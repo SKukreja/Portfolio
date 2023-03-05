@@ -1,16 +1,12 @@
 import React from 'react'
-import styled from 'styled-components'
-
-const Splash = styled.div`
-    background: grey;
-    width: 100%;
-    height: 100vh;
-`;
+import Splash from '../../components/Home/Splash/Splash';
+import FeaturedWorks from '../../components/Home/FeaturedWorks/FeaturedWorks';
 
 const Home = () => {
   return (
     <div>
-        <Splash></Splash>
+        <Splash />
+        <FeaturedWorks />
     </div>
   )
 }
