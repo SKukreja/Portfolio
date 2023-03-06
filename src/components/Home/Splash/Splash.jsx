@@ -1,10 +1,10 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef } from 'react'
+import React, { Suspense, useRef, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components';
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, GodRays } from '@react-three/postprocessing'
 import { BlendFunction, GodRaysEffect, KernelSize } from 'postprocessing'
-import { CameraShake, Cloud } from '@react-three/drei'
+import { CameraShake } from '@react-three/drei'
 
 const hueRotate = keyframes`
     0% {
@@ -80,7 +80,7 @@ const ShadowTransition = styled.div`
 `;
 
 const Astronaut = styled.img`
-    width: 24vw;
+    width: 30vmin;
     height: auto;
     position: absolute;
     left: 50%;
@@ -92,8 +92,8 @@ const Astronaut = styled.img`
 `;
 
 const Frame = styled.div`
-    width: calc(75vh - 2rem);
-    height: calc(75vh - 2rem);
+    width: calc(75vmin - 2rem);
+    aspect-ratio: 1;
     border: 5px solid #504CCF;
     pointer-events: none;
     position: absolute;
@@ -114,7 +114,7 @@ const Name = styled.h1`
     font-weight: 900;
     text-transform: uppercase;
     font-size: 6.5rem;
-    filter: drop-shadow(0 0 1px #504CCF);
+    text-shadow: 0 0 5px #504CCF;
     color: #504CCF;
     margin: 0;
 `;
@@ -123,6 +123,7 @@ const Caption = styled.h2`
     font-family: 'Poppins';
     font-weight: 500;
     margin: 0;
+    text-shadow: 0 0 5px #f1e3f3;
     font-size: 2.8rem;
     margin-top: -1.5rem;
 `;
@@ -133,11 +134,11 @@ const Scroll = styled.h2`
     font-size: 7.6rem;
     margin: 0;
     position: absolute;
-    background: rgba(241, 227, 243, 0.05);
     bottom: 0rem;
-    -webkit-text-fill-color: transparent;
+    color: rgba(80, 76, 207, 0.1);
     -webkit-background-clip: text;
     text-transform: uppercase;
+    filter: drop-shadow(0 0 1px rgba(80, 76, 207,0.1));
 `;
 
 const Stars = (props) => {
@@ -199,33 +200,58 @@ const Rig = () => {
 }
 
 const Splash = () => {
-  return (
-    <Container>
-        <Light />
-        <Blur />
-        <Shadow />
-        <Scene linear dpr={[1, 2]} camera={{ fov: -100, position: [0, 0, 0] }}>
-            <Suspense fallback={null}>
-            <fog attach="fog" args={['#F1E3F3', 50, 190]} />
-            <Stars path='/star.png' />
-            <Stars path='/star2.png' />
-            <Stars path='/star3.png' />
-            <Stars path='/star4.png' />
-            <Rig />
-            </Suspense>
-            <EffectComposer multisampling={0}>
-                <Bloom kernelSize={KernelSize.LARGE} blendFunction={BlendFunction.SCREEN} />
-            </EffectComposer>
-        </Scene>
-        <Frame>
-            <Name>Sumit Kukreja</Name>
-            <Caption>Full Stack Developer based in Toronto</Caption>
-            <Astronaut src='/astronaut.png' />
-            <Scroll>Scroll Down</Scroll>
-        </Frame>
-        <ShadowTransition />
-    </Container>
-  )
+    const container = useRef()
+    const astronaut = useRef()
+    const scroll = useRef()
+
+    useEffect(() => {
+        container.current.addEventListener("mousemove", moveAstronaut)
+        window.addEventListener("scroll", handleScroll)
+        return () => {
+            container.current.removeEventListener("mousemove", moveAstronaut)
+            window.removeEventListener("scroll", handleScroll)
+        };
+    }, []);
+
+    const moveAstronaut = (event) => {
+        astronaut.current.animate({
+            transform: `translate(${-event.clientX/50}px, ${-event.clientY/50}px)`
+        }, { duration: 200, fill: "forwards"})
+    }
+
+    const handleScroll = (event) => {
+        scroll.current.animate({
+            transform: `translate(0, ${-window.scrollY/15}px)`,
+            opacity: (1 - window.scrollY/500)
+        }, {duration: 0, fill: "forwards"})
+    } 
+
+    return (
+        <Container ref={container}>
+            <Light />
+            <Blur />
+            <Shadow />
+            <Scene linear dpr={[1, 2]} camera={{ fov: -100, position: [0, 0, 0] }}>
+                <Suspense fallback={null}>
+                <Stars path='/star.png' />
+                <Stars path='/star2.png' />
+                <Stars path='/star3.png' />
+                <Stars path='/star4.png' />
+                <Rig />
+                </Suspense>
+                <EffectComposer multisampling={0}>
+                    <Bloom kernelSize={KernelSize.LARGE} blendFunction={BlendFunction.SCREEN} />
+                </EffectComposer>
+            </Scene>
+            <Frame>
+                <Name>Sumit Kukreja</Name>
+                <Caption>Full Stack Developer based in Toronto</Caption>
+                <Astronaut ref={astronaut} src='/astronaut.png' />
+                <Scroll ref={scroll}>Scroll Down</Scroll>
+            </Frame>
+            <ShadowTransition />
+        </Container>
+    )
 }
 
 export default Splash
