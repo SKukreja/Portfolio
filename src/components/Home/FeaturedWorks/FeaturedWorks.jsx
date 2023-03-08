@@ -2,6 +2,7 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../../hooks/use';
+import { Icons } from '../../Common/Icons';
 
 const hueRotate = keyframes`
     0% {
@@ -81,7 +82,19 @@ const ProjectBackground = styled.div`
 
 const ProjectName = styled.h1`
   text-transform: uppercase;
-  font-family: 'Poppins';
+  font-family: 'Hind';
+  font-weight: 900;
+  font-size: 2rem;
+  color: #504CCF;
+  text-shadow: 0 0 2px #504CCF;
+  letter-spacing: 1px;
+  animation: ${hueRotate} 18s linear infinite;
+  margin: 2rem 0;
+  & > svg {
+    font-size: 3rem;
+    margin-bottom: -0.75rem;
+    display: none;
+  }
 `;
 
 const ProjectContent = styled.div`
@@ -114,9 +127,11 @@ const ProjectImage = styled.div`
   border: 5px solid #504CCF;
   box-shadow: 0 0 3px #504CCf;
   overflow: hidden;
-  margin: 1rem;
-  z-index: 1;
+  margin-top: 0;
+  margin-left: 1rem;
+  margin-right: 1rem;
   margin-bottom: 5rem;
+  z-index: 1;
   display: flex;
   animation: ${hueRotate} 18s linear infinite;
   justify-content: center;
@@ -190,25 +205,78 @@ const ProjectMockups = styled.div`
 `;
 
 const ProjectSummary = styled.div`
-  font-family: 'Hind';
+  font-family: Hind;
+  letter-spacing: 0.5px;6
+  margin-bottom: 1rem;
+  text-shadow: 0 0 1px #F1E3F3;
 `;
 
 const ProjectNumber = styled.h1`
   font-family: 'Poppins';
   font-size: 10rem;
   font-weight: 200;
-  line-height: 1;
-  text-shadow: 0 0 5px #F1E3F3;
+  line-height: 0.8;
+  text-shadow: 0 0 2px #F1E3F3;
   margin: 0;
   filter: drop-shadow(2px 2px 2px black)
 `;
 
-const Filler = styled.div`
-  width: calc((100vw - 75vmin)/2);
+const ProjectActions = styled.div`
+  margin: 2rem -0.5rem;
+`;
+
+const ProjectLink = styled.a`
+  color: white;
+  display: inline-flex;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  line-height: 1;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background: #504CCF;
+  animation: ${hueRotate} 18s linear infinite;
+  &:hover {
+    background: #C2BBF0;
+    text-decoration: none;
+  }
+`;
+
+const ProjectTechnologies = styled.div`
+  display: inline-block;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+`;
+
+const ProjectTechnology = styled.div`
+  display: inline-block;
+  font-size: 2.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 `;
 
 const padNum = (num, targetLength) => {
   return num.toString().padStart(targetLength, "0");
+}
+
+const ProjectInfo = (props) => {
+  return (
+    <ProjectContent className={props.className}>
+      <ProjectNumber>{padNum(props.number + 1, 2)}</ProjectNumber>
+      <ProjectName>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
+      <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
+      <ProjectActions>
+      {props.project.attributes.links?.map((link) => (
+        <ProjectLink key={link.id} href={link.url}>{Icons[link.icon]()}</ProjectLink>
+      ))}        
+      </ProjectActions>
+      <ProjectTechnologies>
+      {props.project.attributes.technologies.data?.map((technology) => (
+        <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]()}</ProjectTechnology>
+      ))}
+      </ProjectTechnologies>
+    </ProjectContent>
+  );
 }
 
 const FeaturedWorks = () => {
@@ -216,31 +284,26 @@ const FeaturedWorks = () => {
     `/home?populate=deep`
   );
 
+  if (error) return (
+    <>{error}</>
+  )
+
   return (
     <Featured>
+      {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
         <InView key={project.id}>
+          {/* Check if the project is in the viewport and give it the active class, unpausing animation and colouring */}
           {({ inView, ref, entry }) => (
           <Project ref={ref} className={`${inView ? 'active' : ''}`}>
-            {number % 2 == 0 ? (
-              <ProjectContent className='odd'>
-                  <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
-                  <ProjectName>{project.attributes.title}</ProjectName>
-                  <ProjectSummary className='summary'>{project.attributes.summary}</ProjectSummary>
-              </ProjectContent>
-              ):''}
+            {/* Show Project Info before Image if the number's odd */}
+            {number % 2 == 0 ? (<ProjectInfo className='odd' number={number} project={project} />) : ''}
             <ProjectImage>
               <ProjectBackground className='project-background' />
               <ProjectMockups className={`${project.attributes.cover_style}`} style={{backgroundImage: "url(" + import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.cover.data.attributes.url + ")"}} />
             </ProjectImage>
-
-            {number % 2 != 0 ? (
-              <ProjectContent className='even'>
-                  <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
-                  <ProjectName>{project.attributes.title}</ProjectName>
-                  <ProjectSummary className='summary'>{project.attributes.summary}</ProjectSummary>
-              </ProjectContent>
-              ):''}
+            {/* Show Project Info after Image if the number's even */}
+            {number % 2 != 0 ? (<ProjectInfo className='even' number={number} project={project} />) : ''}
           </Project>
         )}
         </InView>

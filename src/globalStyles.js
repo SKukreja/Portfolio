@@ -12,6 +12,11 @@ import PoppinsThinWoff from './assets/fonts/Poppins-Thin.woff';
 import PoppinsThinWoff2 from './assets/fonts/Poppins-Thin.woff2';
 import PoppinsRegularWoff from './assets/fonts/Poppins-Regular.woff';
 import PoppinsRegularWoff2 from './assets/fonts/Poppins-Regular.woff2';
+
+import SatoshiRegularWoff from './assets/fonts/Satoshi-Regular.woff'
+import SatoshiRegularWoff2 from './assets/fonts/Satoshi-Regular.woff2'
+import SatoshiBlackWoff from './assets/fonts/Satoshi-Black.woff'
+import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2'
  
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -50,12 +55,24 @@ const GlobalStyle = createGlobalStyle`
         url(${PoppinsThinWoff}) format('woff');
     font-weight: 200;
   }
+  @font-face {
+    font-family: 'Hind';
+    src: url(${SatoshiRegularWoff2}) format('woff2'),
+        url(${SatoshiRegularWoff}) format('woff');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Hind';
+    src: url(${SatoshiBlackWoff2}) format('woff2'),
+        url(${SatoshiBlackWoff}) format('woff');
+    font-weight: 900;
+  }
   body {
     margin: 0;
     padding: 0;
     background: #080708;
-    color: white;
-    font-family: Open-Sans, Helvetica, Sans-Serif;
+    color: #F1E3F3;
+    font-family: 'Hind', Open-Sans, Helvetica, Sans-Serif;
   }
 `;
  
