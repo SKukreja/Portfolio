@@ -15,6 +15,8 @@ import PoppinsRegularWoff2 from './assets/fonts/Poppins-Regular.woff2';
 
 import SatoshiRegularWoff from './assets/fonts/Satoshi-Regular.woff'
 import SatoshiRegularWoff2 from './assets/fonts/Satoshi-Regular.woff2'
+import SatoshiBoldWoff from './assets/fonts/Satoshi-Bold.woff'
+import SatoshiBoldWoff2 from './assets/fonts/Satoshi-Bold.woff2'
 import SatoshiBlackWoff from './assets/fonts/Satoshi-Black.woff'
 import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2'
  
@@ -56,13 +58,19 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 200;
   }
   @font-face {
-    font-family: 'Hind';
+    font-family: 'Satoshi';
     src: url(${SatoshiRegularWoff2}) format('woff2'),
         url(${SatoshiRegularWoff}) format('woff');
     font-weight: 400;
   }
   @font-face {
-    font-family: 'Hind';
+    font-family: 'Satoshi';
+    src: url(${SatoshiBoldWoff2}) format('woff2'),
+        url(${SatoshiBoldWoff}) format('woff');
+    font-weight: 600;
+  }
+  @font-face {
+    font-family: 'Satoshi';
     src: url(${SatoshiBlackWoff2}) format('woff2'),
         url(${SatoshiBlackWoff}) format('woff');
     font-weight: 900;

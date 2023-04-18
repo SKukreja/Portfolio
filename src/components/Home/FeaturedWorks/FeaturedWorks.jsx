@@ -67,33 +67,36 @@ const ProjectBackground = styled.div`
   top: 0;
 	background: linear-gradient(to bottom left, transparent, #504CCF);
 	filter: contrast(7) grayscale(0.7);
-  animation: ${pulseBackground} 6s linear infinite;
+  animation: ${pulseBackground} 10s linear infinite;
   animation-play-state: paused;
   --mask: linear-gradient(red, rgba(0, 0, 0, 0.45));
 	&::before {
 		position: absolute;
 		top: 0; right: 0; bottom: 0; left: 0;
-    background: radial-gradient(#000, transparent) 0 0/0.3em 0.3em space;
+    background: radial-gradient(#000, transparent) 0 0/0.5em 0.5em space;
     -webkit-mask: var(--mask);
     mask: var(--mask);
 		content: ''
 	}
 `;
 
-const ProjectName = styled.h1`
+const ProjectName = styled.a`
   text-transform: uppercase;
-  font-family: 'Hind';
-  font-weight: 900;
+  font-family: 'Satoshi';
+  font-weight: 600;
   font-size: 2rem;
   color: #504CCF;
   text-shadow: 0 0 2px #504CCF;
+  text-decoration: none;
   letter-spacing: 1px;
   animation: ${hueRotate} 18s linear infinite;
   margin: 2rem 0;
   & > svg {
     font-size: 3rem;
     margin-bottom: -0.75rem;
-    display: none;
+  }
+  &:hover {
+    color: white;
   }
 `;
 
@@ -206,8 +209,8 @@ const ProjectMockups = styled.div`
 `;
 
 const ProjectSummary = styled.div`
-  font-family: Hind;
-  letter-spacing: 0.5px;6
+  font-family: 'Satoshi';
+  letter-spacing: 0.5px;
   margin-bottom: 1rem;
   text-shadow: 0 0 1px #F1E3F3;
 `;
@@ -264,7 +267,7 @@ const ProjectInfo = (props) => {
   return (
     <ProjectContent className={props.className}>
       <ProjectNumber>{padNum(props.number + 1, 2)}</ProjectNumber>
-      <ProjectName>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
+      <ProjectName href={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
       {props.project.attributes.links?.map((link) => (

@@ -1,9 +1,10 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useEffect } from 'react'
+import React, { Suspense, useRef, useEffect, useContext } from 'react'
 import styled, { keyframes } from 'styled-components';
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, GodRays } from '@react-three/postprocessing'
 import { BlendFunction, GodRaysEffect, KernelSize } from 'postprocessing'
+import WebGLPerformanceContext from '../../../WebGLPerformanceContext';
 import { CameraShake } from '@react-three/drei'
 
 const hueRotate = keyframes`
@@ -141,15 +142,25 @@ const Scroll = styled.h2`
     filter: drop-shadow(0 0 1px rgba(80, 76, 207,0.1));
 `;
 
+const spriteLoader = new THREE.TextureLoader();
+
+const sprites = {
+  star: spriteLoader.load('/star.png'),
+  star2: spriteLoader.load('/star2.png'),
+  star3: spriteLoader.load('/star3.png'),
+  star4: spriteLoader.load('/star4.png'),
+};
+
 const Stars = (props) => {
     const geometry = new THREE.BufferGeometry()
     const vertices = []
     const velocities = []
     const accelerations = []
     const star = useRef();
-    const sprite = new THREE.TextureLoader().load(props.path)
+    const sprite = sprites[props.type];
+    const stars = props.count;
   
-    for (let count = 0; count < 6000; count++) {
+    for (let count = 0; count < stars; count++) {
       const x = Math.random() * 2000 - 300
       const y = Math.random() * 2000 - 300
       const z = Math.random() * 600 - 300  
@@ -163,7 +174,7 @@ const Stars = (props) => {
     geometry.setAttribute('acceleration', new THREE.Float32BufferAttribute(accelerations, 1))
   
     useFrame(() => {
-      for (let i = 0; i < 6000; i++) {
+      for (let i = 0; i < stars; i++) {
         geometry.getAttribute('velocity').array[i] += geometry.getAttribute('acceleration').array[i]
         geometry.getAttribute('position').array[i * 3 + 2] += geometry.getAttribute('velocity').array[i]
 
@@ -180,10 +191,18 @@ const Stars = (props) => {
     })
   
     return (
-      <points ref={star} args={[geometry]}>
-        <pointsMaterial opacity={Math.random() * 2.5 + 0.5} size={Math.random() * 1 + 1} sizeAttenuation={true} map={sprite} depthWrite={false} transparent={true} blending={THREE.AdditiveBlending} />
-      </points>
-    )
+        <points ref={star} args={[geometry]}>
+          <pointsMaterial
+            opacity={Math.random() * 2.5 + 0.5}
+            size={Math.random() * 1 + 1}
+            sizeAttenuation={true}
+            map={sprite}
+            depthWrite={false}
+            transparent={true}
+            blending={THREE.AdditiveBlending}
+          />
+        </points>
+      );
 }
 
 const Rig = () => {
@@ -203,15 +222,20 @@ const Splash = () => {
     const container = useRef()
     const astronaut = useRef()
     const scroll = useRef()
+    const performanceLevel = useContext(WebGLPerformanceContext);
+    const stars = performanceLevel === 'high' ? 6000 : 1000;
 
     useEffect(() => {
-        container.current.addEventListener("mousemove", moveAstronaut)
-        window.addEventListener("scroll", handleScroll)
+        container.current.addEventListener("mousemove", moveAstronaut);
+        window.addEventListener("scroll", handleScroll);
         return () => {
-            container.current.removeEventListener("mousemove", moveAstronaut)
-            window.removeEventListener("scroll", handleScroll)
+            if (container.current) {
+                container.current.removeEventListener("mousemove", moveAstronaut);
+            }
+            window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+    
 
     const moveAstronaut = (event) => {
         astronaut.current.animate({
@@ -231,12 +255,17 @@ const Splash = () => {
             <Light />
             <Blur />
             <Shadow />
-            <Scene linear dpr={[1, 2]} camera={{ fov: -100, position: [0, 0, 0] }}>
+            <Scene
+            linear
+            dpr={[1, 2]}
+            gl={{ webgl2: true, webgl1: true }}
+            camera={{ fov: -100, position: [0, 0, 0] }}
+            >
                 <Suspense fallback={null}>
-                <Stars path='/star.png' />
-                <Stars path='/star2.png' />
-                <Stars path='/star3.png' />
-                <Stars path='/star4.png' />
+                <Stars type="star" count={stars} />
+                <Stars type="star2" count={stars} />
+                <Stars type="star3" count={stars} />
+                <Stars type="star4" count={stars} />
                 <Rig />
                 </Suspense>
                 <EffectComposer multisampling={0}>

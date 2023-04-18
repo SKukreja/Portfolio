@@ -8,6 +8,7 @@ const API = axios.create({
   },
 });
 
+// Custom hook to fetch data from API
 const use = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);

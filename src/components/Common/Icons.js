@@ -3,6 +3,8 @@ import { SiWordpress, SiPhp, SiJavascript, SiMysql, SiApache } from 'react-icons
 import { MdOpenInNew } from 'react-icons/md'
 import { FaAws } from 'react-icons/fa'
 import { BsInfo } from 'react-icons/bs'
+import { GiGraduateCap } from 'react-icons/gi'
+import { MdWork } from 'react-icons/md'
 
 export const Icons = {
     "Github" : FiGithub,
@@ -16,5 +18,7 @@ export const Icons = {
     "Vanilla JS" : SiJavascript,
     "MySQL" : SiMysql,
     "Apache" : SiApache,
-    "AWS" : FaAws
+    "AWS" : FaAws,
+    "Education" : GiGraduateCap,
+    "Work" : MdWork
 }
