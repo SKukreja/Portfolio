@@ -155,7 +155,7 @@ const Stars = (props) => {
       const z = Math.random() * 600 - 300  
       vertices.push(x, y, z)
       velocities.push(0)
-      accelerations.push(0.0001)
+      accelerations.push(0.00005)
     }
   
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
@@ -173,7 +173,7 @@ const Stars = (props) => {
           geometry.getAttribute('velocity').array[i] = 0
         }
       }
-      star.current.rotation.z += 0.001
+      star.current.rotation.z += 0.0005
       geometry.attributes.position.needsUpdate = true
       geometry.attributes.velocity.needsUpdate = true
       geometry.attributes.acceleration.needsUpdate = true
@@ -189,8 +189,8 @@ const Stars = (props) => {
 const Rig = () => {
     const { camera, mouse } = useThree()
     useFrame(() => {
-      camera.position.x += -mouse.x * 5 - camera.position.x
-      camera.position.y += -mouse.y * 5 - camera.position.y
+      camera.position.x += -mouse.x * 3 - camera.position.x
+      camera.position.y += -mouse.y * 3 - camera.position.y
     })
     return (
       <>
@@ -215,7 +215,7 @@ const Splash = () => {
 
     const moveAstronaut = (event) => {
         astronaut.current.animate({
-            transform: `translate(${-event.clientX/50}px, ${-event.clientY/50}px)`
+            transform: `translate(${-event.clientX/75}px, ${-event.clientY/75}px)`
         }, { duration: 200, fill: "forwards"})
     }
 

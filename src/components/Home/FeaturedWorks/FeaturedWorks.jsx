@@ -159,15 +159,15 @@ const Project = styled.div`
 
 const panImageDiagonal = keyframes`
     0% {
-      background-position: 30% 40%;
+      background-position: 0% 0%;
     }
 
     50% {
-      background-position: 80% 50%;   
+      background-position: 100% 100%;   
     }
     
     100% {
-      background-position: 30% 40%;
+      background-position: 0% 0%;
     }
 `;
 
@@ -181,7 +181,7 @@ const panImageVertical = keyframes`
     }
     
     100% {
-      background-position: 40% 80%;
+      background-position: 40% 30%;
     }
 `;
 
@@ -191,8 +191,9 @@ const ProjectMockups = styled.div`
   right: 0;
   top: 0;
   width: 100%;
-  background-size: 175%;
-  background-position: 50%;
+  filter: drop-shadow(5px 5px 10px #080708);
+  background-size: 135%;
+  background-position: 0%;
   height: 100%;
   &.diagonal {
     animation: ${panImageDiagonal} 50s ease-in-out infinite;
@@ -250,7 +251,7 @@ const ProjectTechnologies = styled.div`
 
 const ProjectTechnology = styled.div`
   display: inline-block;
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 `;
