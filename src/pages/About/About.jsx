@@ -143,13 +143,9 @@ const LogoLink = styled.a`
   }
 `;
 
-const Timeline = styled.div`
+const Timeline = styled.div``;
 
-`;
-
-const TimelineSection = styled.div`
-
-`;
+const TimelineSection = styled.div``;
 
 const Line = styled.div`
   margin: 2rem auto;
@@ -207,6 +203,8 @@ const CenterText = styled.p`
   text-align: center;
   margin-top: 0;
   width: 60vmin;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 1rem;
   font-family: 'Satoshi';
   font-size: 2rem;
@@ -214,9 +212,55 @@ const CenterText = styled.p`
 `;
 
 const BelowImage = styled.img`
-  width: 40vmin;
+  width: 50vmin;
   border-radius: 30px;
+  padding: 1rem;
+  &.three {
+    width: 25vmin;    
+  }
 `;
+
+const ThreeImages = styled.div`
+  display: flex;
+`;
+
+const FiveImages = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 2rem;
+  grid-row-gap: 2rem;
+  padding: 1rem;
+`;
+
+const FiveImage = styled.img`
+  border-radius: 30px;
+  aspect-ratio: 4/3;
+  height: calc(20vmin - 2rem);
+  align-self: center;
+  &.portrait {
+    height: calc(40vmin - 2rem);
+    aspect-ratio: 3/4;
+    justify-self: center;
+    grid-area: 1 / 2 / 3 / 3;
+  }
+  &.landscape1 {
+    justify-self: right;
+    grid-area: 1 / 1 / 2 / 2;
+  }
+  &.landscape2 {
+    justify-self: right;
+    grid-area: 2 / 1 / 3 / 2;
+  }
+  &.landscape3 {
+    justify-self: left;
+    grid-area: 1 / 3 / 2 / 4;
+  }
+  &.landscape4 {
+    justify-self: left;
+    grid-area: 2 / 3 / 3 / 4;
+  }
+`
 
 const colors = ["#FFFFFF", "#F1E3F3", "#C2BBF0"];
 
@@ -327,6 +371,26 @@ const About = () => {
                     <ImageBelowText>
                       <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
                       <BelowImage src={import.meta.env.VITE_APP_UPLOAD_URL + section.image.data?.attributes.url} />                    
+                    </ImageBelowText>
+                  ) : 
+                  section.__component === 'timeline.text-above-three-images' ? (
+                    <ImageBelowText>
+                      <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                      <ThreeImages>
+                      {section.images.data?.map((image, index) => (
+                        <BelowImage key={index} className='three' src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
+                      ))}
+                      </ThreeImages>
+                    </ImageBelowText>
+                  ) : 
+                  section.__component === 'timeline.text-above-5-images' ? (
+                    <ImageBelowText>
+                      <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                      <FiveImages>
+                      {section.images.data?.map((image, index) => (
+                        <FiveImage key={index} className={index == 0 ? ' portrait' : ' landscape' + index} src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
+                      ))}
+                      </FiveImages>                              
                     </ImageBelowText>
                   ) : 
                   section.__component === 'timeline.event' ? (
