@@ -16,10 +16,11 @@ const hueRotate = keyframes`
     }
 `;
 
-const Nav = styled.div`
+const Nav = styled.nav`
   width: calc(100% - 4rem);
   position: fixed;
   top: 0;
+  transition: all 0.5s ease;
   background: linear-gradient(to bottom, #080708 33%, rgba(8, 7, 8, 0.25) 75%, transparent);
   display: flex;
   z-index: 10;
@@ -37,6 +38,19 @@ const Left = styled.div`
 const Branding = styled.img`
   width: 80px;
   pointer-events: auto;
+  z-index: 2;
+  position: relative;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+  &.logo-dark {
+    opacity: 0;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
 `;
 
 const Right = styled.div`
@@ -50,10 +64,11 @@ const Menu = styled.nav`
 `;
 
 const Link = styled.a`
-  color: white;
+  color: #F1E3F3;
   text-decoration: none;
   letter-spacing: 1px;
   font-size: 1rem;
+  background: transparent;
   text-shadow: 0 0 2px #f1e3f3;
   pointer-events: auto;
   padding: 1rem;
@@ -61,6 +76,10 @@ const Link = styled.a`
     color: #504CCF;
     text-shadow: 0 0 2px #504CCF;
   }
+`;
+
+const LogoContainer = styled.div`
+  position: relative;
 `;
 
 const Navbar = () => {
@@ -71,7 +90,10 @@ const Navbar = () => {
   return (
     <Nav>
       <Left>
-        <Branding src='/logo.png' />
+        <LogoContainer>
+          <Branding className='logo-dark' src='/logo-dark.png' />
+          <Branding className='logo-light' src='/logo.png' />
+        </LogoContainer>
       </Left>
       <Right>
         <Menu>

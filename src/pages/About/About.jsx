@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
@@ -121,7 +122,7 @@ const CurrentIcon = styled.div`
 
 const Blurb = styled.div`
   font-family: 'Satoshi';
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-align: center;
   width: 75vmin;
   margin-bottom: 5rem;
@@ -148,14 +149,13 @@ const Timeline = styled.div``;
 const TimelineSection = styled.div``;
 
 const Line = styled.div`
-  margin: 2rem auto;
   width: 1px;
-  height: 200px;
+  height: 300px;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #c2bbf0);
+  margin: 2rem auto;
 `;
 
 const Year = styled.div`
-  margin-top: -2rem;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -169,7 +169,7 @@ const YearText = styled.h2`
   font-weight: 700;
   font-size: 3rem;
   animation: ${hueRotate} 18s linear infinite;
-  margin-top: 0.5rem;
+  margin-top: 2rem;
   margin-bottom: 2rem;
 `;
 
@@ -177,17 +177,19 @@ const SideBySide = styled.div`
   width: 80vmin;
   display: flex;
   align-items: center;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const LeftImage = styled.img`
-  width: 50%;
+  width: calc(50% - 2rem);
   padding: 1rem;
   border-radius: 30px;
 `;
 
 const RightText = styled.p`
   padding: 1rem;
-  width: 50%;
+  width: calc(50% - 2rem);
   font-family: 'Satoshi';
   font-size: 2rem;
   font-weight: 400;
@@ -197,22 +199,39 @@ const ImageBelowText = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 3rem;
 `;
 
-const CenterText = styled.p`
+const CenterText = styled.div`
   text-align: center;
   margin-top: 0;
   width: 60vmin;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   font-family: 'Satoshi';
-  font-size: 2rem;
+  padding: 0;
+  font-size: 1.5rem;
   font-weight: 400;
+  & svg {
+    font-size: 4rem;
+  }
+  & > p:first-child {
+    margin-top: -1rem;
+  }
+  & a, & a:visited {
+    color: #504CCF;
+    animation: ${hueRotate} 18s linear infinite;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  & a:hover {
+    color: white;
+  }
 `;
 
 const BelowImage = styled.img`
-  width: 50vmin;
+  max-width: 50vmin;
   border-radius: 30px;
   padding: 1rem;
   &.three {
@@ -326,7 +345,7 @@ const About = () => {
             </CurrentSection>
           </Current>
           <Blurb>
-            {data?.attributes.blurb}
+            <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{data?.attributes.blurb}</ReactMarkdown>           
           </Blurb>
         </AboutContainer>
       )}
@@ -364,18 +383,18 @@ const About = () => {
                   {section.__component === 'timeline.image-beside-text' ? (
                     <SideBySide>
                       <LeftImage src={import.meta.env.VITE_APP_UPLOAD_URL + section.image.data?.attributes.url} />
-                      <RightText>{Icons[section.type]()}<br />{section.text}</RightText>
+                      <RightText><ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></RightText>
                     </SideBySide>
                   ) : 
                   section.__component === 'timeline.image-below-text' ? (
                     <ImageBelowText>
-                      <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                       <BelowImage src={import.meta.env.VITE_APP_UPLOAD_URL + section.image.data?.attributes.url} />                    
                     </ImageBelowText>
                   ) : 
                   section.__component === 'timeline.text-above-three-images' ? (
                     <ImageBelowText>
-                      <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                       <ThreeImages>
                       {section.images.data?.map((image, index) => (
                         <BelowImage key={index} className='three' src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
@@ -385,7 +404,7 @@ const About = () => {
                   ) : 
                   section.__component === 'timeline.text-above-5-images' ? (
                     <ImageBelowText>
-                      <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                       <FiveImages>
                       {section.images.data?.map((image, index) => (
                         <FiveImage key={index} className={index == 0 ? ' portrait' : ' landscape' + index} src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
@@ -394,7 +413,7 @@ const About = () => {
                     </ImageBelowText>
                   ) : 
                   section.__component === 'timeline.event' ? (
-                    <CenterText>{Icons[section.type]()}<br />{section.text}</CenterText>
+                    <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                   ) : ("")}
                 </TimelineSection>
               )}

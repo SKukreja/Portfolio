@@ -80,7 +80,23 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     background: #080708;
     color: #F1E3F3;
+    transition: background 0.5s ease;
     font-family: 'Hind', Open-Sans, Helvetica, Sans-Serif;
+  }
+  .inverted body {
+    background: #F1E3F3;
+  }
+  .inverted nav {
+    background: linear-gradient(to bottom, #F1E3F3 33%, rgba(241, 227, 243, 0.25) 75%, transparent);
+  }
+  .inverted nav a {
+    color: #080708;
+  }
+  .inverted nav .logo-dark {
+    opacity: 1;
+  }
+  .inverted nav .logo-light {
+    opacity: 0;
   }
 `;
  
