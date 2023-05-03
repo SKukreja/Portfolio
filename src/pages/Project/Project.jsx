@@ -226,32 +226,14 @@ function isInViewport(element) {
 const Project = () => {
   const { id } = useParams();
   const [isInverted, setIsInverted] = useState(false);
-  const [figureRefs, setFigureRefs] = useState([]);
   const { data, loading, error } = use(
     `/slugify/slugs/work/` + id + `?populate=deep`
   );
 
-  useEffect(() => {
-    if (data && data.attributes && data.attributes.article) {
-      const newFigureRefs = data.attributes.article.map((_, i) =>
-        figureRefs[i] || React.createRef()
-      );
-      setFigureRefs(newFigureRefs);
-    }
-  }, [data, figureRefs]);
+  const onFigureInViewChange = (inView) => {
+    setIsInverted(inView);
+  };
 
-  useEffect(() => {
-    if (figureRefs.length > 0) {
-      let anyFigureInView = false;
-      figureRefs.forEach((figureRef, index) => {
-        const figureInView = figureRef.current && isInViewport(figureRef.current);
-        if (figureInView) {
-          anyFigureInView = true;
-        }
-      });
-      setIsInverted(anyFigureInView);
-    }
-  }, [figureRefs]);  
 
   useEffect(() => {
     const lightElems = document.querySelectorAll(".light");
@@ -305,36 +287,38 @@ const Project = () => {
             </BuiltWith>
           </Section>
           {data?.attributes.article.map((topic, index) => {
-            return(
+            const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
+
+            if (isFigure) {
+              return (
+                <Section key={topic.id}>
+                  <InView onChange={onFigureInViewChange} threshold={0.5}>
+                    <Figure className='light'>
+                      <InvertedTitle>{topic.title}</InvertedTitle>
+                      <img src={import.meta.env.VITE_APP_UPLOAD_URL + (topic.__component === 'article.figure' ? topic.figure.data.attributes.url : topic.images.data[0].attributes.url)} />
+                    </Figure>
+                  </InView>
+                </Section>
+              );
+            }
+
+            return (
               <Section key={topic.id}>
-                {topic.__component === 'article.figure' ? (
-                    <Figure ref={figureRefs[index]} className='light'>
-                      <InvertedTitle>{topic.title}</InvertedTitle>
-                      <img src={import.meta.env.VITE_APP_UPLOAD_URL + topic.figure.data.attributes.url} />
-                    </Figure>
-                  ) :
-                  topic.__component === 'article.slides' ? (
-                    <Figure ref={figureRefs[index]} className='light'>
-                      <InvertedTitle>{topic.title}</InvertedTitle>
-                      <img src={import.meta.env.VITE_APP_UPLOAD_URL + topic.images.data[0].attributes.url} />
-                    </Figure>
-                  ) : (
-                    <TextSection className='dark'>
-                      <Headers>
-                        {topic.header ? topic.header : ""}
-                      </Headers>
-                      <Topic>
-                        {topic.__component === 'article.topic' ? (
-                        <TopicText>
-                          <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{topic.content}</ReactMarkdown>
-                        </TopicText>
-                        ) : 
-                        topic.__component === 'article.sandbox' ? (
-                          <div></div>
-                        ) : ("")}
-                      </Topic>
-                    </TextSection>
-                  )}            
+                <TextSection className='dark'>
+                  <Headers>
+                    {topic.header ? topic.header : ""}
+                  </Headers>
+                  <Topic>
+                    {topic.__component === 'article.topic' ? (
+                    <TopicText>
+                      <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{topic.content}</ReactMarkdown>
+                    </TopicText>
+                    ) : 
+                    topic.__component === 'article.sandbox' ? (
+                      <div></div>
+                    ) : ("")}
+                  </Topic>
+                </TextSection>
               </Section>
             );
           })}
