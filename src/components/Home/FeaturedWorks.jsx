@@ -1,8 +1,10 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import use from '../../../hooks/use';
-import { Icons } from '../../Common/Icons';
+import use from '../../hooks/use';
+import { Icons } from '../Common/Icons';
+
+const desktopContainerWidth = '75vw';
 
 const hueRotate = keyframes`
     0% {
@@ -88,7 +90,7 @@ const ProjectName = styled.a`
 const ProjectContent = styled.div`
   position: relative;
   display: flex;
-  width: calc((100vw - 75vmin)/2);
+  width: 33%;
   flex-direction: column;
   z-index: 10;
   margin: -0.3rem 1rem 0 1rem;
@@ -108,7 +110,7 @@ const ProjectContent = styled.div`
 
 const ProjectImage = styled.div`
   position: relative;
-  width: 75vmin;
+  width: 75%;
   overflow: hidden;
   margin-top: 0;
   margin-left: 1rem;
@@ -125,17 +127,13 @@ const Project = styled.div`
     filter: grayscale(1);
     transition: all 1s ease;
     opacity: 0;
-    &.odd {
-      transform: translateX(-100px);
-    }
-    &.even {
-      transform: translateX(100px);
-    }
+    width: ${desktopContainerWidth};
+    transform: translateY(100px);
     &.active {
       filter: grayscale(0);
     }
     &.active.odd, &.active.even {
-      transform: translateX(0);
+      transform: translateY(0);
       opacity: 1;
     }
 `;
@@ -179,7 +177,7 @@ const ProjectLink = styled.a`
   font-size: 1.5rem;
   padding: 0.5rem;
   line-height: 1;
-  border-radius: 3px;
+  border-radius: 5px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   background: #504CCF;

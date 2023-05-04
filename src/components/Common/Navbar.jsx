@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import styled, { keyframes } from 'styled-components'
-import use from '../../../hooks/use';
+import use from '../../hooks/use';
 
 const hueRotate = keyframes`
     0% {

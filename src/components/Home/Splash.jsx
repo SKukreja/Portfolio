@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Bloom, EffectComposer, GodRays } from '@react-three/postprocessing'
 import { BlendFunction, GodRaysEffect, KernelSize } from 'postprocessing'
-import WebGLPerformanceContext from '../../../WebGLPerformanceContext';
+import WebGLPerformanceContext from '../../WebGLPerformanceContext';
 import { CameraShake } from '@react-three/drei'
 
 const hueRotate = keyframes`

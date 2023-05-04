@@ -5,8 +5,9 @@ import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
+import Slider from '../../components/Project/Slider';
 
-const desktopContainerWidth = '70vw';
+const desktopContainerWidth = '75vw';
 
 const hueRotate = keyframes`
   0% {
@@ -158,11 +159,9 @@ const Figure = styled.div`
   margin-top: -10rem;
   text-align: center;
   & img {
-    position: absoluyt
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
-    aspect-ratio: 16/9;
   }
   opacity: 0;
   transition: opacity 0.5s ease;
@@ -209,23 +208,53 @@ const TopicText = styled.div`
   }
 `;
 
-function isInViewport(element) {
-  const rect = element.getBoundingClientRect();
-  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-  const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+const ProjectLinks = styled.div`
+  height: 50vh;
+  width: ${desktopContainerWidth};
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  transition: all 0.5s ease;
+  &.active {
+    opacity: 1;
+  }
+`;
 
-  // Calculate the amount of visible height and width of the element
-  const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-  const visibleWidth = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
-
-  // Check if the element is at least 50% visible in both height and width
-  return visibleHeight > 0 && visibleWidth > 0 &&
-         visibleHeight >= rect.height / 2 && visibleWidth >= rect.width / 2;
-}
+const Action = styled.a`
+  margin: 2rem;
+  background: #504CCF;
+  width: 25%;
+  text-align: center;
+  font-size: 2rem;
+  color: #F1E3F3;
+  font-family: 'Satoshi';
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-decoration: none;
+  padding: 3rem;
+  border-radius: 15px;
+  animation: ${hueRotate} 18s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease;
+  & svg {
+    margin-right: 1rem;
+  }
+  &:hover {
+    background: #F1E3F3;
+    color: #080708;
+  }
+`;
 
 const Project = () => {
   const { id } = useParams();
   const [isInverted, setIsInverted] = useState(false);
+
   const { data, loading, error } = use(
     `/slugify/slugs/work/` + id + `?populate=deep`
   );
@@ -233,7 +262,6 @@ const Project = () => {
   const onFigureInViewChange = (inView) => {
     setIsInverted(inView);
   };
-
 
   useEffect(() => {
     const lightElems = document.querySelectorAll(".light");
@@ -288,15 +316,22 @@ const Project = () => {
           </Section>
           {data?.attributes.article.map((topic, index) => {
             const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
-
+            const first = index === 0 ? 'active' : '';
             if (isFigure) {
               return (
                 <Section key={topic.id}>
-                  <InView onChange={onFigureInViewChange} threshold={0.5}>
+                  <InView onChange={onFigureInViewChange} threshold={0.7} style={{ width: '100%' }}>
+                    {topic.__component === 'article.slides' ? (
+                      <Figure className='light'>
+                        <InvertedTitle>{topic.title}</InvertedTitle>
+                        <Slider media={topic.media} />
+                      </Figure>
+                    ) : (
                     <Figure className='light'>
                       <InvertedTitle>{topic.title}</InvertedTitle>
                       <img src={import.meta.env.VITE_APP_UPLOAD_URL + (topic.__component === 'article.figure' ? topic.figure.data.attributes.url : topic.images.data[0].attributes.url)} />
                     </Figure>
+                    )}
                   </InView>
                 </Section>
               );
@@ -304,9 +339,9 @@ const Project = () => {
 
             return (
               <Section key={topic.id}>
-                <TextSection className='dark'>
+                <TextSection className={'dark ' + first}>
                   <Headers>
-                    {topic.header ? topic.header : ""}
+                    {topic.header ? topic.header : ''}
                   </Headers>
                   <Topic>
                     {topic.__component === 'article.topic' ? (
@@ -323,6 +358,11 @@ const Project = () => {
             );
           })}
         </Article>
+        <ProjectLinks className='dark'>
+          {data?.attributes.links?.map((action, index) => {
+            return <Action key={index} target='_blank' href={action.url}>{Icons[action.icon]()}{action.name}</Action>;
+          })}
+        </ProjectLinks>
       </ProjectInfo>
     </ProjectContainer>
   )

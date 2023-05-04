@@ -6,7 +6,7 @@ import { BsInfo } from 'react-icons/bs'
 import { GiGraduateCap } from 'react-icons/gi'
 import { VscChromeMinimize, VscChromeMaximize, VscChromeClose } from 'react-icons/vsc'
 import { MdWork } from 'react-icons/md'
-import { BiCoffee } from 'react-icons/bi'
+import { BiCoffee, BiEnvelope } from 'react-icons/bi'
 import { AiFillHeart, AiOutlinePlus } from 'react-icons/ai'
 
 export const Icons = {
@@ -32,5 +32,6 @@ export const Icons = {
     "Close" : VscChromeClose,
     "Coffee" : BiCoffee,
     "Heart" : AiFillHeart,
-    "Plus" : AiOutlinePlus
+    "Plus" : AiOutlinePlus,
+    "Envelope" : BiEnvelope,
 }

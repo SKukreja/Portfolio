@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider, Route, Outlet } from 'react-router-dom'
 import GlobalStyle from './globalStyles';
-import Navbar from './components/Common/Navbar/Navbar';
-import Footer from './components/Common/Footer/Footer';
+import Navbar from './components/Common/Navbar';
+import Footer from './components/Common/Footer';
 import Home from './pages/Home/Home';
 import Work from './pages/Work/Work';
 import About from './pages/About/About';
