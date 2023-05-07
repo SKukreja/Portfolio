@@ -66,6 +66,11 @@ const Slide = styled.div`
         width: 100%;
         height: auto;
     }
+    @media (max-width: 768px) {
+        &.active {            
+            width: 100%;
+        }
+    }
 `;
 
 const Arrow = styled.svg`

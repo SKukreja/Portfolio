@@ -27,6 +27,7 @@ const Container = styled.div`
     height: 100vh;
     position: relative;
     overflow: hidden;
+    z-index: 0;
     animation: ${hueRotate} 18s linear infinite;
 `;
 
@@ -39,6 +40,9 @@ const Light = styled.div`
     top: 50%;
     translate: -50% -50%;
     z-index: 1;
+    @media (max-width: 768px) {
+        height: 100vh;
+    }
 `;
 
 const Blur = styled.div`
@@ -90,6 +94,12 @@ const Astronaut = styled.img`
     z-index: 6;
     translate: -50% -50%;
     filter: blur(0.5px) saturate(1.2) contrast(1.4) sepia(0.3) drop-shadow(0 0 5px rgba(5, 8, 41, 0.7));
+    @media (max-width: 768px) {
+        width: 95%;
+    }
+    @media (max-width: 400px) {
+        width: 80%;
+    }
 `;
 
 const Frame = styled.div`
@@ -107,6 +117,13 @@ const Frame = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    @media (max-width: 768px) {
+        width: calc(75vmin);
+        height: 75vh;
+        top: 50%;
+        margin-top: 2rem;
+        border: 3px solid #504CCF;
+    }
 }
 `;
 
@@ -118,6 +135,10 @@ const Name = styled.h1`
     text-shadow: 0 0 5px #504CCF;
     color: #504CCF;
     margin: 0;
+
+    @media (max-width: 768px) {
+        font-size: 9vw;
+    }
 `;
 
 const Caption = styled.h2`
@@ -127,6 +148,10 @@ const Caption = styled.h2`
     text-shadow: 0 0 5px #f1e3f3;
     font-size: 2.8rem;
     margin-top: -1.5rem;
+    @media (max-width: 768px) {
+        margin-top: -0.5rem;
+        font-size: 3.85vw;
+    }
 `;
 
 const Scroll = styled.h2`
@@ -140,6 +165,9 @@ const Scroll = styled.h2`
     -webkit-background-clip: text;
     text-transform: uppercase;
     filter: drop-shadow(0 0 1px rgba(80, 76, 207,0.1));
+    @media (max-width: 768px) {
+        font-size: 11vw;
+    }
 `;
 
 const spriteLoader = new THREE.TextureLoader();

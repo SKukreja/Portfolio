@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Route, Outlet } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
 import Footer from './components/Common/Footer';
@@ -7,55 +7,73 @@ import Work from './pages/Work/Work';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Project from './pages/Project/Project';
+import { ModalProvider } from './components/Common/ModalContext';
+import styled from 'styled-components';
+import { useContext } from 'react';
+import ModalContext from './components/Common/ModalContext.jsx';
 
+const Blur = styled.div`
+  ${({ isModalOpen }) =>
+    isModalOpen
+      ? `
+    filter: blur(10px);
+    transition: filter 0.3s ease-in-out;
+  `
+      : ''};
+`;
 
 const Layout = () => {
+  const { isModalOpen } = useContext(ModalContext);
+
   return (
     <div className="app">
       <GlobalStyle />
       <Navbar />
-      <Outlet />
-      <Footer />
+      <Blur isModalOpen={isModalOpen}>
+        <Outlet />
+        <Footer />
+      </Blur>
     </div>
-  )
-}
+  );
+};
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Layout />,
     children: [
       {
-        path: "/",
-        element: <Home />
+        path: '/',
+        element: <Home />,
       },
       {
-        path: "/project/:id",
-        element: <Project />
-      }, 
-      {
-        path: "/work",
-        element: <Work />
+        path: '/project/:id',
+        element: <Project />,
       },
       {
-        path: "/about",
-        element: <About />
+        path: '/work',
+        element: <Work />,
       },
       {
-        path: "/contact",
-        element: <Contact />
-      }
-    ]
+        path: '/about',
+        element: <About />,
+      },
+      {
+        path: '/contact',
+        element: <Contact />,
+      },
+    ],
   },
-])
+]);
 
 function App() {
-
   return (
     <div>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

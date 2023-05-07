@@ -37,6 +37,9 @@ const Browser = styled.div`
   position: relative;
   aspect-ratio: 16/9;
   margin-bottom: 6rem;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const Window = styled.div`
@@ -45,6 +48,10 @@ const Window = styled.div`
   box-shadow: 0px 0px 15px 3px #050829;
   aspect-ratio: 16/9;
   animation: ${hueRotate} 18s linear infinite;
+  @media (max-width: 768px) {
+    border: 3px solid #504CCF;
+    border-top: 25px solid #504CCF;
+  }
 `;
 
 const Website = styled.div`
@@ -70,6 +77,10 @@ const ProjectTitle = styled.h1`
   line-height: 1;
   animation: ${hueRotate} 18s linear infinite;
   margin-bottom: -1rem;
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const Buttons = styled.div`
@@ -80,6 +91,10 @@ const Buttons = styled.div`
   top: -45px;
   right: 0;
   height: 40px;
+  @media (max-width: 768px) {
+    top: -23px;
+    height: 20px;
+  }
 `;
 
 const Button = styled.div`
@@ -91,6 +106,12 @@ const Button = styled.div`
   margin-left: 5px;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    margin-left: 3px;
+    width: 20px;
+    height: 20px;
+    font-size: 1rem;
+  }
 `;
 
 const StackComponents = styled.div`
@@ -113,6 +134,10 @@ const ProjectTechnology = styled.div`
     font-size: 2rem;
     padding-right: 1rem;
   }
+  @media (max-width: 768px) {
+    width: 50%;
+    font-size: 1rem;
+  }
 `;
 
 const ProjectInfo = styled.div`
@@ -121,7 +146,8 @@ const ProjectInfo = styled.div`
   line-height: 2;
   letter-spacing: 0.5px;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 2rem);
+  padding: 1rem;
 `;
 
 const Section = styled.div`
@@ -135,6 +161,10 @@ const Section = styled.div`
   &.bw.active {
     opacity: 1;
   }
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 const TextSection = styled.div`
@@ -144,6 +174,9 @@ const TextSection = styled.div`
   &.active {
     opacity: 1;
   }
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const InvertedTitle = styled.h1`
@@ -152,6 +185,9 @@ const InvertedTitle = styled.h1`
   font-family: 'Satoshi';
   font-size: 6rem;
   font-weight: 600;
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
 `;
 
 const Figure = styled.div`
@@ -167,6 +203,10 @@ const Figure = styled.div`
   transition: opacity 0.5s ease;
   &.active {
     opacity: 1;
+  }
+  @media (max-width: 768px) {
+    margin-top: -5rem;
+    width: 100vw;
   }
 `;
 
@@ -184,6 +224,11 @@ const Headers = styled.div`
   font-weight: 600;
   color: #504CCF;
   animation: ${hueRotate} 18s linear infinite;
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
 `;
 
 const Topic = styled.div`
@@ -191,6 +236,11 @@ const Topic = styled.div`
   font-family: 'Satoshi';
   display: flex;
   width: 66%;
+  @media (max-width: 768px) {
+    width: calc(100% - 3rem);
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
 `;
 
 const BuiltWith = styled.div`
@@ -200,6 +250,10 @@ const BuiltWith = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 66%;
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 1.5rem;
+  }
 `;
 
 const TopicText = styled.div`
@@ -221,6 +275,10 @@ const ProjectLinks = styled.div`
   transition: all 0.5s ease;
   &.active {
     opacity: 1;
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    align-content: flex-end;
   }
 `;
 
@@ -249,6 +307,19 @@ const Action = styled.a`
     background: #F1E3F3;
     color: #080708;
   }
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1rem;
+    margin: 1rem;
+  }
+`;
+
+const Caption = styled.span`
+  margin-top: 3rem;
+  overflow: visible;
+  width: 100%;  
+  display: block;
+  color: #080708;
 `;
 
 const Project = () => {
@@ -325,11 +396,13 @@ const Project = () => {
                       <Figure className='light'>
                         <InvertedTitle>{topic.title}</InvertedTitle>
                         <Slider media={topic.media} />
+                        <Caption>{topic.caption}</Caption>
                       </Figure>
                     ) : (
                     <Figure className='light'>
                       <InvertedTitle>{topic.title}</InvertedTitle>
                       <img src={import.meta.env.VITE_APP_UPLOAD_URL + (topic.__component === 'article.figure' ? topic.figure.data.attributes.url : topic.images.data[0].attributes.url)} />
+                      <Caption>{topic.caption}</Caption>
                     </Figure>
                     )}
                   </InView>

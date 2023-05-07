@@ -34,20 +34,23 @@ const FooterContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  @media (max-width: 768px) {
+    border-top: 3px solid #504CCF;
+    padding: 2rem 0;
+    width: 90%;
+  }
 `;
 
 const Copyright = styled.span`
   font-family: 'Satoshi';
 `;
 
-const Name = styled.span`
-  font-family: 'Poppins';
-  font-weight: 900;
-  font-size: 2rem;
-`;
-
 const Socials = styled.div`
   display: flex;
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 
 const SocialLink = styled.a`
@@ -60,25 +63,18 @@ const SocialLink = styled.a`
   align-items: center;
   justify-content: center;
   border-radius: 15px;
-  margin-right: 1rem;
   & svg {
     width: 3rem;
     height: 3rem;
   }
-`;
-
-const Email = styled.a`
-  font-family: 'Satoshi';
-  font-size: 1rem;
-  font-weight: 400;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-  & svg {
-    margin-right: 0.5rem;
-    width: 1.25rem;
-    height: 1.25rem;
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+    width: calc(90vw/4 - 3rem);
+    height: calc(90vw/4 - 3rem);
+    & svg {
+      width: 2rem;
+      height: 2rem;
+    }    
   }
 `;
 
@@ -94,6 +90,9 @@ const TopSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Footer = () => {

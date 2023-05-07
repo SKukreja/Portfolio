@@ -70,6 +70,9 @@ const Intro = styled.h1`
   animation: 
     ${typewriter} 2s steps(20, end),
     ${blink} .75s step-end 3;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const SkillsContainer = styled.div`
@@ -83,6 +86,9 @@ const SkillsContainer = styled.div`
   }
   & > .words svg text:first-child {
     animation: ${hueRotate} 18s linear infinite;
+  }
+  @media (max-width: 768px) {
+    margin-bottom: 4rem;
   }
 `;
 
@@ -100,6 +106,10 @@ const CurrentHeader = styled.h2`
   color: #504CCF;
   letter-spacing: 0.1rem;
   animation: ${hueRotate} 18s linear infinite;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    letter-spacing: 0.03rem;
+  }
 `;
 
 const Current = styled.div`
@@ -113,6 +123,12 @@ const CurrentSection = styled.div`
   flex-direction: column;
   padding: 4rem;
   align-items: center;
+  font-size: 0.75rem;
+  text-align: center;
+  @media (max-width: 768px) {
+    padding: 1rem;
+    width: 50%;
+  }
 `;
 
 const CurrentIcon = styled.div`
@@ -126,6 +142,10 @@ const Blurb = styled.div`
   text-align: center;
   width: 75vmin;
   margin-bottom: 5rem;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    width: 85%;
+  }
 `;
 
 const Description = styled.p`
@@ -153,6 +173,9 @@ const Line = styled.div`
   height: 300px;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #c2bbf0);
   margin: 2rem auto;
+  @media (max-width: 768px) {
+    height: 150px;
+  }
 `;
 
 const Year = styled.div`
@@ -171,6 +194,9 @@ const YearText = styled.h2`
   animation: ${hueRotate} 18s linear infinite;
   margin-top: 2rem;
   margin-bottom: 2rem;
+  @media (max-width: 768px) {
+    margin-top: 0;
+  }
 `;
 
 const SideBySide = styled.div`
@@ -211,7 +237,7 @@ const CenterText = styled.div`
   margin-bottom: 0;
   font-family: 'Satoshi';
   padding: 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 400;
   & svg {
     font-size: 4rem;
@@ -228,6 +254,13 @@ const CenterText = styled.div`
   & a:hover {
     color: white;
   }
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    width: 85%;
+    & svg {
+      font-size: 3rem;
+    }
+  }
 `;
 
 const BelowImage = styled.img`
@@ -236,6 +269,11 @@ const BelowImage = styled.img`
   padding: 1rem;
   &.three {
     width: 25vmin;    
+  }
+  @media (max-width: 768px) {
+    border-radius: 15px;
+    max-width: 90%;
+    padding: 0.5rem;
   }
 `;
 
@@ -250,6 +288,10 @@ const FiveImages = styled.div`
   grid-column-gap: 2rem;
   grid-row-gap: 2rem;
   padding: 1rem;
+  @media (max-width: 768px) {
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+  }
 `;
 
 const FiveImage = styled.img`
@@ -278,6 +320,13 @@ const FiveImage = styled.img`
   &.landscape4 {
     justify-self: left;
     grid-area: 2 / 3 / 3 / 4;
+  }
+  @media (max-width: 768px) {
+    border-radius: 15px;
+    height: calc(20vmin - 1rem);
+    &.portrait {
+      height: calc(40vmin - 1rem);
+    }
   }
 `
 
@@ -361,7 +410,7 @@ const About = () => {
       <AboutContainer>
         <CurrentHeader>My Story So Far</CurrentHeader>
         <Timeline>
-        {data?.attributes.timeline.map((section) => {
+        {data?.attributes.timeline.map((section, index) => {
           const year = new Date(section.date).getFullYear();
 
           // Display the year only if it's different from the current year
@@ -375,7 +424,7 @@ const About = () => {
           currentYear = year;
 
           return (
-              <InView key={section.id}>
+              <InView key={`section-${index}`}>
               {({ inView, ref, entry }) => (
                 <TimelineSection ref={ref} className={`${inView ? 'active' : ''}`}>
                   <Line></Line>
@@ -397,7 +446,7 @@ const About = () => {
                       <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                       <ThreeImages>
                       {section.images.data?.map((image, index) => (
-                        <BelowImage key={index} className='three' src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
+                        <BelowImage key={image.id} className='three' src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
                       ))}
                       </ThreeImages>
                     </ImageBelowText>
@@ -407,7 +456,7 @@ const About = () => {
                       <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
                       <FiveImages>
                       {section.images.data?.map((image, index) => (
-                        <FiveImage key={index} className={index == 0 ? ' portrait' : ' landscape' + index} src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
+                        <FiveImage key={image.id} className={index == 0 ? ' portrait' : ' landscape' + index} src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
                       ))}
                       </FiveImages>                              
                     </ImageBelowText>

@@ -81,6 +81,8 @@ const GlobalStyle = createGlobalStyle`
     background: #080708;
     color: #F1E3F3;
     transition: background 0.5s ease;
+    display: flex;
+    justify-content: center;
     font-family: 'Hind', Open-Sans, Helvetica, Sans-Serif;
   }
   .inverted body {
