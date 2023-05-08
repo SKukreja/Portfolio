@@ -75,15 +75,28 @@ const GlobalStyle = createGlobalStyle`
         url(${SatoshiBlackWoff}) format('woff');
     font-weight: 900;
   }
-  body {
+  .app {
+    width: 100%;
+    max-width: 100vw;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  html, body {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  body {
     background: #080708;
     color: #F1E3F3;
+    box-sizing: border-box;
     transition: background 0.5s ease;
     display: flex;
+    width: 100%;
+    min-height: 100vh;
     justify-content: center;
-    font-family: 'Hind', Open-Sans, Helvetica, Sans-Serif;
+    font-family: 'Satoshi', Open-Sans, Helvetica, Sans-Serif;
   }
   .inverted body {
     background: #F1E3F3;
@@ -99,6 +112,12 @@ const GlobalStyle = createGlobalStyle`
   }
   .inverted nav .logo-light {
     opacity: 0;
+  }
+  .inverted .hamburger span{
+    background: #080708;
+  }
+  .no-scroll {
+    overflow: hidden;
   }
 `;
  

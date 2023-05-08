@@ -146,7 +146,7 @@ const ProjectInfo = styled.div`
   line-height: 2;
   letter-spacing: 0.5px;
   align-items: center;
-  width: calc(100% - 2rem);
+  width: 100%;
   padding: 1rem;
 `;
 

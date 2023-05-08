@@ -118,7 +118,7 @@ const Frame = styled.div`
     align-items: center;
     justify-content: flex-start;
     @media (max-width: 768px) {
-        width: calc(75vmin);
+        width: calc(100% - 5rem);
         height: 75vh;
         top: 50%;
         margin-top: 2rem;

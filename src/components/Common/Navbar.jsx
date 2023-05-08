@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import styled, { keyframes, css } from 'styled-components';
 import use from '../../hooks/use';
 import { ModalContext } from './ModalContext.jsx';
@@ -49,9 +49,10 @@ const slideInFromRight = keyframes`
 `;
 
 const Nav = styled.nav`
-  width: calc(100% - 4rem);
+  width: 100%;
   height: auto;
   position: fixed;
+  box-sizing: border-box;
   top: 0;
   transition: all 0.5s ease;
   background: ${({ isDark }) => (isDark ? 
@@ -63,6 +64,10 @@ const Nav = styled.nav`
   animation: ${hueRotate} 18s linear infinite;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }  
 `
 
 const Left = styled.div`
@@ -85,6 +90,9 @@ const Branding = styled.img`
     top: 0;
     right: 0;
     bottom: 0;
+  }
+  @media (max-width: 768px) {
+    width: 60px;
   }
 `;
 
@@ -141,6 +149,8 @@ const Overlay = styled.div`
     content: "";
     position: absolute;
     top: 0;
+    bottom: 0;
+    right: 0;
     left: 0;
     width: 100%;
     height: 100%;
@@ -188,10 +198,8 @@ const OverlayMenu = styled.nav`
 
 const HamburgerButton = styled.button`
   display: none;
-  position: fixed;
+  position: relative;
   z-index: 11;
-  right: 2rem;
-  top: 2rem;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -201,10 +209,10 @@ const HamburgerButton = styled.button`
 
   span {
     display: block;
-    width: 30px;
+    width: 27px;
     height: 2px;
     background: ${({ isDark }) => (isDark ? '#080708' : '#f1e3f3')};
-    margin: 5px 0;
+    margin: 7px 0;
     transition: all 0.3s ease;
   }
 
@@ -214,7 +222,7 @@ const HamburgerButton = styled.button`
 
   &.buttonActive {
     span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+      transform: rotate(45deg) translate(6px, 7px);
     }
 
     span:nth-child(2) {
@@ -222,7 +230,7 @@ const HamburgerButton = styled.button`
     }
 
     span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
+      transform: rotate(-45deg) translate(6px, -7px);
     }
   }
 `;
@@ -235,6 +243,26 @@ const Navbar = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  useEffect(() => {
+    let originalScrollY = 0;
+    if (isModalOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      originalScrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${originalScrollY}px`;
+  
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        window.scrollTo(0, originalScrollY);
+      };
+    }
+  }, [isModalOpen]);
+
   return (
     <Nav>
       <Left>
@@ -246,7 +274,7 @@ const Navbar = () => {
       <Right>
         <HamburgerButton
           onClick={toggleOverlay}
-          className={isModalOpen ? 'buttonActive' : ''}
+          className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
           isDark={isModalOpen}
         >
           <span></span>
