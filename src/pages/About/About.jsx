@@ -5,6 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import ReactWordcloud from 'react-wordcloud';
 import { Icons } from '../../components/Common/Icons';
+import { Helmet } from 'react-helmet';
 
 const hueRotate = keyframes`
     0% {
@@ -105,6 +106,8 @@ const CurrentHeader = styled.h2`
   text-transform: uppercase;
   color: #504CCF;
   letter-spacing: 0.1rem;
+  width: 100%;
+  text-align: center;
   animation: ${hueRotate} 18s linear infinite;
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -125,6 +128,9 @@ const CurrentSection = styled.div`
   align-items: center;
   font-size: 0.75rem;
   text-align: center;
+  & p {    
+    margin-top: 0;
+  }
   @media (max-width: 768px) {
     padding: 1rem;
     width: 50%;
@@ -133,6 +139,7 @@ const CurrentSection = styled.div`
 
 const CurrentIcon = styled.div`
   font-size: 2.5rem;
+  line-height: 1;
   color: #C2BBF0;
 `;
 
@@ -166,7 +173,13 @@ const LogoLink = styled.a`
 
 const Timeline = styled.div``;
 
-const TimelineSection = styled.div``;
+const TimelineSection = styled.div`
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  &.active {
+    opacity: 1;
+  }
+`;
 
 const Line = styled.div`
   width: 1px;
@@ -339,7 +352,7 @@ const options = {
   randomSeed: "167", // 24, 46, 50
   enableTooltip: false,
   enableOptimizations: true,
-  fontSizes: [8, 70],
+  fontSizes: [8, 50],
   padding: 5,
   fontWeight: 900,
   rotations: 2,
@@ -363,6 +376,10 @@ const About = () => {
   )
   return (
     <Container>
+      <Helmet>      
+        <title>Sumit Kukreja | About Me</title>                
+        <link rel="icon" type="image/png" href="/favicon.ico" />         
+      </Helmet>
       <InView>
       {({ inView, ref, entry }) => (
         <Bio ref={ref} className={`${inView ? 'active' : ''}`}>
@@ -387,7 +404,7 @@ const About = () => {
             </CurrentSection>
             <CurrentSection>
               <CurrentIcon>{Icons['Education']()}</CurrentIcon>
-              <Description>I'm studying Software Engineering at</Description>
+              <Description>I'm enrolled part-time at</Description>
               <LogoLink href="https://www.eng.mcmaster.ca/sept/programs/degree-options/btech-software-engineering-technology/program-structure/">
               <img src="https://nursing.mcmaster.ca/images/default-source/default-album/ft_logo_mcmasterd99d0d45b7f266cc881aff0000960f99.png?sfvrsn=4" />
               </LogoLink>

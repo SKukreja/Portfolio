@@ -6,6 +6,7 @@ import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import Slider from '../../components/Project/Slider';
+import { Helmet } from 'react-helmet';
 
 const desktopContainerWidth = '75vw';
 
@@ -362,6 +363,10 @@ const Project = () => {
   )
   return (
     <ProjectContainer>
+      <Helmet>      
+        <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        
+        <link rel="icon" type="image/png" href="/favicon.ico" />
+      </Helmet>
       <ProjectTitle>{data?.attributes.title}</ProjectTitle>
       <Browser>
         <Window>

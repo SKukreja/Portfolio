@@ -61,14 +61,20 @@ const SocialLink = styled.a`
   padding: 1.5rem;
   display: flex;
   align-items: center;
+  margin: 0.5rem;
   justify-content: center;
   border-radius: 15px;
   & svg {
     width: 3rem;
     height: 3rem;
   }
+  &:hover {
+    background: #C2BBF0;
+    color: #080708;    
+  }
   @media (max-width: 768px) {
     padding: 1.25rem;
+    margin: 0;
     width: calc(90vw/4 - 3rem);
     height: calc(90vw/4 - 3rem);
     & svg {

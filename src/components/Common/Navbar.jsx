@@ -64,9 +64,9 @@ const Nav = styled.nav`
   animation: ${hueRotate} 18s linear infinite;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
+  box-sizing: border-box;  
   @media (max-width: 768px) {
-    padding: 1.5rem;
+    padding: 1.5rem 5vw;
   }  
 `
 
@@ -104,6 +104,7 @@ const Menu = styled.nav`
   font-family: 'Poppins';
   font-weight: 500;
   text-transform: uppercase;
+  margin-right: -1rem;
 
   @media (max-width: 768px) {
     display: none;
@@ -243,6 +244,10 @@ const Navbar = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const goHome = () => { 
+    window.location.href = '/';
+  };
+
   useEffect(() => {
     let originalScrollY = 0;
     if (isModalOpen) {
@@ -266,7 +271,7 @@ const Navbar = () => {
   return (
     <Nav>
       <Left>
-        <LogoContainer>
+        <LogoContainer onClick={goHome}>
           <Branding className="logo-dark" src="/logo-dark.png" isDark={!isModalOpen} />
           <Branding className="logo-light" src="/logo.png" isDark={isModalOpen} />
         </LogoContainer>

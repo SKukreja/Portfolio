@@ -10,6 +10,7 @@ import Project from './pages/Project/Project';
 import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
 import { useContext } from 'react';
+import { Helmet } from 'react-helmet';
 import ModalContext from './components/Common/ModalContext.jsx';
 
 const Blur = styled.div`
@@ -29,6 +30,10 @@ const Layout = () => {
     <div className="app">
       <GlobalStyle />
       <Navbar />
+      <Helmet>      
+        <title>Sumit Kukreja</title>                
+        <link rel="icon" type="image/png" href="/favicon.ico" />         
+      </Helmet>
       <Blur isModalOpen={isModalOpen}>
         <Outlet />
         <Footer />

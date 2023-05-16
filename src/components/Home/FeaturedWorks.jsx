@@ -33,6 +33,9 @@ const ProjectImageBorder = styled.div`
   width: 100%;
   animation: ${hueRotate} 18s linear infinite;
   border: 5px solid #504CCF;
+  @media (max-width: 1440px) {
+    display: none;   
+  }
 `;
 
 const ProjectName = styled.a`
@@ -53,6 +56,13 @@ const ProjectName = styled.a`
   &:hover {
     color: white;
   }
+  @media (max-width: 1920px) {
+    font-size: 1.5rem;
+    & > svg {
+      font-size: 2.3rem;
+      margin-bottom: -0.6rem;
+    }
+  }
   @media (max-width: 768px) {
     font-size: 1.2rem;
     & > svg {
@@ -72,16 +82,28 @@ const ProjectContent = styled.div`
   &.odd {
     text-align: right;
   }
-  &.odd .summary {
-    padding-left: 25%;
-  }
   &.even {
     text-align: left;
+  }
+  &.odd .summary {
+    padding-left: 25%;
   }
   &.even .summary {
     padding-right: 25%;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1920px) {
+    width: 40%;
+  }
+  @media (max-width: 1440px) {
+    width: 50%;
+    &.odd .summary {
+      padding-left: 0;
+    }
+    &.even .summary {
+      padding-right: 0;
+    }
+  }
+  @media (max-width: 1440px) {
     width: calc(100% - 4rem);
     margin: 0;
     padding: 2rem;
@@ -95,6 +117,9 @@ const ProjectContent = styled.div`
     &.even, &.odd {
       text-align: center;
     }
+  }
+  @media (max-width: 768px) {
+    height: 100%;
   }
 `;
 
@@ -110,8 +135,10 @@ const ProjectImage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  @media (max-width: 768px) {
+  @media (max-width: 1920px) {
+    width: 60%;
+  }
+  @media (max-width: 1440px) {
     width: 100%;
     margin-left: 0;
     margin-right: 0;
@@ -123,36 +150,45 @@ const ProjectImage = styled.div`
     margin-bottom: 0;
     filter: blur(15px) saturation(180%);
   }
+  @media (max-width: 768px) {
+
+  }
 `;
 
 const Project = styled.div`
     display: flex;
     filter: grayscale(1);
-    transition: all 1s ease;
+    transition: all 2s ease;
     opacity: 0;
     width: ${desktopContainerWidth};
-    transform: translateY(100px);
+    margin-bottom: 2rem;
     &.active {
       filter: grayscale(0);
     }
     &.active.odd, &.active.even {
-      transform: translateY(0);
       opacity: 1;
     }
+    @media (max-width: 1920px) {
+      width: 90%;
+    }
+    @media (max-width: 1440px) {
+      width: 70%;
+    }
     @media (max-width: 768px) {
-      flex-direction: column;
       width: 100%;
+      aspect-ratio: 16/9;
+      flex-direction: column;      
     }
 `;
 
-const ProjectMockups = styled.div`
+const ProjectCover = styled.div`
   position: absolute;
   left: 5px;
   right: 5px;
   top: 5px;
   bottom: 5px;
   width: calc(100% - 10px);
-  aspect-ratio: 16/9;
+  height: calc(100% - 10px);
   background-size: cover;
   background-position: center;
 
@@ -167,6 +203,7 @@ const ProjectSummary = styled.div`
   letter-spacing: 0.5px;
   margin-bottom: 1rem;
   letter-spacing: 1px;
+  font-size: 1rem;
   text-shadow: 0 0 1px #F1E3F3;
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -181,8 +218,11 @@ const ProjectNumber = styled.h1`
   text-shadow: 0 0 2px #F1E3F3;
   margin: 0;
   filter: drop-shadow(2px 2px 2px black);
-  @media (max-width: 768px) {
+  @media (max-width: 1600px) {
     font-size: 6rem;
+  }
+  @media (max-width: 768px) {
+    font-size: 4rem;
   }
 `;
 
@@ -200,13 +240,21 @@ const ProjectLink = styled.a`
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   background: #504CCF;
+  align-items: center;
+  overflow: hidden;
+  text-decoration: none;
   animation: ${hueRotate} 18s linear infinite;
   &:hover {
+    color: #080708;
     background: #C2BBF0;
     text-decoration: none;
   }
+  &:hover .btn-label {
+    max-width: 300px;
+    opacity: 1;
+  }
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
   }
 `;
 
@@ -216,17 +264,38 @@ const ProjectHeader = styled.div`
 `;
 
 const Header = styled.h1`
-  font-size: 6rem;
-  font-weight: 400;
-  margin: 6rem 0;
-  color: #504CCF;
-  animation: ${hueRotate} 18s linear infinite;
+  font-family: 'Poppins';
+  font-size: 1.5rem;
   text-transform: uppercase;
-  font-family: 'Satoshi';
-
+  color: #504CCF;
+  letter-spacing: 0.1rem;
+  width: 100%;
+  text-align: center;
+  animation: ${hueRotate} 18s linear infinite;
+  margin-bottom: 4rem;
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.03rem;
   }
+`;
+
+const ButtonLabel = styled.span`
+  display: inline-flex;
+  max-width: 0;  
+  opacity: 0;
+  font-family: 'Satoshi';
+  font-size: 1.2rem;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-transition: all 0.5s linear;
+    -moz-transition: all 0.5s linear;
+    -o-transition: all 0.5s linear;
+    transition: all 0.5s linear;
+`;
+
+const LabelContainer = styled.span`
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 `;
 
 const padNum = (num, targetLength) => {
@@ -243,7 +312,9 @@ const ProjectInfo = (props) => {
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
       {props.project.attributes.links?.map((link) => (
-        <ProjectLink key={link.id} href={link.url}>{Icons[link.icon]()}</ProjectLink>
+        <ProjectLink key={link.id} href={link.url}>{Icons[link.icon]()}
+          <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
+        </ProjectLink>
       ))}        
       </ProjectActions>
     </ProjectContent>
@@ -276,7 +347,7 @@ const ProjectItem = ({ project, number }) => {
       )}
       <ProjectImage>
         <ProjectImageBorder></ProjectImageBorder>
-        <ProjectMockups
+        <ProjectCover
           style={{
             backgroundImage:
               'url(' +

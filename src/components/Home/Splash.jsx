@@ -1,9 +1,9 @@
-import * as THREE from 'three'
-import React, { Suspense, useRef, useEffect, useContext } from 'react'
+import * as THREE from 'three';
+import React, { Suspense, useRef, useEffect, useContext } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Bloom, EffectComposer, GodRays } from '@react-three/postprocessing'
-import { BlendFunction, GodRaysEffect, KernelSize } from 'postprocessing'
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Bloom, EffectComposer, GodRays } from '@react-three/postprocessing';
+import { BlendFunction, GodRaysEffect, KernelSize } from 'postprocessing';
 import WebGLPerformanceContext from '../../WebGLPerformanceContext';
 import { CameraShake } from '@react-three/drei'
 
@@ -33,6 +33,7 @@ const Container = styled.div`
 
 const Light = styled.div`
     width: 100vw;
+    height: 100vh;
     aspect-ratio: 1;
     background: linear-gradient(to right, #050829, #504CCF);
     position: absolute;
@@ -40,9 +41,6 @@ const Light = styled.div`
     top: 50%;
     translate: -50% -50%;
     z-index: 1;
-    @media (max-width: 768px) {
-        height: 100vh;
-    }
 `;
 
 const Blur = styled.div`
@@ -69,6 +67,7 @@ const Scene = styled(Canvas)`
     height: 100vh;
     position: absolute;
     pointer-events: none;
+    overflow-y: visible;
     left: 50%;
     top: 50%;
     translate: -50% -50%;
@@ -95,10 +94,9 @@ const Astronaut = styled.img`
     translate: -50% -50%;
     filter: blur(0.5px) saturate(1.2) contrast(1.4) sepia(0.3) drop-shadow(0 0 5px rgba(5, 8, 41, 0.7));
     @media (max-width: 768px) {
-        width: 95%;
-    }
-    @media (max-width: 400px) {
-        width: 80%;
+        top: 45%;
+        height: 50vh;
+        width: auto;
     }
 `;
 
@@ -118,11 +116,11 @@ const Frame = styled.div`
     align-items: center;
     justify-content: flex-start;
     @media (max-width: 768px) {
-        width: calc(100% - 5rem);
-        height: 75vh;
-        top: 50%;
+        width: 100%;
+        height: calc(100% - 6rem);
+        top: 50%;        
         margin-top: 2rem;
-        border: 3px solid #504CCF;
+        border: none;
     }
 }
 `;
@@ -131,13 +129,13 @@ const Name = styled.h1`
     font-family: 'Poppins';
     font-weight: 900;
     text-transform: uppercase;
-    font-size: 6.5rem;
+    font-size: 8vmin;
     text-shadow: 0 0 5px #504CCF;
     color: #504CCF;
     margin: 0;
 
     @media (max-width: 768px) {
-        font-size: 9vw;
+        font-size: 11vw;
     }
 `;
 
@@ -146,18 +144,18 @@ const Caption = styled.h2`
     font-weight: 500;
     margin: 0;
     text-shadow: 0 0 5px #f1e3f3;
-    font-size: 2.8rem;
+    font-size: 3.45vmin;
     margin-top: -1.5rem;
     @media (max-width: 768px) {
         margin-top: -0.5rem;
-        font-size: 3.85vw;
+        font-size: 4.70vw;
     }
 `;
 
 const Scroll = styled.h2`
     font-family: 'Poppins';
     font-weight: 400;
-    font-size: 7.6rem;
+    font-size: 9.5vmin;
     margin: 0;
     position: absolute;
     bottom: 0rem;
@@ -166,7 +164,9 @@ const Scroll = styled.h2`
     text-transform: uppercase;
     filter: drop-shadow(0 0 1px rgba(80, 76, 207,0.1));
     @media (max-width: 768px) {
-        font-size: 11vw;
+        position: fixed;
+        font-size: 13vw;
+        bottom: 6rem;
     }
 `;
 
@@ -193,8 +193,8 @@ const Stars = (props) => {
       const y = Math.random() * 2000 - 300
       const z = Math.random() * 600 - 300  
       vertices.push(x, y, z)
-      velocities.push(0)
-      accelerations.push(0.00005)
+      velocities.push(0.05)
+      accelerations.push(0)
     }
   
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
@@ -208,11 +208,11 @@ const Stars = (props) => {
 
   
         if (geometry.getAttribute('position').array[i * 3 + 2] > 200) {
-          geometry.getAttribute('position').array[i * 3 + 2] = -200
+          geometry.getAttribute('position').array[i * 3 + 2] = -100
           geometry.getAttribute('velocity').array[i] = 0
         }
       }
-      star.current.rotation.z += 0.0005
+      star.current.rotation.z += 0.0002
       geometry.attributes.position.needsUpdate = true
       geometry.attributes.velocity.needsUpdate = true
       geometry.attributes.acceleration.needsUpdate = true
@@ -234,17 +234,43 @@ const Stars = (props) => {
 }
 
 const Rig = () => {
-    const { camera, mouse } = useThree()
+    const { camera, mouse } = useThree();
+    const [orientation, setOrientation] = React.useState({ alpha: 0, beta: 0, gamma: 0 });
+    const lastMousePosition = React.useRef({ x: 0, y: 0 });
+  
+    React.useEffect(() => {
+      const handleOrientation = (e) => {
+        setOrientation({ alpha: e.alpha, beta: e.beta, gamma: e.gamma });
+      };
+  
+      window.addEventListener('deviceorientation', handleOrientation, true);
+      return () => window.removeEventListener('deviceorientation', handleOrientation);
+    }, []);
+  
     useFrame(() => {
-      camera.position.x += -mouse.x * 3 - camera.position.x
-      camera.position.y += -mouse.y * 3 - camera.position.y
-    })
+      const dx = (mouse.x - lastMousePosition.current.x) * 0.03;
+      const dy = (mouse.y - lastMousePosition.current.y) * 0.03;
+
+      if(orientation.gamma || orientation.beta) {
+        camera.position.x += -camera.position.x + orientation.gamma/5;
+        camera.position.y += -camera.position.y + orientation.beta/5;
+      }
+      else if (Math.abs(dx) < 0.02 && Math.abs(dy) < 0.02) {
+        camera.position.x += dx * 50;  // Adjust multiplier as needed
+        camera.position.y += dy * 50;  // Adjust multiplier as needed
+      }
+
+      lastMousePosition.current = { x: mouse.x, y: mouse.y };
+    });
+  
     return (
       <>
-        <CameraShake maxYaw={0.1} maxPitch={0.1} maxRoll={0.1} yawFrequency={0.05} pitchFrequency={0.05} rollFrequency={0.05} />
+        <CameraShake maxYaw={0.05} maxPitch={0.05} maxRoll={0.05} yawFrequency={0.05} pitchFrequency={0.05} rollFrequency={0.05} />
       </>
     )
-}
+  }
+  
+  
 
 const Splash = () => {
     const container = useRef()
@@ -254,13 +280,13 @@ const Splash = () => {
     const stars = performanceLevel === 'high' ? 6000 : 1000;
 
     useEffect(() => {
-        container.current.addEventListener("mousemove", moveAstronaut);
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener('mousemove', moveAstronaut);
+        window.addEventListener('deviceorientationabsolute', moveAstronautMobile);
+        window.addEventListener('scroll', handleScroll);
         return () => {
-            if (container.current) {
-                container.current.removeEventListener("mousemove", moveAstronaut);
-            }
-            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener('mousemove', moveAstronaut);
+            window.removeEventListener('deviceorientationabsolute', moveAstronautMobile);
+            window.removeEventListener('scroll', handleScroll);
         };
     }, []);
     
@@ -271,9 +297,16 @@ const Splash = () => {
         }, { duration: 200, fill: "forwards"})
     }
 
+    const moveAstronautMobile = (event) => {
+        const { alpha, beta, gamma } = event;
+
+        astronaut.current.animate({
+            transform: `translate(${-gamma/3}px, ${beta/3}px)`
+        }, { duration: 200, fill: "forwards"})
+    }
+
     const handleScroll = (event) => {
         scroll.current.animate({
-            transform: `translate(0, ${-window.scrollY/15}px)`,
             opacity: (1 - window.scrollY/500)
         }, {duration: 0, fill: "forwards"})
     } 

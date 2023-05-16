@@ -18,8 +18,9 @@ import SatoshiRegularWoff2 from './assets/fonts/Satoshi-Regular.woff2'
 import SatoshiBoldWoff from './assets/fonts/Satoshi-Bold.woff'
 import SatoshiBoldWoff2 from './assets/fonts/Satoshi-Bold.woff2'
 import SatoshiBlackWoff from './assets/fonts/Satoshi-Black.woff'
-import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2'
+import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2';
  
+
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Poppins';
@@ -75,9 +76,30 @@ const GlobalStyle = createGlobalStyle`
         url(${SatoshiBlackWoff}) format('woff');
     font-weight: 900;
   }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #504CCF #ffffff;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #504CCF;
+    border-radius: 0px;
+    border: 0px solid #ffffff;
+  }
+
   .app {
-    width: 100%;
-    max-width: 100vw;
+    width: 100vw;    
     margin: 0 auto;
     box-sizing: border-box;
   }

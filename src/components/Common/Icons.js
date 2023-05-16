@@ -1,4 +1,4 @@
-import { FiGithub, FiLinkedin, FiCodesandbox, FiArrowUpRight } from 'react-icons/fi'
+import { FiGithub, FiLinkedin, FiCodesandbox, FiArrowUpRight, FiLink } from 'react-icons/fi'
 import { SiWordpress, SiLoopback, SiPhp, SiJavascript, SiMysql, SiApache, SiAngular } from 'react-icons/si'
 import { MdOpenInNew } from 'react-icons/md'
 import { FaAws } from 'react-icons/fa'
@@ -11,7 +11,7 @@ import { AiFillHeart, AiOutlinePlus } from 'react-icons/ai'
 
 export const Icons = {
     "Github" : FiGithub,
-    "Open in New" : MdOpenInNew,
+    "Open in New" : FiLink,
     "Info" : BsInfo,
     "LinkedIn" : FiLinkedin,
     "Code Sandbox" : FiCodesandbox,
