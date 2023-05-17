@@ -76,11 +76,19 @@ const ProjectTitle = styled.h1`
   text-decoration: none;
   letter-spacing: 1px;
   line-height: 1;
+  margin-bottom: 2rem;
   animation: ${hueRotate} 18s linear infinite;
-  margin-bottom: -1rem;
+  @media (max-width: 1440px) {
+    font-size: 4rem;
+  }
+  @media (max-width: 1024px) {
+    font-size: 3rem;
+  }
   @media (max-width: 768px) {
     font-size: 2rem;
-    margin-bottom: 2rem;
+  }
+  @media (max-width: 600px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -122,7 +130,7 @@ const StackComponents = styled.div`
 `;
 
 const ProjectTechnology = styled.div`
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-family: 'Satoshi';
   height: 4rem;
   display: flex;
@@ -221,7 +229,7 @@ const Article = styled.div`
 const Headers = styled.div`
   width: 33%;
   font-family: 'Satoshi';
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #504CCF;
   animation: ${hueRotate} 18s linear infinite;
@@ -233,7 +241,7 @@ const Headers = styled.div`
 `;
 
 const Topic = styled.div`
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-family: 'Satoshi';
   display: flex;
   width: 66%;

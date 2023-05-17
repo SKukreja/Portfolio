@@ -20,6 +20,15 @@ const hueRotate = keyframes`
     }
 `;
 
+const growBorder = keyframes`
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+`;
+
 const FooterContainer = styled.div`
   width: ${desktopContainerWidth};
   height: calc(50vh - 8rem);
@@ -33,6 +42,8 @@ const FooterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-width: ${({ inView }) => (inView ? '100%' : '0')};
+  transition: border-width 0.3s ease-out;
   justify-content: space-between;
   @media (max-width: 768px) {
     border-top: 3px solid #504CCF;
@@ -57,7 +68,7 @@ const SocialLink = styled.a`
   color: white;  
   font-size: 1.5rem;
   background: #504CCF;
-  animation: ${hueRotate} 18s linear infinite;
+  animation: ${hueRotate} 18s linear infinite ${({ delay }) => delay || 0}s;
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -103,15 +114,19 @@ const TopSection = styled.div`
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+  });
+
   return (
-    <FooterContainer>
+    <FooterContainer ref={ref} inView={inView}>
       <TopSection>
         <Contact>Let's connect</Contact>
         <Socials>
-          <SocialLink href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Envelope']()}</SocialLink>
-          <SocialLink href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['LinkedIn']()}</SocialLink>
-          <SocialLink href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Github']()}</SocialLink>
-          <SocialLink href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Code Sandbox']()}</SocialLink>
+          <SocialLink delay={0.3} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Envelope']()}</SocialLink>
+          <SocialLink delay={0.6} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['LinkedIn']()}</SocialLink>
+          <SocialLink delay={0.9} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Github']()}</SocialLink>
+          <SocialLink delay={1.2} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Code Sandbox']()}</SocialLink>
         </Socials>
       </TopSection>
       <Copyright>© S.Kukreja {currentYear}</Copyright>

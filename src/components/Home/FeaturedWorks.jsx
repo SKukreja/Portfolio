@@ -108,6 +108,7 @@ const ProjectContent = styled.div`
     margin: 0;
     padding: 2rem;
     background: rgba(8,7,8,0.9);
+    justify-content: center;
     &.odd .summary {
       padding-left: 0;
     }
@@ -159,6 +160,7 @@ const Project = styled.div`
     display: flex;
     filter: grayscale(1);
     transition: all 2s ease;
+    position: relative;
     opacity: 0;
     width: ${desktopContainerWidth};
     margin-bottom: 2rem;
@@ -176,8 +178,11 @@ const Project = styled.div`
     }
     @media (max-width: 768px) {
       width: 100%;
-      aspect-ratio: 16/9;
+      height: 60vh;
       flex-direction: column;      
+    }
+    @media (max-width: 600px) {      
+      height: 75vh;  
     }
 `;
 
@@ -203,6 +208,7 @@ const ProjectSummary = styled.div`
   letter-spacing: 0.5px;
   margin-bottom: 1rem;
   letter-spacing: 1px;
+  color: #F1E3F3;
   font-size: 1rem;
   text-shadow: 0 0 1px #F1E3F3;
   @media (max-width: 768px) {
