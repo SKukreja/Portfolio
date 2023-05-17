@@ -191,7 +191,7 @@ const Stars = (props) => {
     for (let count = 0; count < stars; count++) {
       const x = Math.random() * 4000 - 2000
       const y = Math.random() * 4000 - 2000
-      const z = Math.random() * -600  
+      const z = Math.random() * -1000  
       vertices.push(x, y, z)
       velocities.push(0.1)
       accelerations.push(0)
@@ -208,7 +208,7 @@ const Stars = (props) => {
 
   
         if (geometry.getAttribute('position').array[i * 3 + 2] > 200) {
-          geometry.getAttribute('position').array[i * 3 + 2] = Math.random() * -300 - 300
+          geometry.getAttribute('position').array[i * 3 + 2] = Math.random() * -500 - 500
           geometry.getAttribute('velocity').array[i] = 0.1
         }
       }
@@ -222,7 +222,7 @@ const Stars = (props) => {
         <points ref={star} args={[geometry]}>
           <pointsMaterial
             opacity={Math.random() * 2.5 + 0.5}
-            size={Math.random() * 1 + 2}
+            size={Math.random() * 1 + 1}
             sizeAttenuation={true}
             map={sprite}
             depthWrite={false}
@@ -277,7 +277,7 @@ const Splash = () => {
     const astronaut = useRef()
     const scroll = useRef()
     const performanceLevel = useContext(WebGLPerformanceContext);
-    const stars = performanceLevel === 'high' ? 3000 : 1000;
+    const stars = performanceLevel === 'high' ? 4000 : 1000;
 
     useEffect(() => {
         window.addEventListener('mousemove', moveAstronaut);
