@@ -80,7 +80,7 @@ const GlobalStyle = createGlobalStyle`
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #504CCF #ffffff;
+    scrollbar-color: #504CCF transparent;
   }
 
   /* Chrome, Edge, and Safari */
@@ -95,7 +95,7 @@ const GlobalStyle = createGlobalStyle`
   *::-webkit-scrollbar-thumb {
     background-color: #504CCF;
     border-radius: 0px;
-    border: 0px solid #ffffff;
+    border: 0px solid transparent;
   }
 
   .app {

@@ -189,11 +189,11 @@ const Stars = (props) => {
     const stars = props.count;
   
     for (let count = 0; count < stars; count++) {
-      const x = Math.random() * 2000 - 300
-      const y = Math.random() * 2000 - 300
-      const z = Math.random() * 600 - 300  
+      const x = Math.random() * 4000 - 2000
+      const y = Math.random() * 4000 - 2000
+      const z = Math.random() * -600  
       vertices.push(x, y, z)
-      velocities.push(0.05)
+      velocities.push(0.1)
       accelerations.push(0)
     }
   
@@ -208,11 +208,11 @@ const Stars = (props) => {
 
   
         if (geometry.getAttribute('position').array[i * 3 + 2] > 200) {
-          geometry.getAttribute('position').array[i * 3 + 2] = -100
-          geometry.getAttribute('velocity').array[i] = 0
+          geometry.getAttribute('position').array[i * 3 + 2] = Math.random() * -300 - 300
+          geometry.getAttribute('velocity').array[i] = 0.1
         }
       }
-      star.current.rotation.z += 0.0002
+      star.current.rotation.z += 0.0003
       geometry.attributes.position.needsUpdate = true
       geometry.attributes.velocity.needsUpdate = true
       geometry.attributes.acceleration.needsUpdate = true
@@ -222,7 +222,7 @@ const Stars = (props) => {
         <points ref={star} args={[geometry]}>
           <pointsMaterial
             opacity={Math.random() * 2.5 + 0.5}
-            size={Math.random() * 1 + 1}
+            size={Math.random() * 1 + 2}
             sizeAttenuation={true}
             map={sprite}
             depthWrite={false}
@@ -252,12 +252,12 @@ const Rig = () => {
       const dy = (mouse.y - lastMousePosition.current.y) * 0.03;
 
       if(orientation.gamma || orientation.beta) {
-        camera.position.x += -camera.position.x + orientation.gamma/5;
-        camera.position.y += -camera.position.y + orientation.beta/5;
+        camera.position.x += -camera.position.x + orientation.gamma/3;
+        camera.position.y += -camera.position.y + orientation.beta/3;
       }
       else if (Math.abs(dx) < 0.02 && Math.abs(dy) < 0.02) {
-        camera.position.x += dx * 50;  // Adjust multiplier as needed
-        camera.position.y += dy * 50;  // Adjust multiplier as needed
+        camera.position.x += dx * 100;  // Adjust multiplier as needed
+        camera.position.y += dy * 100;  // Adjust multiplier as needed
       }
 
       lastMousePosition.current = { x: mouse.x, y: mouse.y };
@@ -277,7 +277,7 @@ const Splash = () => {
     const astronaut = useRef()
     const scroll = useRef()
     const performanceLevel = useContext(WebGLPerformanceContext);
-    const stars = performanceLevel === 'high' ? 6000 : 1000;
+    const stars = performanceLevel === 'high' ? 3000 : 1000;
 
     useEffect(() => {
         window.addEventListener('mousemove', moveAstronaut);
