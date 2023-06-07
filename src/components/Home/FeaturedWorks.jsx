@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { Link } from 'react-router-dom';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
@@ -38,7 +39,7 @@ const ProjectImageBorder = styled.div`
   }
 `;
 
-const ProjectName = styled.a`
+const ProjectName = styled(Link)`
   text-transform: uppercase;
   font-family: 'Satoshi';
   font-weight: 600;
@@ -56,7 +57,7 @@ const ProjectName = styled.a`
   &:hover {
     color: white;
   }
-  @media (max-width: 1920px) {
+  @media (max-width: 2560px) {
     font-size: 1.5rem;
     & > svg {
       font-size: 2.3rem;
@@ -217,7 +218,7 @@ const ProjectSummary = styled.div`
 `;
 
 const ProjectNumber = styled.h1`
-  font-family: 'Poppins';
+  font-family: 'Satoshi';
   font-size: 10rem;
   font-weight: 200;
   line-height: 0.8;
@@ -236,7 +237,7 @@ const ProjectActions = styled.div`
   margin: 2rem -0.5rem;
 `;
 
-const ProjectLink = styled.a`
+const ProjectLink = styled(Link)`
   color: white;
   display: inline-flex;
   font-size: 1.5rem;
@@ -270,7 +271,7 @@ const ProjectHeader = styled.div`
 `;
 
 const Header = styled.h1`
-  font-family: 'Poppins';
+  font-family: 'Satoshi';
   font-size: 1.5rem;
   text-transform: uppercase;
   color: #504CCF;
@@ -313,12 +314,12 @@ const ProjectInfo = (props) => {
     <ProjectContent className={props.className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(props.number + 1, 2)}</ProjectNumber>
-        <ProjectName href={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
+        <ProjectName to={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
       </ProjectHeader>
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
       {props.project.attributes.links?.map((link) => (
-        <ProjectLink key={link.id} href={link.url}>{Icons[link.icon]()}
+        <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]()}
           <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
         </ProjectLink>
       ))}        

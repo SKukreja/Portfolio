@@ -6,6 +6,7 @@ import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import Slider from '../../components/Project/Slider';
+import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
 
 const desktopContainerWidth = '75vw';
@@ -68,7 +69,7 @@ const Website = styled.div`
 
 const ProjectTitle = styled.h1`
   text-transform: uppercase;
-  font-family: 'Poppins';
+  font-family: 'Satoshi';
   font-weight: 600;
   font-size: 6rem;
   color: #504CCF;
@@ -370,6 +371,18 @@ const Project = () => {
     <>{error}</>
   )
   return (
+    <motion.div
+    initial={{ 
+      opacity: 0,      
+     }} 
+    animate={{ 
+      opacity: 1,      
+    }} 
+    exit={{ 
+      opacity: 0,
+     }} 
+    transition={{ duration: 1 }}
+    >
     <ProjectContainer>
       <Helmet>      
         <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        
@@ -451,6 +464,7 @@ const Project = () => {
         </ProjectLinks>
       </ProjectInfo>
     </ProjectContainer>
+    </motion.div>
   )
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { InView, useInView } from 'react-intersection-observer';
+import { motion, useAnimate, stagger } from "framer-motion"
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 
@@ -42,8 +42,6 @@ const FooterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-width: ${({ inView }) => (inView ? '100%' : '0')};
-  transition: border-width 0.3s ease-out;
   justify-content: space-between;
   @media (max-width: 768px) {
     border-top: 3px solid #504CCF;
@@ -56,7 +54,7 @@ const Copyright = styled.span`
   font-family: 'Satoshi';
 `;
 
-const Socials = styled.div`
+const Socials = styled(motion.div)`
   display: flex;
   @media (max-width: 768px) {
     width: 100%;
@@ -64,7 +62,7 @@ const Socials = styled.div`
   }
 `;
 
-const SocialLink = styled.a`
+const SocialLink = styled(motion.a)`
   color: white;  
   font-size: 1.5rem;
   background: #504CCF;
@@ -113,20 +111,28 @@ const TopSection = styled.div`
 `;
 
 const Footer = () => {
+  const { data, loading, error } = use('/social?populate=deep');
   const currentYear = new Date().getFullYear();
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-  });
+  const variants = {
+    initial: { x: "-10rem" },
+    animate: {
+      x: 0,
+      transition: { staggerChildren: 0.05, ease: "easeInOut", duration: 1 },
+    },
+  }
 
   return (
-    <FooterContainer ref={ref} inView={inView}>
+    <FooterContainer>
       <TopSection>
         <Contact>Let's connect</Contact>
         <Socials>
-          <SocialLink delay={0.3} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Envelope']()}</SocialLink>
-          <SocialLink delay={0.6} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['LinkedIn']()}</SocialLink>
-          <SocialLink delay={0.9} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Github']()}</SocialLink>
-          <SocialLink delay={1.2} href="https://www.linkedin.com/in/sumit-kukreja-1b1b3b1b0/" target="_blank">{Icons['Code Sandbox']()}</SocialLink>
+        {data?.attributes.links.map((link, index) => (
+          <SocialLink 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }} 
+          delay={stagger(0.3)} href={link.url} target="_blank">{Icons[link.icon]()}</SocialLink>          
+        ))}
         </Socials>
       </TopSection>
       <Copyright>© S.Kukreja {currentYear}</Copyright>

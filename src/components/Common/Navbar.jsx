@@ -1,39 +1,8 @@
 import React, {useContext, useEffect} from 'react'
 import styled, { keyframes, css } from 'styled-components';
+import { Link } from 'react-router-dom';
 import use from '../../hooks/use';
 import { ModalContext } from './ModalContext.jsx';
-
-const hueRotate = keyframes`
-    0% {
-        filter: hue-rotate(10deg);
-    }
-    
-    50% {
-        filter: hue-rotate(-30deg);
-    }
-    
-    100% {
-        filter: hue-rotate(10deg);
-    }
-`;
-
-const fadeIn = keyframes`
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-`;
-
-const fadeOut = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-`;
 
 const slideInFromRight = keyframes`
   0% {
@@ -61,7 +30,6 @@ const Nav = styled.nav`
   display: flex;
   z-index: 20;
   padding: 2rem;
-  animation: ${hueRotate} 18s linear infinite;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;  
@@ -86,10 +54,6 @@ const Branding = styled.img`
   &.logo-dark {
     z-index: 50;
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
   }
   @media (max-width: 768px) {
     width: 60px;
@@ -101,8 +65,8 @@ const Right = styled.div`
 `;
 
 const Menu = styled.nav`
-  font-family: 'Poppins';
-  font-weight: 500;
+  font-family: 'Satoshi';
+  font-weight: 600;
   text-transform: uppercase;
   margin-right: -1rem;
 
@@ -111,7 +75,7 @@ const Menu = styled.nav`
   }
 `;
 
-const Link = styled.a`
+const NavLink = styled(Link)`
   color: #F1E3F3;
   text-decoration: none;
   letter-spacing: 1px;
@@ -127,7 +91,7 @@ const Link = styled.a`
   }
 `;
 
-const LogoContainer = styled.div`
+const LogoContainer = styled(Link)`
   position: relative;
 `;
 
@@ -160,7 +124,7 @@ const Overlay = styled.div`
   }
 `;
 
-const OverlayLink = styled.a`
+const OverlayLink = styled(Link)`
   color: #080708;
   text-decoration: none;
   letter-spacing: 1px;
@@ -244,8 +208,8 @@ const Navbar = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const goHome = () => { 
-    window.location.href = '/';
+  const handleClick = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -271,7 +235,7 @@ const Navbar = () => {
   return (
     <Nav>
       <Left>
-        <LogoContainer onClick={goHome}>
+        <LogoContainer to="/">
           <Branding className="logo-dark" src="/logo-dark.png" isDark={!isModalOpen} />
           <Branding className="logo-light" src="/logo.png" isDark={isModalOpen} />
         </LogoContainer>
@@ -288,9 +252,9 @@ const Navbar = () => {
         </HamburgerButton>
         <Menu className="nav-menu">
           {data?.attributes.links.map((link) => (
-            <Link key={link.id} href={link.url}>
+            <NavLink key={link.id} to={link.url}>
               {link.text}
-            </Link>
+            </NavLink>
           ))}
         </Menu>
       </Right>
@@ -299,7 +263,8 @@ const Navbar = () => {
           {data?.attributes.links.map((link, index) => (
             <OverlayLink
               key={link.id}
-              href={link.url}
+              onClick={handleClick}
+              to={link.url}
               isVisible={isModalOpen}
               index={index}
             >

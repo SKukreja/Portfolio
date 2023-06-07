@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import ReactWordcloud from 'react-wordcloud';
 import { Icons } from '../../components/Common/Icons';
+import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
+import { BrightnessContrast } from '@react-three/postprocessing';
 
 const hueRotate = keyframes`
     0% {
@@ -53,7 +55,7 @@ const Bio = styled.div`
   }
 `;
 
-const ProfileImage = styled.img`
+const ProfileImage = styled(motion.img)`
   width: 40vmin;
   height: 40vmin;
   filter: drop-shadow(5px 5px 10px #080708);
@@ -101,7 +103,7 @@ const AboutContainer = styled.div`
 `;
 
 const CurrentHeader = styled.h2`
-  font-family: 'Poppins';
+  font-family: 'Satoshi';
   font-size: 1.5rem;
   text-transform: uppercase;
   color: #504CCF;
@@ -357,7 +359,7 @@ const options = {
   fontWeight: 900,
   rotations: 2,
   rotationAngles: [0, 90, 270],
-  transitionDuration: 1000
+  transitionDuration: 0
 };
 
 const callbacks = {
@@ -366,16 +368,32 @@ const callbacks = {
 
 const About = () => {
   let currentYear = null;
+  const [imageLoading, setImageLoading] = useState(true);
 
   const { data, loading, error } = use(
     `/about?populate=deep`
   );
 
+  const imageLoaded = () => {
+    setImageLoading(false);
+  };
+
   if (error) return (
     <>{error}</>
   )
   return (
-    <Container>
+    <Container as={motion.div} 
+    initial={{ 
+      opacity: 0,      
+     }} 
+    animate={{ 
+      opacity: 1,      
+    }} 
+    exit={{ 
+      opacity: 0,
+     }} 
+    transition={{ duration: 1 }}
+    >
       <Helmet>      
         <title>Sumit Kukreja | About Me</title>                
         <link rel="icon" type="image/png" href="/favicon.ico" />         
@@ -383,7 +401,15 @@ const About = () => {
       <InView>
       {({ inView, ref, entry }) => (
         <Bio ref={ref} className={`${inView ? 'active' : ''}`}>
-          <ProfileImage src={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.picture.data.attributes.url} />
+          <ProfileImage 
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: imageLoading ? 0 : 1
+          }}
+          transition={
+            ({ opacity: { delay: 0.5, duration: 0.4 } })
+          } 
+          onLoad={imageLoaded} src={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.picture.data.attributes.url} />
           <Intro>Hello, my name is Sumit.</Intro>
         </Bio>
       )}

@@ -1,4 +1,5 @@
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
 import Footer from './components/Common/Footer';
@@ -9,7 +10,7 @@ import Contact from './pages/Contact/Contact';
 import Project from './pages/Project/Project';
 import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import ModalContext from './components/Common/ModalContext.jsx';
 
@@ -23,8 +24,9 @@ const Blur = styled.div`
       : ''};
 `;
 
-const Layout = () => {
+const Layout = ({ children }) => {
   const { isModalOpen } = useContext(ModalContext);
+  const location = useLocation(); 
 
   return (
     <div className="app">
@@ -35,49 +37,34 @@ const Layout = () => {
         <link rel="icon" type="image/png" href="/favicon.ico" />         
       </Helmet>
       <Blur isModalOpen={isModalOpen}>
-        <Outlet />
+        <AnimatePresence mode='wait' onExitComplete={() => {
+            if (typeof window !== "undefined") {
+                window.scrollTo({ top: 0, behavior: "instant" });
+            }
+        }}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Home />} />
+            <Route path="/project/:id" element={<Project />} />
+            <Route path="/work" element={<Work />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </AnimatePresence>
         <Footer />
       </Blur>
     </div>
   );
 };
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Layout />,
-    children: [
-      {
-        path: '/',
-        element: <Home />,
-      },
-      {
-        path: '/project/:id',
-        element: <Project />,
-      },
-      {
-        path: '/work',
-        element: <Work />,
-      },
-      {
-        path: '/about',
-        element: <About />,
-      },
-      {
-        path: '/contact',
-        element: <Contact />,
-      },
-    ],
-  },
-]);
-
-function App() {
+const App = () => {
   return (
-    <div>
+    <MotionConfig reducedMotion="user">
       <ModalProvider>
-        <RouterProvider router={router} />
+        <Router>
+          <Layout />
+        </Router>
       </ModalProvider>
-    </div>
+    </MotionConfig>
   );
 }
 
