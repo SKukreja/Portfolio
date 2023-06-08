@@ -14,7 +14,7 @@ const Background = styled.img`
   height: 100vmax;
   object-fit: cover;
   position: absolute;
-  top: 20vmax;
+  top: 15vmax;
   left: 50%;
   pointer-events: none;
   filter: saturate(140%) brightness(1.1);
@@ -23,16 +23,20 @@ const Background = styled.img`
     top: 30vmax;
   }
   @media (max-width: 1440px) {
-    top: 50%;
+    top: 35%;
   }
+  @media (max-width: 1023px) {
+    top: 50%;
+  }  
   @media (max-width: 768px) {
+    top: 50%;
     left: 30vmax;
   }
 `; 
 
 const CanvasStyled = styled.canvas`
   position: absolute;
-  top: 20vmax;
+  top: 15vmax;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #080708;
@@ -44,9 +48,13 @@ const CanvasStyled = styled.canvas`
     top: 30vmax;
   }
   @media (max-width: 1440px) {
-    top: 50%;
+    top: 35%;
   }
+  @media (max-width: 1023px) {
+    top: 50%;
+  }  
   @media (max-width: 768px) {
+    top: 50%;
     left: 30vmax;
   }
 `;
@@ -62,21 +70,21 @@ const ShadowTransition = styled.div`
 `;
 
 const Header = styled.h1`
-  color: #504CCF;
+  color: white;
   display: flex;
+  font-family: 'Hind';
   flex-direction: column;
-  font-size: 2rem;
-  font-weight: 900;
+  font-size: 4vmax;
+  display: none;
+  font-weight: 200;
   position: absolute;
-  top: 6vmax;
-  left: 2rem;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 30px 30px #030208;
   @media (max-width: 768px) {
     left: 5vw;
   }  
-`;
-
-const Span = styled.span`
-    font-family: 'Satoshi';
 `;
 
 const Landing = () => {
@@ -85,20 +93,27 @@ const Landing = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const viewportMax = Math.max(window.innerWidth, window.innerHeight);
-    canvas.width = viewportMax;
-    canvas.height = viewportMax;
+    const resolutionFactor = window.devicePixelRatio || 1;  // Determine the resolution factor
+
+    // Multiply the width and height by the resolution factor
+    canvas.width = viewportMax * resolutionFactor;
+    canvas.height = viewportMax * resolutionFactor;
 
     const draw = async () => {
         const gridSize = 128;  // fixed grid size
 
-        const cellSize = viewportMax / gridSize;  
+        const ctx = canvas.getContext("2d");
+        // Scale all canvas drawing by the resolution factor
+        ctx.scale(resolutionFactor, resolutionFactor);
+
+        // Now we calculate the cellSize and fontSize after we have scaled the context
+        const cellSize = viewportMax / gridSize;
         const fontSize = cellSize;  // equal to cellSize
 
         if ("fonts" in document) {
         await document.fonts.load(`${fontSize}px Pixel`);
         }
-    
-        const ctx = canvas.getContext("2d");
+
         ctx.font = `${fontSize}px Pixel`; 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -151,11 +166,7 @@ const Landing = () => {
     <Container>
         <Background src="/bg.gif" />
         <CanvasStyled ref={canvasRef} />
-        <Header>
-            <Span>Pixel</Span>
-            <Span>Perfect</Span>
-            <Span>Platforms</Span>
-        </Header>
+        <Header>Sumit Kukreja</Header>
         <ShadowTransition />
     </Container>
   );
