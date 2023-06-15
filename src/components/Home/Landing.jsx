@@ -1,5 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import styled from "styled-components";
+import use from "../../hooks/use";
+import { Icons } from "../Common/Icons";
 
 const Container = styled.div`
   width: 100%;
@@ -9,167 +12,365 @@ const Container = styled.div`
   z-index: 0;
 `;
 
-const Background = styled.img`
-  width: 100vmax;
-  height: 100vmax;
+const Background = styled.div`
+  width: 70vh;
+  height: 70vh;
   object-fit: cover;
   position: absolute;
-  top: 15vmax;
+  top: 50%;
   left: 50%;
-  pointer-events: none;
-  filter: saturate(140%) brightness(1.1);
+  background: transparent;
+  will-change: opacity;
   transform: translate(-50%, -50%);
-  @media (max-width: 1920px) {
-    top: 30vmax;
-  }
-  @media (max-width: 1440px) {
-    top: 35%;
-  }
-  @media (max-width: 1023px) {
-    top: 50%;
-  }  
-  @media (max-width: 768px) {
-    top: 50%;
-    left: 30vmax;
-  }
-`; 
-
-const CanvasStyled = styled.canvas`
-  position: absolute;
-  top: 15vmax;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #080708;
-  mix-blend-mode: multiply;
-  width: 100vmax;
-  height: 100vmax;
-  pointer-events: none;
-  @media (max-width: 1920px) {
-    top: 30vmax;
-  }
-  @media (max-width: 1440px) {
-    top: 35%;
-  }
-  @media (max-width: 1023px) {
-    top: 50%;
-  }  
-  @media (max-width: 768px) {
-    top: 50%;
-    left: 30vmax;
-  }
-`;
-
-const ShadowTransition = styled.div`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 200px;
-    pointer-events: none;
-    z-index: 5;
-    background: linear-gradient(to top, rgba(8, 7, 8, 1) 30%, transparent)
+  display: grid;
+  grid-template-columns: repeat(64, 1fr);
+  grid-template-rows: repeat(64, 1fr);
+  gap: 5px;
 `;
 
 const Header = styled.h1`
-  color: white;
+  color: #504ccf;
   display: flex;
   font-family: 'Hind';
-  flex-direction: column;
-  font-size: 4vmax;
-  display: none;
-  font-weight: 200;
+  font-size: 15vw;
+  font-weight: 900;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  user-select: none;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-shadow: 0 0 30px 30px #030208;
-  @media (max-width: 768px) {
-    left: 5vw;
-  }  
+  justify-content: center;
+  margin-top: 0px;
+  text-transform: uppercase;
 `;
 
-const Landing = () => {
-  const canvasRef = useRef(null);
+const Slogan = styled.h2`
+    color: #F1E3F3;
+    font-family: 'Hind';
+    font-size: 1.25rem;
+    font-weight: 400;
+    position: absolute;
+    bottom: 2rem;
+    left: 2rem;
+    display: flex;
+    align-items: center;
+`;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const viewportMax = Math.max(window.innerWidth, window.innerHeight);
-    const resolutionFactor = window.devicePixelRatio || 1;  // Determine the resolution factor
+const CellStyled = styled(motion.div)`
+  grid-column: span 4;
+  grid-row: span 4;
+  background-color: ${({ filled }) => (filled ? "#504ccf" : "transparent")};
+  transition: opacity 2s, transform 2s;
+`;
 
-    // Multiply the width and height by the resolution factor
-    canvas.width = viewportMax * resolutionFactor;
-    canvas.height = viewportMax * resolutionFactor;
+const Socials = styled(motion.div)`
+    position: absolute;
+    bottom: 4rem;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    justify-content: center;
+`;
 
-    const draw = async () => {
-        const gridSize = 128;  // fixed grid size
+const SocialLink = styled(motion.a)`
+    color: #F1E3F3;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+`;
 
-        const ctx = canvas.getContext("2d");
-        // Scale all canvas drawing by the resolution factor
-        ctx.scale(resolutionFactor, resolutionFactor);
+const Email = styled(motion.a)`
+    margin-left: 2rem;
+    color: #F1E3F3;
+    display: flex;
+    align-items: center;
+    font-family: 'Hind';
+    font-size: 1.25rem;
+    font-weight: 400;
+`;
 
-        // Now we calculate the cellSize and fontSize after we have scaled the context
-        const cellSize = viewportMax / gridSize;
-        const fontSize = cellSize;  // equal to cellSize
+const diagonalDelay = (i) => {
+  const x = i % 16;
+  const y = Math.floor(i / 16);
+  return (x + y) * 0.03;
+};  
+  
 
-        if ("fonts" in document) {
-        await document.fonts.load(`${fontSize}px Pixel`);
+const fill = [ 
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+];
+/*const guitar = [ 
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0 ],
+    [ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0 ],
+    [ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 ],
+];*/
+/*const piano = [ 
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 ],
+];*/
+/*
+const coffee = [ 
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1 ],
+    [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
+];*/
+
+const alternates = [ 
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+    [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+];
+
+const squareception = [ 
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+    [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+    [ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 ],
+    [ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 ],
+    [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+];
+
+const bigsquares = [ 
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 ],
+];
+
+const arrow = [ 
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 ],
+];
+
+const icons = [fill, alternates, squareception, bigsquares, arrow];
+
+const cellVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    exit: (i) => ({
+      scale: 0,
+      transition: {
+        scale: { duration: 0.5, delay: diagonalDelay(i) },
+      },
+    }),
+  };
+  
+  const Cell = ({ i, filled }) => {
+    const controls = useAnimation();
+    const wasFilled = useRef(filled);
+  
+    useEffect(() => {
+      if (filled !== wasFilled.current) {
+        if (filled) {
+          controls.start("visible");
+        } else {
+          controls.start("exit");
         }
-
-        ctx.font = `${fontSize}px Pixel`; 
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-    
-        const textGrid = Array.from({ length: gridSize }, () =>
-          Array.from({ length: gridSize }, () =>
-            Math.round(Math.random()).toString()
-          )
-        );
-    
-        const start = performance.now();
-        const duration = 5000;
-    
-        const animate = () => {
-            const elapsed = performance.now() - start;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-            // Calculate the exact space we want to remove
-            const extraSpace = viewportMax - (gridSize * Math.floor(cellSize));
-          
-            for (let y = 0; y < gridSize; y++) {
-              for (let x = 0; x < gridSize; x++) {
-                const delay = (x + y) * 20;
-                const progress = Math.max(0, (elapsed - delay) / duration);
-                ctx.fillStyle = `rgba(255, 255, 255, ${progress})`;
-          
-                // Gradually distribute the space to remove across the upper rows
-                const yOffset = y < extraSpace ? -1 : 0;
-          
-                ctx.fillText(
-                  textGrid[y][x],
-                  (x + 0.5) * cellSize,
-                  (y + 0.5) * cellSize + yOffset
-                );
-              }
-            }
-          
-            if (elapsed < duration + gridSize * 2 * 20) {
-              requestAnimationFrame(animate);
-            }
-        };
-          
-        animate();
+        wasFilled.current = filled;
+      }
+    }, [filled, controls]);
+  
+    return (
+      <AnimatePresence>
+        {filled && (
+          <CellStyled
+            variants={cellVariants}
+            initial="hidden"
+            animate={controls}
+            exit="exit"
+            custom={i}
+            filled={filled}
+          />
+        )}
+      </AnimatePresence>
+    );
+  };
+  
+  const Landing = () => {
+    const { data, loading, error } = use('/social?populate=deep');
+    const [currentIcon, setCurrentIcon] = useState(0);
+    const [cells, setCells] = useState(Array(256).fill(false));
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCurrentIcon((prevIcon) => (prevIcon + 1) % icons.length);
+      }, 5000); // Change icon every 5 seconds
+  
+      return () => clearInterval(interval);
+    }, []);
+  
+    useEffect(() => {
+      const newCells = icons[currentIcon].flat();
+      const timeouts = [];
+  
+      newCells.forEach((filled, i) => {
+        const timeout = setTimeout(() => {
+          setCells((prevCells) => {
+            const updatedCells = [...prevCells];
+            updatedCells[i] = filled;
+            return updatedCells;
+          });
+        }, (diagonalDelay(i) + 2) * 1000); // Add delay based on diagonalDelay
+  
+        timeouts.push(timeout);
+      });
+  
+      return () => {
+        timeouts.forEach((timeout) => clearTimeout(timeout));
       };
-
-    draw();
-  }, []);
-
-  return (
-    <Container>
-        <Background src="/bg.gif" />
-        <CanvasStyled ref={canvasRef} />
-        <Header>Sumit Kukreja</Header>
-        <ShadowTransition />
-    </Container>
-  );
-};
+    }, [currentIcon]);
+  
+    return (
+      <Container>
+        <Background>
+          {cells.map((filled, i) => (
+            <Cell
+              key={i}
+              i={i}
+              filled={filled}
+              initial={filled ? "hidden" : "visible"}
+              animate={filled ? "visible" : "hidden"}
+              exit="exit"
+              transition={{ duration: 1 }}
+              custom={i}
+            />
+          ))}
+        </Background>
+        <Header>Kukreja</Header>
+        <Socials>
+        {data?.attributes.links.map((link, index) => (
+          <SocialLink href={link.url} target="_blank">{Icons[link.icon]()}</SocialLink>          
+        ))}
+        </Socials>
+      </Container>
+    );
+  };
+  
+  
 
 export default Landing;
