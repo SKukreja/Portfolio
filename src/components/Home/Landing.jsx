@@ -31,14 +31,6 @@ const Background = styled.div`
 const Header = styled.h1`
   color: #504ccf;
   display: flex;
-  font-family: 'Hind';
-  font-size: 15vw;
-  font-weight: 900;
-  pointer-events: none;
-  mix-blend-mode: difference;
-  user-select: none;
-  align-items: center;
-  width: 100%;
   height: 100vh;
   position: absolute;
   top: 50%;
