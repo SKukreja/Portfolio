@@ -9,7 +9,7 @@ import Slider from '../../components/Project/Slider';
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
 
-const desktopContainerWidth = '70vw';
+const desktopContainerWidth = 'var(--desktop-container-width)';
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -25,7 +25,7 @@ const Browser = styled.div`
   width: ${desktopContainerWidth};
   position: relative;
   aspect-ratio: 16/9;
-  margin-bottom: 6rem;
+  margin-bottom: var(--article-spacing);
   @media (max-width: 768px) {
     width: 90%;
   }
@@ -59,7 +59,6 @@ const ProjectTitle = styled.h1`
   font-weight: 600;
   font-size: 6rem;
   color: #FF6281;
-  text-shadow: 0 0 5px #FF6281;
   text-decoration: none;
   letter-spacing: 1px;
   line-height: 1;
@@ -116,7 +115,7 @@ const StackComponents = styled.div`
 `;
 
 const ProjectTechnology = styled.div`
-  font-size: 1.5rem;
+  font-size: var(--body-text);
   font-family: 'Satoshi';
   height: 4rem;
   display: flex;
@@ -148,13 +147,26 @@ const ProjectInfo = styled.div`
 const Section = styled.div`
   display: flex;
   width: calc(${desktopContainerWidth} * 3/4);
-  margin-bottom: 6rem;
+  margin-bottom: var(--article-spacing);
   &.bw {
     opacity: 0;
     transition: opacity 0.5s ease;
   }
   &.bw.active {
     opacity: 1;
+  }
+  &.figure {
+    width: 50%;
+  }
+  @media (max-width: 1600px) {
+    &.figure {
+      width: 60%;
+    }
+  }
+  @media (max-width: 1440px) {
+    &.figure {
+      width: 100%;
+    }
   }
   @media (max-width: 768px) {
     flex-direction: column;
@@ -164,10 +176,13 @@ const Section = styled.div`
 
 const TextSection = styled.div`
   display: flex;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.5s ease;
   &.active {
     opacity: 1;
+  }
+  &.intro {
+    width: 100%;
   }
   @media (max-width: 768px) {
     flex-direction: column;
@@ -175,29 +190,38 @@ const TextSection = styled.div`
 `;
 
 const InvertedTitle = styled.h1`
-  color: #080708;
-  margin-bottom: 6rem;
+  color: var(--black);
+  margin-bottom: var(--article-spacing);
   font-family: 'Satoshi';
-  font-size: 6rem;
+  font-size: 4rem;
   font-weight: 600;
+  @media (max-width: 1600px) {
+    font-size: 3.5rem;
+  }
   @media (max-width: 768px) {
     font-size: 3rem;
   }
 `;
 
 const Figure = styled.div`
-  width: 100%;
-  margin-top: -10rem;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -5rem;
+  margin-bottom: 5rem;
   text-align: center;
-  & img {
+  & img, & video {
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
   }
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.5s ease;
   &.active {
     opacity: 1;
+  }
+  @media (max-width: 768px) {
+    width: ;
   }
   @media (max-width: 768px) {
     margin-top: -5rem;
@@ -215,9 +239,10 @@ const Article = styled.div`
 const Headers = styled.div`
   width: 33%;
   font-family: 'Satoshi';
-  font-size: 1.5rem;
+  font-size: var(--body-text);
   font-weight: 600;
   color: #FF6281;
+  transition: opacity 0.5s ease;
   @media (max-width: 768px) {
     width: 100%;
     font-size: 1.2rem;
@@ -226,7 +251,7 @@ const Headers = styled.div`
 `;
 
 const Topic = styled.div`
-  font-size: 1.5rem;
+  font-size: var(--body-text);
   font-family: 'Satoshi';
   display: flex;
   width: 66%;
@@ -238,7 +263,7 @@ const Topic = styled.div`
 `;
 
 const BuiltWith = styled.div`
-  font-size: 2rem;
+  font-size: var(--body-text);
   font-family: 'Satoshi';
   display: flex;
   align-items: center;
@@ -278,10 +303,10 @@ const ProjectLinks = styled.div`
 
 const Action = styled.a`
   margin: 2rem;
-  background: #FF6281;
+  background-color: var(--accent-colour);
   width: 25%;
   text-align: center;
-  font-size: 2rem;
+  font-size: var(--body-text);
   color: var(--offwhite);
   font-family: 'Satoshi';
   font-weight: 500;
@@ -298,7 +323,7 @@ const Action = styled.a`
   }
   &:hover {
     background: var(--offwhite);
-    color: #080708;
+    color: var(--black);
   }
   @media (max-width: 768px) {
     width: 100%;
@@ -312,8 +337,40 @@ const Caption = styled.span`
   overflow: visible;
   width: 100%;  
   display: block;
-  color: #080708;
+  color: var(--black);
 `;
+
+const FigureMedia = ({item}) => {
+  const getMediaType = (mime) => {
+    if (mime.startsWith("video")) {
+      return "video";
+      }
+      return "image";
+  };
+  
+  const type = getMediaType(item.attributes.mime);
+  const src = import.meta.env.VITE_APP_UPLOAD_URL + item.attributes.url;
+  const videoRef = useRef(null);
+  useEffect(() => {
+    if (type === "video") {
+      videoRef.current.play();
+    }
+  }, [type]);
+
+    return (
+      <>
+      {type === "image" ? (
+        <img src={src} alt="" />
+        ) : (
+        <video
+            ref={videoRef}
+            src={src}
+            autoplay muted playsinline loop
+        ></video>
+        )}
+        </>
+    )
+}
 
 const Project = () => {
   const { id } = useParams();
@@ -380,12 +437,12 @@ const Project = () => {
             <Button className='close'>{Icons['Close']()}</Button>
           </Buttons>
         </Window>
-        <Website style={{backgroundImage: "url(" + import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.cover.data.attributes.url + ")"}}>          </Website>
+        <Website style={{backgroundImage: "url(" + import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.cover.data.attributes.url + ")"}}></Website>
       </Browser>
       <ProjectInfo>
         <Article>
           <Section className='bw dark'>
-            <Headers>Built With</Headers>
+            <Headers className='topic-header'>Built With</Headers>
             <BuiltWith>
               <StackComponents>
                 {data?.attributes.technologies.data?.map((technology) => (
@@ -394,12 +451,22 @@ const Project = () => {
               </StackComponents>
             </BuiltWith>
           </Section>
+          <Section>
+            <TextSection className='dark intro'>
+                <Headers className='topic-header'>Introduction</Headers>
+                <Topic>
+                  <TopicText>
+                    <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{data?.attributes.summary}</ReactMarkdown>
+                  </TopicText>
+                </Topic>
+              </TextSection>  
+          </Section>
           {data?.attributes.article.map((topic, index) => {
             const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
             const first = index === 0 ? 'active' : '';
             if (isFigure) {
               return (
-                <Section key={topic.id}>
+                <Section key={topic.id} className='figure'>
                   <InView onChange={onFigureInViewChange} threshold={0.7} style={{ width: '100%' }}>
                     {topic.__component === 'article.slides' ? (
                       <Figure className='light'>
@@ -409,8 +476,8 @@ const Project = () => {
                       </Figure>
                     ) : (
                     <Figure className='light'>
-                      <InvertedTitle>{topic.title}</InvertedTitle>
-                      <img src={import.meta.env.VITE_APP_UPLOAD_URL + (topic.__component === 'article.figure' ? topic.figure.data.attributes.url : topic.images.data[0].attributes.url)} />
+                      <InvertedTitle>{topic.title}</InvertedTitle>                      
+                      <FigureMedia item={(topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])} />
                       <Caption>{topic.caption}</Caption>
                     </Figure>
                     )}
@@ -422,7 +489,7 @@ const Project = () => {
             return (
               <Section key={topic.id}>
                 <TextSection className={'dark ' + first}>
-                  <Headers>
+                  <Headers className='topic-header'>
                     {topic.header ? topic.header : ''}
                   </Headers>
                   <Topic>

@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react'
+import React, {useContext, useState, useRef, useEffect} from 'react'
 import styled, { keyframes, css } from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -21,8 +21,8 @@ const slideInFromRight = keyframes`
 
 const Nav = styled.nav`
   width: 100vw;
-  padding-left: 15vw;
-  padding-right: 15vw;
+  padding-left: calc((100vw - var(--desktop-container-width))/2);
+  padding-right: calc((100vw - var(--desktop-container-width))/2);
   position: fixed;
   box-sizing: border-box;
   top: 0rem;
@@ -31,7 +31,7 @@ const Nav = styled.nav`
   transform: ${({ scrollPos }) =>
     scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
   transition: all 0.5s ease;
-  background: ${({ isSolid }) => isSolid ? 'transparent' : '#000006'};
+  background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
   display: flex;
   z-index: 20;
   left: 0;
@@ -41,9 +41,13 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;  
-  opacity: ${({ isSolid, isModalOpen }) => isSolid && !isModalOpen ? 0 : 1};
+  opacity: 1;
   & .logo {
-    filter: ${({ isModalOpen }) => !isModalOpen ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+    filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : 'brightness(0) invert(1)'};
+    transition: transform 0.5s ease;
+  }
+  & .logo:hover {
+    transform: scale(1.1);
   }
   @media (max-width: 768px) {
     padding-top: 0;
@@ -53,15 +57,6 @@ const Nav = styled.nav`
   }
 
 `
-
-const NavBlend = styled(Nav)`
-  mix-blend-mode: normal;
-  transition: all 0.5s ease;
-  opacity: ${({ isNavSolid, isModalOpen }) => !isNavSolid && !isModalOpen ? 1 : 0};
-  & .logo {
-    filter: ${({ isNavSolid, isMobile }) => isNavSolid ? isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)' : 'brightness(0) invert(0)'};
-  }
-`;
 
 const Left = styled.div`
   width: 200px;
@@ -80,9 +75,9 @@ const Center = styled.div`
 const SocialLink = styled.a`
   font-size: 1.5rem;
   margin-left: 1rem;
-  color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'white') : 'white'};
+  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};
   &:hover {
-    color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'white' : 'black') : 'black'};
+    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};
   }
 `;
 
@@ -118,7 +113,7 @@ const Menu = styled.nav`
 `;
 
 const NavLink = styled(Link)`
-  color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'white') : 'white'};
+  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};
   text-decoration: none;
   letter-spacing: 1px;
   font-size: 1.25rem;
@@ -127,7 +122,7 @@ const NavLink = styled(Link)`
   pointer-events: auto;
   padding: 1rem;
   &:hover {
-    color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'white' : 'black') : 'black'};  
+    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};  
   }
 `;
 
@@ -168,12 +163,12 @@ const Overlay = styled.div`
 `;
 
 const OverlayLink = styled(Link)`
-  color: #080708;
+  color: var(--black);
   text-decoration: none;
   letter-spacing: 1px;
   font-size: 2rem;
   background: transparent;
-  text-shadow: 0 0 2px #080708;
+  text-shadow: 0 0 2px var(--black);
   pointer-events: auto;
   padding: 2rem;
   user-select: none;
@@ -215,11 +210,11 @@ const HamburgerButton = styled.button`
   user-select: none;
   outline: none;
 
-  span {
+  & span {
     display: block;
     width: 27px;
     height: 2px;    
-    background: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'var(--offwhite)') : 'var(--offwhite)'};
+    background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};  
     margin: 7px 0;
     transition: all 0.3s ease;
   }
@@ -243,64 +238,31 @@ const HamburgerButton = styled.button`
   }
 `;
 
-const NavbarComponents = ({ data, socials, isModalOpen, handleClick, toggleOverlay, isSolid }) => {
-  return (
-    <>
-      <Left>
-        <LogoContainer to="/">
-          <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
-        </LogoContainer>
-      </Left>
-      <Center>
-        <HamburgerButton
-          onClick={toggleOverlay}
-          className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
-          isNavSolid={isSolid}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </HamburgerButton>
-        <Menu className="nav-menu">
-          {data?.attributes.links.map((link) => (
-            <NavLink key={link.id} to={link.url} isNavSolid={isSolid}>
-              {link.text}
-            </NavLink>
-          ))}
-        </Menu>
-      </Center>
-      <Right>
-        {socials?.attributes.links.map((link, index) => (
-          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} target="_blank">{Icons[link.icon]()}</SocialLink>          
-        ))}
-      </Right>
-      <Overlay isVisible={isModalOpen}>
-        <OverlayMenu>
-          {data?.attributes.links.map((link, index) => (
-            <OverlayLink
-              key={link.id}
-              onClick={handleClick}
-              to={link.url}
-              isVisible={isModalOpen}
-              index={index}
-            >
-              {link.text}
-            </OverlayLink>
-          ))}
-        </OverlayMenu>
-      </Overlay>
-    </>
-  );
-}
+const usePath = () => {
+  const location = useLocation();
+  const [path, setPath] = useState(location.pathname);
+
+  useEffect(() => {
+    console.log("Setting path:", location.pathname);
+    setPath(location.pathname);
+  }, [location]);
+
+  return path;
+};
 
 function Navbar({ socialData }) {
   const { data, loading, error } = use('/navigation?populate=deep');
   const socials = socialData;
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
-  const [isSolid, setIsSolid] = useState(true);
+  const [isSolid, setIsSolid] = useState(false);
   const [scrollPos, setScrollPos] = useState(0);
   const [onHomePage, setOnHomePage] = useState(false);
-  const location = useLocation();
+  const path = usePath(); 
+  const isSolidRef = useRef(isSolid);
+
+  useEffect(() => {
+      isSolidRef.current = isSolid;
+  }, [isSolid]);
 
   const toggleOverlay = () => {
     setIsModalOpen(!isModalOpen);
@@ -311,41 +273,34 @@ function Navbar({ socialData }) {
   };
 
   useEffect(() => {
-    let prevScrollpos = window.pageYOffset;
-    const onScroll = () => {
-      const currentScrollPos = window.pageYOffset;
-      setScrollPos(prevScrollpos == 0 || prevScrollpos > currentScrollPos ? "up" : "down");
-      prevScrollpos = currentScrollPos;
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    if (location.pathname === "/") {
+    console.log('UE');
+    if(path === '/') {
       setOnHomePage(true);
-      setIsSolid(true);
+      setIsSolid(false);
     } else {
       setOnHomePage(false);
+      setIsSolid(true);
     }
-  }, [location]);
+  }, [onHomePage, path]);
 
-  useEffect(() => {
+  useEffect(() => {    
     let prevScrollpos = window.pageYOffset;
     const onScroll = () => {
       const currentScrollPos = window.pageYOffset;
-      setScrollPos(prevScrollpos == 0 || prevScrollpos > currentScrollPos ? "up" : "down");
-      if (onHomePage && currentScrollPos < window.innerHeight) {
-        setIsSolid(true);
-      } else {
-        setIsSolid(false);
-      }
+      setScrollPos(prevScrollpos === 0 || prevScrollpos > currentScrollPos ? "up" : "down");
       prevScrollpos = currentScrollPos;
+      // handle the path check within the scroll event listener
+      if(path === '/') {
+        setIsSolid(currentScrollPos >= window.innerHeight);
+      } else {
+        setIsSolid(true);
+      }
     };
+  
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, [onHomePage]);
-
+  }, [path]); // remove the other scroll event listeners
+  
   useEffect(() => {
     let originalScrollY = 0;
     if (isModalOpen) {
@@ -368,25 +323,51 @@ function Navbar({ socialData }) {
 
   return (
     <>
-      <NavBlend onHomePage={onHomePage} scrollPos={scrollPos} isSolid={isSolid} isMobile={isModalOpen}>
-        <NavbarComponents
-          data={data}
-          socials={socials}
-          isModalOpen={isModalOpen}
-          handleClick={handleClick}
-          toggleOverlay={toggleOverlay}
-          isSolid={isSolid}
-        />
-      </NavBlend>
-      <Nav onHomePage={onHomePage} scrollPos={scrollPos} isSolid={isSolid} isMobile={isModalOpen}>
-        <NavbarComponents
-          data={data}
-          socials={socials}
-          isModalOpen={isModalOpen}
-          handleClick={handleClick}
-          toggleOverlay={toggleOverlay}
-          isSolid={isSolid}
-        />
+      <Nav onHomePage={onHomePage} scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
+      <Left>
+        <LogoContainer to="/">
+          <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
+        </LogoContainer>
+      </Left>
+      <Center>
+        <HamburgerButton
+          onClick={toggleOverlay}
+          className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
+          isNavSolid={isSolid}
+          isMobile={isModalOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </HamburgerButton>
+        <Menu className="nav-menu">
+          {data?.attributes.links.map((link) => (
+            <NavLink key={link.id} to={link.url} isNavSolid={isSolid} onHome={onHomePage}>
+              {link.text}
+            </NavLink>
+          ))}
+        </Menu>
+      </Center>
+      <Right>
+        {socials?.attributes.links.map((link, index) => (
+          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} onHome={onHomePage} target="_blank">{Icons[link.icon]()}</SocialLink>          
+        ))}
+      </Right>
+      <Overlay isVisible={isModalOpen}>
+        <OverlayMenu>
+          {data?.attributes.links.map((link, index) => (
+            <OverlayLink
+              key={link.id}
+              onClick={handleClick}
+              to={link.url}
+              isVisible={isModalOpen}
+              index={index}
+            >
+              {link.text}
+            </OverlayLink>
+          ))}
+        </OverlayMenu>
+      </Overlay>
       </Nav>
     </>
   );

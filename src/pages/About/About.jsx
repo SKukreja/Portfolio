@@ -58,7 +58,7 @@ const Bio = styled.div`
 const ProfileImage = styled(motion.img)`
   width: 40vmin;
   height: 40vmin;
-  filter: drop-shadow(5px 5px 10px #080708);
+  filter: drop-shadow(5px 5px 10px var(--black));
   border-radius: 30px;
 `;
 
@@ -145,9 +145,9 @@ const CurrentIcon = styled.div`
 
 const Blurb = styled.div`
   font-family: 'Satoshi';
-  font-size: 2rem;
-  text-align: center;
-  width: 75vw;
+  font-size: var(--body-text);
+  text-align: left;
+  width: 50vw;
   margin-bottom: 5rem;
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -199,7 +199,7 @@ const Year = styled.div`
 `;
 
 const YearText = styled.h2`
-  font-family: 'Poppins';
+  font-family: 'Satoshi';
   color: var(--accent-colour);
   letter-spacing: 0.1rem;
   font-weight: 700;
@@ -229,7 +229,7 @@ const RightText = styled.p`
   padding: 1rem;
   width: calc(50% - 2rem);
   font-family: 'Satoshi';
-  font-size: 2rem;
+  font-size: var(--body-text);
   font-weight: 400;
 `;
 
@@ -249,7 +249,7 @@ const CenterText = styled.div`
   margin-bottom: 0;
   font-family: 'Satoshi';
   padding: 0;
-  font-size: 2rem;
+  font-size: var(--body-text);
   font-weight: 400;
   & svg {
     font-size: 4rem;
@@ -403,7 +403,7 @@ const About = () => {
             opacity: imageLoading ? 0 : 1
           }}
           transition={
-            ({ opacity: { delay: 0.5, duration: 0.4 } })
+            ({ opacity: { delay: 0, duration: 0.4 } })
           } 
           onLoad={imageLoaded} src={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.picture.data.attributes.url} />
           <Intro>Hello, my name is Sumit.</Intro>

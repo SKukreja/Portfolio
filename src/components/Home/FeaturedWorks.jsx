@@ -5,8 +5,6 @@ import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
-const desktopContainerWidth = '70vw';
-
 const Featured = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,7 +17,7 @@ const ProjectImageBorder = styled.div`
   z-index: 0;
   aspect-ratio: 16/9;
   width: 100%;
-  border: 5px solid var(--accent-colour);
+  
   @media (max-width: 1440px) {
     display: none;   
   }
@@ -29,14 +27,14 @@ const ProjectName = styled(Link)`
   text-transform: uppercase;
   font-family: 'Satoshi';
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 6vw;
   color: var(--accent-colour);
   text-shadow: 0 0 2px var(--accent-colour);
   text-decoration: none;
   letter-spacing: 1px;
   margin: 2rem 0;
   & > svg {
-    font-size: 3rem;
+    font-size: 3vw;
     margin-bottom: -0.75rem;
   }
   &:hover {
@@ -50,10 +48,10 @@ const ProjectName = styled(Link)`
     }
   }
   @media (max-width: 768px) {
-    font-size: 1.2rem;
+    font-size: 4vw;
     & > svg {
-      font-size: 1.8rem;
-      margin-bottom: -0.5rem;
+      font-size: 6vw;
+      margin-bottom: -1.5vw;
     }
   }
 `;
@@ -64,18 +62,12 @@ const ProjectContent = styled.div`
   width: 33%;
   flex-direction: column;
   z-index: 10;
-  margin: -0.3rem 4rem 0 4rem;
+  margin: -0.3rem var(--default-spacing) 0 var(--default-spacing);
   &.odd {
     text-align: right;
   }
   &.even {
     text-align: left;
-  }
-  &.odd .summary {
-    padding-left: 25%;
-  }
-  &.even .summary {
-    padding-right: 25%;
   }
   @media (max-width: 1920px) {
     width: 40%;
@@ -112,12 +104,11 @@ const ProjectContent = styled.div`
 
 const ProjectImage = styled.div`
   position: relative;
-  width: 75%;
+  width: 60%;
   overflow: hidden;
   margin-top: 0;
   margin-left: 0rem;
   margin-right: 0rem;
-  margin-bottom: 5rem;
   z-index: 1;
   display: flex;
   justify-content: center;
@@ -148,44 +139,36 @@ const Project = styled.div`
     transition: all 2s ease;
     position: relative;
     opacity: 1;
-    width: ${desktopContainerWidth};
-    margin-bottom: 2rem;
+    width: var(--desktop-container-width);
+    margin-bottom: calc(var(--default-spacing) * 2);
     &.active {
       filter: grayscale(0);
     }
     &.active.odd, &.active.even {
       opacity: 1;
     }
-    @media (max-width: 1920px) {
-      width: 90%;
-    }
-    @media (max-width: 1440px) {
-      width: 70%;
-    }
-    @media (max-width: 768px) {
-      width: 100%;
+    @media (max-width: 768px) {      
       height: 60vh;
+      height: 60svh;
       flex-direction: column;      
     }
     @media (max-width: 600px) {      
-      height: 75vh;  
+      height: 75vh;
+      height: 75svh;
     }
 `;
 
 const ProjectCover = styled.div`
+  border: 5px solid var(--accent-colour);
   position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 5px;
-  bottom: 5px;
   width: calc(100% - 10px);
   height: calc(100% - 10px);  
   background-position: bottom;
   background-size: 105%;
   background-repeat: no-repeat;
-
+  will-change: background-position;
   @media (max-width: 768px) {
-    background-size: cover;
+    background-size: 250%;
   }
 `;
 
@@ -195,21 +178,21 @@ const ProjectSummary = styled.div`
   margin-bottom: 1rem;
   letter-spacing: 1px;
   color: var(--offwhite);
-  font-size: 1rem;
+  font-size: var(--body-text);
   text-shadow: 0 0 1px var(--offwhite);
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
 `;
 
 const ProjectNumber = styled.h1`
   font-family: 'Satoshi';
-  font-size: 10rem;
+  font-size: 8rem;
   font-weight: 200;
   line-height: 0.8;
   text-shadow: 0 0 2px var(--offwhite);
   margin: 0;
   filter: drop-shadow(2px 2px 2px black);
+  @media (max-width: 1920px) {
+    font-size: 6rem;
+  }
   @media (max-width: 1600px) {
     font-size: 6rem;
   }
@@ -236,7 +219,7 @@ const ProjectLink = styled(Link)`
   overflow: hidden;
   text-decoration: none;
   &:hover {
-    color: #080708;
+    color: var(--black);
     background: var(--offwhite);
     text-decoration: none;
   }
@@ -297,7 +280,7 @@ const ProjectInfo = (props) => {
     <ProjectContent className={props.className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(props.number + 1, 2)}</ProjectNumber>
-        <ProjectName to={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}{Icons['Up Right']()}</ProjectName>
+        <ProjectName to={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}</ProjectName>
       </ProjectHeader>
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
@@ -318,7 +301,7 @@ const ProjectItem = ({ project, number }) => {
   const ref = useRef(null);
   const [windowHeight, setWindowHeight] = useState(0);
   const [elementTop, setElementTop] = useState(0);
-  const [bgY, setBgY] = useState(50);
+  const [bgY, setBgY] = useState(0);
 
   // Update window height on resize
   useEffect(() => {
@@ -339,7 +322,7 @@ const ProjectItem = ({ project, number }) => {
         const rect = ref.current.getBoundingClientRect();
         setElementTop(rect.top);
 
-        const newBgY = (rect.top / windowHeight) * 100;
+        const newBgY = (rect.top / windowHeight) * 150;
         setBgY(newBgY);
       }
     };

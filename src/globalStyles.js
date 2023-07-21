@@ -21,6 +21,30 @@ const GlobalStyle = createGlobalStyle`
     --offwhite: #FFFDF9;
     --accent-colour: #ec4359;
     --secondary-colour: #AD5893;
+    --black: #000006;
+    --body-text: 0.9vw;
+    --article-spacing: 4rem;
+    --desktop-container-width: 60vw;
+    --default-spacing: 2rem;
+    @media (max-width: 1920px) {      
+      --article-spacing: 4rem;
+      --desktop-container-width: 70vw;
+    }
+    @media (max-width: 1600px) {      
+      --article-spacing: 4rem;
+      --desktop-container-width: 80vw;
+    }
+    @media (max-width: 1440px) {      
+      --article-spacing: 4rem;
+      --desktop-container-width: 90vw;
+    }
+    @media (max-width: 1024px) {
+      --body-text: 3vw;
+      --desktop-container-width: 100vw;
+    }
+    @media (max-width: 768px) {
+      --body-text: 4vw;
+    }
   }
 
   @font-face {
@@ -91,7 +115,7 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
   body {
-    background: #000006;
+    background: var(--black);
     color: var(--offwhite);
     box-sizing: border-box;
     transition: background 0.5s ease;
@@ -109,13 +133,16 @@ const GlobalStyle = createGlobalStyle`
     background: var(--offwhite);
   }
   .inverted nav a {
-    color: #080708;
+    color: var(--black);
+  }
+  .inverted .topic-header {
+    opacity: 0;
   }
   .inverted nav .logo {
     filter: brightness(0) invert(0);    
   }
   .inverted .hamburger span{
-    background: #080708;
+    background: var(--black);
   }
   .no-scroll {
     overflow: hidden;

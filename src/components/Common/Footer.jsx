@@ -4,30 +4,7 @@ import { motion, useAnimate, stagger } from "framer-motion";
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 
-const desktopContainerWidth = '70vw';
-
-const hueRotate = keyframes`
-    0% {
-        filter: hue-rotate(10deg);
-    }
-    
-    50% {
-        filter: hue-rotate(-30deg);
-    }
-    
-    100% {
-        filter: hue-rotate(10deg);
-    }
-`;
-
-const growBorder = keyframes`
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-`;
+const desktopContainerWidth = 'var(--desktop-container-width)';
 
 const FooterContainer = styled.div`
   width: ${desktopContainerWidth};
@@ -71,13 +48,14 @@ const SocialLink = styled(motion.a)`
   margin: 0.5rem;
   justify-content: center;
   border-radius: 15px;
+  transition: all 0.5s ease;
   & svg {
     width: 3rem;
     height: 3rem;
   }
   &:hover {
     background: var(--offwhite);
-    color: #080708;    
+    color: var(--black);    
   }
   @media (max-width: 768px) {
     padding: 1.25rem;

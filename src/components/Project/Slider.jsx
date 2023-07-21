@@ -1,18 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const hueRotate = keyframes`
-  0% {
-      filter: hue-rotate(10deg);
-  }
-  50% {
-      filter: hue-rotate(-30deg);
-  }
-  100% {
-      filter: hue-rotate(10deg);
-  }
-`;
-
 const SliderWrapper = styled.div`
   position: relative;
   display: flex;
@@ -80,8 +68,7 @@ const Arrow = styled.svg`
     transition: all 0.5s ease;
     height: 1.5rem;
     width: 1.5rem;
-    fill: #080708;    
-    animation: ${hueRotate} 18s linear infinite;
+    fill: var(--black);    
     cursor: pointer;
     user-select: none;
     z-index: 2;

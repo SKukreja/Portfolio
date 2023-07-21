@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react'
 import { Canvas, extend, useThree, useLoader, useFrame } from '@react-three/fiber'
-import { Image } from '@react-three/drei'
+import { Effects, Image } from '@react-three/drei'
 import { Bloom, EffectComposer, Noise } from '@react-three/postprocessing'
-import { Water } from 'three-stdlib'
+import { Water } from 'three-stdlib';
+import { useInView } from 'react-intersection-observer'
 import { BlendFunction, KernelSize } from 'postprocessing'
 import styled, { keyframes, css } from 'styled-components';
 
@@ -18,7 +19,7 @@ const bounce = keyframes`
 `;
 
 const Scene = styled.div`
-  background: #080708;
+  background: var(--black);
   width: 100%;
   height: 100vh;
   height: 100svh;
@@ -49,17 +50,18 @@ const Name = styled.h1`
     position: absolute;
     left: 0;
     right: 0;
-    width: 70vw;
+    width: var(--desktop-container-width);
     margin-left: auto;
     margin-right: auto;
-    top: 16%;
+    top: 16vh;
+    top: 16svh;
     mix-blend-mode: difference;    
     @media (max-width: 768px) {
       display: block;
-      font-size: 10vw;
-      top: 20%;
+      font-weight: 700;
+      font-size: 9vw;
       text-align: center;
-      color: #000006;
+      color: var(--black);
       mix-blend-mode: normal;
     }
 `;
@@ -76,17 +78,20 @@ const Caption = styled.h2`
   position: absolute;
   left: 0;
   right: 0;
-  width: 70vw;
+  width: var(--desktop-container-width);
   margin-left: auto;
   margin-right: auto;
-  top: 40%;
+  top: 40vh;
+  top: 40svh;
   mix-blend-mode: difference;
   @media (max-width: 768px) {
     display: block;
     font-size: 5vw;
-    top: 30%;
+    font-weight: 400;
+    top 25vh;
+    top: 25svh;
     text-align: center;
-    color: #000006;
+    color: var(--black);
     mix-blend-mode: normal;
   }
 `;
@@ -141,9 +146,6 @@ function Layer({ url, z, scaleFactor, mobileScaling, offsetX, offsetY, posY }) {
   const { width: w, height: h } = viewport
   const ref = useRef()
   const [deviceOrientation, setDeviceOrientation] = useState({ alpha: 0, beta: 0, gamma: 0 });
-  const [mobileOffsetX, setMobileOffsetX] = useState(offsetX);
-  const [mobileOffsetY, setMobileOffsetY] = useState(offsetY);
-  const [mobileScalingFactor, setMobileScalingFactor] = useState(mobileScaling);
 
   useEffect(() => {
     function handleOrientation(event) {
@@ -155,50 +157,48 @@ function Layer({ url, z, scaleFactor, mobileScaling, offsetX, offsetY, posY }) {
   }, []);
 
   useFrame(() => {    
+    let mobileOffsetX, mobileOffsetY, mobileScalingFactor;
     if (w > 5) {
-      setMobileOffsetX(0);
-      setMobileOffsetY(0 + posY);
-      setMobileScalingFactor(1);
+      mobileOffsetX = 0;
+      mobileOffsetY = 0 + posY;
+      mobileScalingFactor = 1;
     }
     else {
-      setMobileOffsetX(offsetX);
-      setMobileOffsetY(posY);
-      setMobileScalingFactor(mobileScaling);
+      mobileOffsetX = offsetX;
+      mobileOffsetY = posY;
+      mobileScalingFactor = mobileScaling;
     }
     if (typeof window.orientation !== "undefined") {
-        // Modify sensitivity here by changing the multiplication factor
         ref.current.position.x = deviceOrientation.gamma * (0.000015 / (1.01 - z)) + mobileOffsetX
     } else {
         ref.current.position.x = pointer.x * (0.001 / (1.01 - z)) + mobileOffsetX
     }
   })
 
-  return <Image ref={ref} url={url} transparent scale={[w * scaleFactor * mobileScalingFactor, (w * scaleFactor * mobileScalingFactor * 816/1456), 1]} position={[0 + mobileOffsetX, 0 + mobileOffsetY, z]} />
+  return <Image ref={ref} url={url} transparent scale={[w * scaleFactor * mobileScaling, (w * scaleFactor * mobileScaling * 816/1456), 1]} position={[0 + offsetX, 0 + offsetY, z]} />
 }
 
 
-function Ocean() {
+
+function Ocean({waterPos}) {
   const ref = useRef()
   const gl = useThree((state) => state.gl)
   const waterNormals = useLoader(THREE.TextureLoader, '/waternormals.jpeg')
   waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping
-  const geom = useMemo(() => new THREE.PlaneGeometry(1000, 1000), [])
-  const config = useMemo(
-    () => ({
-      textureWidth: 512,
-      textureHeight: 512,
-      waterNormals,
-      sunDirection: new THREE.Vector3(1,1,0),
-      sunColor: 0x47234d,
-      waterColor: 0xec4359,
-      distortionScale: 0.3,
-      fog: true,
-      format: gl.encoding
-    }),
-    [waterNormals]
-  )
+  const geom = new THREE.PlaneGeometry(100, 100); // Moved outside of useMemo
+  const config = {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals,
+    sunDirection: new THREE.Vector3(0,0,0),
+    sunColor: 0x47234d,
+    waterColor: 0xec4359,
+    distortionScale: 0.3,
+    fog: true,
+  }; // Moved outside of useMemo
+
   useFrame((state, delta) => (ref.current.material.uniforms.time.value += delta / 20))
-  return <water ref={ref} args={[geom, config]} rotation-x={-Math.PI / 2} position={[0, -2, 0]} />
+  return <water ref={ref} args={[geom, config]} rotation-x={-Math.PI / 2} position={waterPos} />
 }
 
 function Layers() {
@@ -213,36 +213,38 @@ function Layers() {
   const imageAspect = 816/1456; // replace with the actual aspect ratio of the image
   useEffect(() => {
     setDifference(-(816 - pixelWidth * 1456/816) / 1000);
-    console.log(pixelWidth, pixelHeight, difference);
   }, [size.width, size.height]);
   return (
     <>
-    <Layer url="/assets/FG1.png" z={1} scaleFactor={1.1} mobileScaling={1} offsetX={0} posY={bottom + (w * 1.1 * imageAspect) / 2} offsetY={bottom + (w * 1.3 * imageAspect)/2} />
+    <Layer url="/assets/FG1.png" z={1} scaleFactor={1.1} mobileScaling={1} offsetX={0} posY={bottom + (w * 1.1 * imageAspect) / 2} offsetY={bottom + (w * 1.1 * imageAspect)/2 + 0.15} />
     <Layer url="/assets/FG2.png" z={0.95} scaleFactor={1.05} mobileScaling={1} offsetX={0} posY={0} offsetY={-0.2} />
     <Layer url="/assets/MG1.png" z={0.9} scaleFactor={1.05} mobileScaling={1} offsetX={0} posY={0} offsetY={0} />
-    <Layer url="/assets/MG2.png" z={0.85} scaleFactor={1.05} mobileScaling={1} offsetX={0} posY={0} offsetY={0} />
+    <Layer url="/assets/MG2.png" z={0.85} scaleFactor={1.05} mobileScaling={1} offsetX={0} posY={0} offsetY={-0.05} />
     <Layer url="/assets/Fog.png" z={0.825} scaleFactor={1.05} mobileScaling={3} offsetX={0} posY={0} offsetY={0.5} />
     <Layer url="/assets/MG3.png" z={0.8} scaleFactor={1.05} mobileScaling={1}  offsetX={0} posY={0} offsetY={0} />
     <Layer url="/assets/Moon.png" z={0} scaleFactor={1.1} mobileScaling={1} offsetX={0} posY={0} offsetY={0} />
+    <Ocean waterPos={[0, bottom, -30]} />
     </>
   )
 }
 
+const DisableRender = () => useFrame(() => null, 1000)
+
 function Landing() {
+  const { ref, inView } = useInView()
+  const isLowEndDevice = /iPad|iPhone|iPod|android/i.test(navigator.userAgent); // Add a check for low-end devices
+
   return (
-    <Scene>
+    <Scene ref={ref}>
       <SceneCanvas dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 25, near: 0.01, far: 100 }}>
+        {!inView && <DisableRender />}
         <color attach="background" args={['#EC4359']} />
-        <fog attach="fog" args={['#EC4359', 1, 100]} />
-        <pointLight position={[100, 100, 100]} />
-        <pointLight position={[-100, -100, -100]} />
         <Suspense fallback={null}>
-          <Ocean />
           <Layers />
         </Suspense>
         <EffectComposer>
           <Noise opacity={0.5} blendFunction={BlendFunction.OVERLAY} />
-          <Bloom kernelSize={KernelSize.SMALL} luminanceThreshold={0} luminanceSmoothing={0.1} height={300} />
+          <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
         </EffectComposer>
       </SceneCanvas>
       <Name>SUMIT KUKREJA</Name>
