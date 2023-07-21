@@ -1,5 +1,6 @@
+import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, MotionConfig } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
 import Footer from './components/Common/Footer';
@@ -8,9 +9,9 @@ import Work from './pages/Work/Work';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Project from './pages/Project/Project';
+import ReactGA from 'react-ga';
 import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
-import { useContext, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import use from './hooks/use';
 import ModalContext from './components/Common/ModalContext.jsx';
@@ -25,10 +26,31 @@ const Blur = styled.div`
       : ''};
 `;
 
+function initializeAnalytics() {
+  ReactGA.initialize(import.meta.env.GTAG_ID);
+  ReactGA.pageview(window.location.pathname + window.location.search);
+}
+
 const Layout = ({ children }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation(); 
+
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
+
+  useEffect(() => {
+    ReactGA.initialize(import.meta.env.GTAG_ID);
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
+
+  useEffect(() => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';      
+    }
+  }, []);
 
   return (
     <div className="app">

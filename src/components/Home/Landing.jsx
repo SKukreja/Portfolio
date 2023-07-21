@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react'
 import { Canvas, extend, useThree, useLoader, useFrame } from '@react-three/fiber'
 import { Effects, Image } from '@react-three/drei'
+import { motion } from 'framer-motion'
 import { Bloom, EffectComposer, Noise } from '@react-three/postprocessing'
 import { Water } from 'three-stdlib';
 import { useInView } from 'react-intersection-observer'
@@ -18,7 +19,7 @@ const bounce = keyframes`
   }
 `;
 
-const Scene = styled.div`
+const Scene = styled(motion.div)`
   background: var(--black);
   width: 100%;
   height: 100vh;
@@ -232,11 +233,16 @@ const DisableRender = () => useFrame(() => null, 1000)
 
 function Landing() {
   const { ref, inView } = useInView()
-  const isLowEndDevice = /iPad|iPhone|iPod|android/i.test(navigator.userAgent); // Add a check for low-end devices
 
   return (
-    <Scene ref={ref}>
-      <SceneCanvas dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 25, near: 0.01, far: 100 }}>
+    <Scene ref={ref} 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 1, duration: 2 }}
+    >
+      <SceneCanvas dpr={[1, 2]}
+        camera={{ position: [0, 0, 10], fov: 25, near: 0.01, far: 100 }}
+      >
         {!inView && <DisableRender />}
         <color attach="background" args={['#EC4359']} />
         <Suspense fallback={null}>

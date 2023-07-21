@@ -30,7 +30,7 @@ const Nav = styled.nav`
   padding-bottom: 1rem;
   transform: ${({ scrollPos }) =>
     scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
-  transition: all 0.5s ease;
+  transition: transform 0.5s ease, background 0.3s linear 1s;
   background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
   display: flex;
   z-index: 20;
@@ -44,7 +44,7 @@ const Nav = styled.nav`
   opacity: 1;
   & .logo {
     filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : 'brightness(0) invert(1)'};
-    transition: transform 0.5s ease;
+    transition: transform 0.5s ease, filter 2s ease;
   }
   & .logo:hover {
     transform: scale(1.1);
@@ -76,6 +76,7 @@ const SocialLink = styled.a`
   font-size: 1.5rem;
   margin-left: 1rem;
   color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};
+  transition: color 2s ease;
   &:hover {
     color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};
   }
@@ -119,6 +120,7 @@ const NavLink = styled(Link)`
   font-size: 1.25rem;
   font-family: 'Hind';
   user-select: none;
+  transition: color 2s ease;
   pointer-events: auto;
   padding: 1rem;
   &:hover {
@@ -130,6 +132,7 @@ const LogoContainer = styled(Link)`
   position: relative;
   display: flex;
   height: 80px;
+  width: fit-content;
   align-items: center;
 `;
 
@@ -216,7 +219,7 @@ const HamburgerButton = styled.button`
     height: 2px;    
     background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};  
     margin: 7px 0;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, background 2s ease;
   }
 
   @media (max-width: 768px) {

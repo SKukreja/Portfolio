@@ -35,7 +35,8 @@ const blink = keyframes`
 
 const Container = styled.div`
   display: flex;
-  padding-top: 200px;
+  padding-top: 25vh;
+  padding-top: 25svh;
   flex-direction: column;
   align-items: center;
 `;

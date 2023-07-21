@@ -18,7 +18,8 @@ const ProjectContainer = styled.div`
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 10rem;
+  padding-top: 25vh;
+  padding-top: 25svg;
 `;
 
 const Browser = styled.div`
@@ -423,7 +424,18 @@ const Project = () => {
      }} 
     transition={{ duration: 1 }}
     >
-    <ProjectContainer>
+    <ProjectContainer as={motion.div} 
+    initial={{ 
+      opacity: 0,      
+     }} 
+    animate={{ 
+      opacity: 1,      
+    }} 
+    exit={{ 
+      opacity: 0,
+     }} 
+    transition={{ duration: 1 }}
+    >
       <Helmet>      
         <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        
         <link rel="icon" type="image/png" href="/favicon.ico" />

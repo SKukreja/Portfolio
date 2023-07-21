@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 const Container = styled.div`
   width: var(--desktop-container-width);
   margin-left: auto;
   margin-right: auto;
-  margin-top: 15vh;
-  margin-top: 15svh;
-  margin-bottom: var(--default-spacing);
+  margin-top: 25vh;
+  margin-top: 25svh;
+  margin-bottom: calc(var(--default-spacing) * 2);
   display: flex;
   flex-direction: row-reverse;
   @media (max-width: 768px) {
@@ -85,6 +86,7 @@ const ContactFormBody = styled.form`
     width: calc(100% - -var(--default-spacing) - 10px);
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: var(--default-spacing);
   }
 `;
 
@@ -94,7 +96,17 @@ const Contact = () => {
       videoRef.current.play();
   }, []);
   return (
-    <Container>
+    <Container as={motion.div} 
+    initial={{ 
+      opacity: 0,      
+     }} 
+    animate={{ 
+      opacity: 1,      
+    }} 
+    exit={{ 
+      opacity: 0,
+     }} 
+    transition={{ duration: 1 }}>
       <ContactVideo ref={videoRef} src={'/assets/contact.mp4'} autoplay muted playsinline loop />
       <ContactForm>
         <ContactFormHeader>Say Hello!</ContactFormHeader>
