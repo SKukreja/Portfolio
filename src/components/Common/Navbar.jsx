@@ -1,7 +1,9 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import styled, { keyframes, css } from 'styled-components';
+import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import use from '../../hooks/use';
+import { Icons } from './Icons';
 import { ModalContext } from './ModalContext.jsx';
 
 const slideInFromRight = keyframes`
@@ -18,43 +20,81 @@ const slideInFromRight = keyframes`
 `;
 
 const Nav = styled.nav`
-  width: 100%;
-  height: auto;
+  width: 100vw;
+  padding-left: 15vw;
+  padding-right: 15vw;
   position: fixed;
   box-sizing: border-box;
-  top: 0;
+  top: 0rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  transform: ${({ scrollPos }) =>
+    scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
   transition: all 0.5s ease;
-  background: ${({ isDark }) => (isDark ? 
-    'linear-gradient(to bottom, #f1e3f3 33%, rgba(241, 227, 243, 0.25) 75%, transparent)' : 
-    'linear-gradient(to bottom, #080708 33%, rgba(8, 7, 8, 0.25) 75%, transparent)')};
+  background: ${({ isSolid }) => isSolid ? 'transparent' : '#000006'};
   display: flex;
   z-index: 20;
-  padding: 2rem;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;  
+  right: 0;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;  
+  opacity: ${({ isSolid, isModalOpen }) => isSolid && !isModalOpen ? 0 : 1};
+  & .logo {
+    filter: ${({ isModalOpen }) => !isModalOpen ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+  }
   @media (max-width: 768px) {
-    padding: 1.5rem 5vw;
-  }  
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;    
+  }
+
 `
 
-const Left = styled.div`
+const NavBlend = styled(Nav)`
+  mix-blend-mode: normal;
+  transition: all 0.5s ease;
+  opacity: ${({ isNavSolid, isModalOpen }) => !isNavSolid && !isModalOpen ? 1 : 0};
+  & .logo {
+    filter: ${({ isNavSolid, isMobile }) => isNavSolid ? isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)' : 'brightness(0) invert(0)'};
+  }
+`;
 
+const Left = styled.div`
+  width: 200px;
+`;
+
+const Center = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+`;
+
+const SocialLink = styled.a`
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'white') : 'white'};
+  &:hover {
+    color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'white' : 'black') : 'black'};
+  }
 `;
 
 const Branding = styled.img`
   width: 80px;
-  pointer-events: auto;
-  z-index: ${({ isDark }) => (isDark ? 1 : 50)};
-  position: relative;
+  pointer-events: auto;  
   cursor: pointer;
   user-select: none;
   transition: opacity 0.5s ease;
-  opacity: ${({ isDark }) => (isDark ? 0 : 1)};
-  &.logo-dark {
-    z-index: 50;
-    position: absolute;
-  }
+  opacity: 1;
+  z-index: 50;
+  position: absolute;
   @media (max-width: 768px) {
     width: 60px;
   }
@@ -62,37 +102,40 @@ const Branding = styled.img`
 
 const Right = styled.div`
   text-align: right;
+  width: 200px;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Menu = styled.nav`
   font-family: 'Satoshi';
   font-weight: 600;
   text-transform: uppercase;
-  margin-right: -1rem;
-
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
 const NavLink = styled(Link)`
-  color: #F1E3F3;
+  color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'white') : 'white'};
   text-decoration: none;
   letter-spacing: 1px;
-  font-size: 1rem;
-  background: transparent;
+  font-size: 1.25rem;
+  font-family: 'Hind';
   user-select: none;
-  text-shadow: 0 0 2px #f1e3f3;
   pointer-events: auto;
   padding: 1rem;
   &:hover {
-    color: #504CCF;
-    text-shadow: 0 0 2px #504CCF;
+    color: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'white' : 'black') : 'black'};  
   }
 `;
 
 const LogoContainer = styled(Link)`
   position: relative;
+  display: flex;
+  height: 80px;
+  align-items: center;
 `;
 
 const Overlay = styled.div`
@@ -107,7 +150,7 @@ const Overlay = styled.div`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: visibility 0s ${({ isVisible }) => (isVisible ? '0s' : '0.3s')}, opacity 0.3s ease-out;
   flex-direction: column;
-  background: linear-gradient(to bottom right, rgba(241, 227, 243, 0.6), rgba(80, 76, 207, 0.6));
+  background: linear-gradient(to bottom right, rgba(255, 255, 243, 0.6), rgba(255, 155, 168, 0.6));
   z-index: 10;
 
   &::before {
@@ -136,8 +179,8 @@ const OverlayLink = styled(Link)`
   user-select: none;
   opacity: 0;
   &:hover {
-    color: #504CCF;
-    text-shadow: 0 0 2px #504CCF;
+    color: #FF6281;
+    text-shadow: 0 0 2px #FF6281;
   }
   animation: ${({ isVisible, index }) =>
     isVisible
@@ -175,8 +218,8 @@ const HamburgerButton = styled.button`
   span {
     display: block;
     width: 27px;
-    height: 2px;
-    background: ${({ isDark }) => (isDark ? '#080708' : '#f1e3f3')};
+    height: 2px;    
+    background: ${({ isNavSolid, isMobile }) => isNavSolid ? (!isMobile ? 'black' : 'var(--offwhite)') : 'var(--offwhite)'};
     margin: 7px 0;
     transition: all 0.3s ease;
   }
@@ -200,51 +243,19 @@ const HamburgerButton = styled.button`
   }
 `;
 
-const Navbar = () => {
-  const { data, loading, error } = use('/navigation?populate=deep');
-  const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
-
-  const toggleOverlay = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handleClick = () => {
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    let originalScrollY = 0;
-    if (isModalOpen) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      originalScrollY = window.scrollY;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.top = `-${originalScrollY}px`;
-  
-      return () => {
-        document.body.style.overflow = originalStyle;
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        window.scrollTo(0, originalScrollY);
-      };
-    }
-  }, [isModalOpen]);
-
+const NavbarComponents = ({ data, socials, isModalOpen, handleClick, toggleOverlay, isSolid }) => {
   return (
-    <Nav>
+    <>
       <Left>
         <LogoContainer to="/">
-          <Branding className="logo-dark" src="/logo-dark.png" isDark={!isModalOpen} />
-          <Branding className="logo-light" src="/logo.png" isDark={isModalOpen} />
+          <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
         </LogoContainer>
       </Left>
-      <Right>
+      <Center>
         <HamburgerButton
           onClick={toggleOverlay}
           className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
-          isDark={isModalOpen}
+          isNavSolid={isSolid}
         >
           <span></span>
           <span></span>
@@ -252,11 +263,16 @@ const Navbar = () => {
         </HamburgerButton>
         <Menu className="nav-menu">
           {data?.attributes.links.map((link) => (
-            <NavLink key={link.id} to={link.url}>
+            <NavLink key={link.id} to={link.url} isNavSolid={isSolid}>
               {link.text}
             </NavLink>
           ))}
         </Menu>
+      </Center>
+      <Right>
+        {socials?.attributes.links.map((link, index) => (
+          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} target="_blank">{Icons[link.icon]()}</SocialLink>          
+        ))}
       </Right>
       <Overlay isVisible={isModalOpen}>
         <OverlayMenu>
@@ -273,7 +289,106 @@ const Navbar = () => {
           ))}
         </OverlayMenu>
       </Overlay>
-    </Nav>
+    </>
+  );
+}
+
+function Navbar({ socialData }) {
+  const { data, loading, error } = use('/navigation?populate=deep');
+  const socials = socialData;
+  const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
+  const [isSolid, setIsSolid] = useState(true);
+  const [scrollPos, setScrollPos] = useState(0);
+  const [onHomePage, setOnHomePage] = useState(false);
+  const location = useLocation();
+
+  const toggleOverlay = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleClick = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    let prevScrollpos = window.pageYOffset;
+    const onScroll = () => {
+      const currentScrollPos = window.pageYOffset;
+      setScrollPos(prevScrollpos == 0 || prevScrollpos > currentScrollPos ? "up" : "down");
+      prevScrollpos = currentScrollPos;
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setOnHomePage(true);
+      setIsSolid(true);
+    } else {
+      setOnHomePage(false);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    let prevScrollpos = window.pageYOffset;
+    const onScroll = () => {
+      const currentScrollPos = window.pageYOffset;
+      setScrollPos(prevScrollpos == 0 || prevScrollpos > currentScrollPos ? "up" : "down");
+      if (onHomePage && currentScrollPos < window.innerHeight) {
+        setIsSolid(true);
+      } else {
+        setIsSolid(false);
+      }
+      prevScrollpos = currentScrollPos;
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [onHomePage]);
+
+  useEffect(() => {
+    let originalScrollY = 0;
+    if (isModalOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      originalScrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${originalScrollY}px`;
+  
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        window.scrollTo(0, originalScrollY);        
+      };
+    } 
+  }, [isModalOpen]);
+
+  return (
+    <>
+      <NavBlend onHomePage={onHomePage} scrollPos={scrollPos} isSolid={isSolid} isMobile={isModalOpen}>
+        <NavbarComponents
+          data={data}
+          socials={socials}
+          isModalOpen={isModalOpen}
+          handleClick={handleClick}
+          toggleOverlay={toggleOverlay}
+          isSolid={isSolid}
+        />
+      </NavBlend>
+      <Nav onHomePage={onHomePage} scrollPos={scrollPos} isSolid={isSolid} isMobile={isModalOpen}>
+        <NavbarComponents
+          data={data}
+          socials={socials}
+          isModalOpen={isModalOpen}
+          handleClick={handleClick}
+          toggleOverlay={toggleOverlay}
+          isSolid={isSolid}
+        />
+      </Nav>
+    </>
   );
 };
 

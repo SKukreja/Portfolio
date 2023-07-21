@@ -1,10 +1,10 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { motion, useAnimate, stagger } from "framer-motion"
+import { motion, useAnimate, stagger } from "framer-motion";
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 
-const desktopContainerWidth = '75vw';
+const desktopContainerWidth = '70vw';
 
 const hueRotate = keyframes`
     0% {
@@ -34,8 +34,7 @@ const FooterContainer = styled.div`
   height: calc(50vh - 8rem);
   margin-left: auto;
   margin-right: auto;
-  border-top: 5px solid #504CCF;
-  animation: ${hueRotate} 18s linear infinite;
+  border-top: 5px solid var(--accent-colour);
   overflow: visible;
   position: relative;
   padding: 4rem 0;
@@ -44,7 +43,7 @@ const FooterContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   @media (max-width: 768px) {
-    border-top: 3px solid #504CCF;
+    border-top: 3px solid var(--accent-colour);
     padding: 2rem 0;
     width: 90%;
   }
@@ -65,8 +64,7 @@ const Socials = styled(motion.div)`
 const SocialLink = styled(motion.a)`
   color: white;  
   font-size: 1.5rem;
-  background: #504CCF;
-  animation: ${hueRotate} 18s linear infinite ${({ delay }) => delay || 0}s;
+  background: var(--accent-colour);
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -78,7 +76,7 @@ const SocialLink = styled(motion.a)`
     height: 3rem;
   }
   &:hover {
-    background: #C2BBF0;
+    background: var(--offwhite);
     color: #080708;    
   }
   @media (max-width: 768px) {
@@ -110,8 +108,8 @@ const TopSection = styled.div`
   }
 `;
 
-const Footer = () => {
-  const { data, loading, error } = use('/social?populate=deep');
+const Footer = ({socialData}) => {
+  const data = socialData;
   const currentYear = new Date().getFullYear();
   const variants = {
     initial: { x: "-10rem" },
@@ -128,6 +126,7 @@ const Footer = () => {
         <Socials>
         {data?.attributes.links.map((link, index) => (
           <SocialLink 
+          key={link.id}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }} 

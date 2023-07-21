@@ -9,20 +9,7 @@ import Slider from '../../components/Project/Slider';
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
 
-const desktopContainerWidth = '75vw';
-
-const hueRotate = keyframes`
-  0% {
-      filter: hue-rotate(10deg);
-  }
-  50% {
-      filter: hue-rotate(-30deg);
-  }
-  100% {
-      filter: hue-rotate(10deg);
-  }
-`;
-
+const desktopContainerWidth = '70vw';
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -45,14 +32,13 @@ const Browser = styled.div`
 `;
 
 const Window = styled.div`
-  border: 5px solid #504CCF;
-  border-top: 50px solid #504CCF;
+  border: 5px solid #FF6281;
+  border-top: 50px solid #FF6281;
   box-shadow: 0px 0px 15px 3px #050829;
   aspect-ratio: 16/9;
-  animation: ${hueRotate} 18s linear infinite;
   @media (max-width: 768px) {
-    border: 3px solid #504CCF;
-    border-top: 25px solid #504CCF;
+    border: 3px solid #FF6281;
+    border-top: 25px solid #FF6281;
   }
 `;
 
@@ -72,13 +58,12 @@ const ProjectTitle = styled.h1`
   font-family: 'Satoshi';
   font-weight: 600;
   font-size: 6rem;
-  color: #504CCF;
-  text-shadow: 0 0 5px #504CCF;
+  color: #FF6281;
+  text-shadow: 0 0 5px #FF6281;
   text-decoration: none;
   letter-spacing: 1px;
   line-height: 1;
   margin-bottom: 2rem;
-  animation: ${hueRotate} 18s linear infinite;
   @media (max-width: 1440px) {
     font-size: 4rem;
   }
@@ -98,11 +83,11 @@ const Buttons = styled.div`
   justify-content: center;
   align-items: right;
   position: absolute;
-  top: -45px;
+  top: 5px;
   right: 0;
   height: 40px;
   @media (max-width: 768px) {
-    top: -23px;
+    top: 3px;
     height: 20px;
   }
 `;
@@ -232,8 +217,7 @@ const Headers = styled.div`
   font-family: 'Satoshi';
   font-size: 1.5rem;
   font-weight: 600;
-  color: #504CCF;
-  animation: ${hueRotate} 18s linear infinite;
+  color: #FF6281;
   @media (max-width: 768px) {
     width: 100%;
     font-size: 1.2rem;
@@ -294,18 +278,17 @@ const ProjectLinks = styled.div`
 
 const Action = styled.a`
   margin: 2rem;
-  background: #504CCF;
+  background: #FF6281;
   width: 25%;
   text-align: center;
   font-size: 2rem;
-  color: #F1E3F3;
+  color: var(--offwhite);
   font-family: 'Satoshi';
   font-weight: 500;
   letter-spacing: 2px;
   text-decoration: none;
   padding: 3rem;
   border-radius: 15px;
-  animation: ${hueRotate} 18s linear infinite;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,13 +297,13 @@ const Action = styled.a`
     margin-right: 1rem;
   }
   &:hover {
-    background: #F1E3F3;
+    background: var(--offwhite);
     color: #080708;
   }
   @media (max-width: 768px) {
     width: 100%;
-    font-size: 1rem;
-    margin: 1rem;
+    font-size: 2rem;
+    margin: 1rem 5%;
   }
 `;
 

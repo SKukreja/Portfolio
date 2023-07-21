@@ -86,7 +86,7 @@ const Arrow = styled.svg`
     user-select: none;
     z-index: 2;
     &:hover {
-        fill: #504CCF;
+        fill: var(--accent-colour);
     }
     &.left {
         left: 10px;

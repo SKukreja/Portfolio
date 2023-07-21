@@ -9,7 +9,7 @@ import { MdWork } from 'react-icons/md'
 import { BiCoffee, BiEnvelope } from 'react-icons/bi'
 import { AiFillHeart, AiOutlinePlus } from 'react-icons/ai'
 
-export const Icons = {
+export const Icons = {    
     "Github" : FiGithub,
     "Open in New" : FiLink,
     "Info" : BsInfo,

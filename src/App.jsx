@@ -12,6 +12,7 @@ import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
 import { useContext, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import use from './hooks/use';
 import ModalContext from './components/Common/ModalContext.jsx';
 
 const Blur = styled.div`
@@ -25,23 +26,24 @@ const Blur = styled.div`
 `;
 
 const Layout = ({ children }) => {
+  const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation(); 
 
   return (
     <div className="app">
       <GlobalStyle />
-      <Navbar />
+      <Navbar socialData={data} />
       <Helmet>      
         <title>Sumit Kukreja</title>                
         <link rel="icon" type="image/png" href="/favicon.ico" />         
       </Helmet>
       <Blur isModalOpen={isModalOpen}>
-        <AnimatePresence mode='wait' onExitComplete={() => {
-            if (typeof window !== "undefined") {
-                window.scrollTo({ top: 0, behavior: "instant" });
-            }
-        }}>
+          <AnimatePresence mode='wait' onExitComplete={() => {
+              if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "instant" });
+              }
+          }}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="/project/:id" element={<Project />} />
@@ -50,7 +52,7 @@ const Layout = ({ children }) => {
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </AnimatePresence>
-        <Footer />
+        <Footer socialData={data} />
       </Blur>
     </div>
   );

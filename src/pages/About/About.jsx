@@ -79,7 +79,7 @@ const Intro = styled.h1`
 `;
 
 const SkillsContainer = styled.div`
-  width: 100%;
+  width: 50%;
   height: 100vh;
   transition: filter 2s ease-in-out;
   filter: grayscale(1);
@@ -87,11 +87,9 @@ const SkillsContainer = styled.div`
   &.active {
     filter: grayscale(0);
   }
-  & > .words svg text:first-child {
-    animation: ${hueRotate} 18s linear infinite;
-  }
   @media (max-width: 768px) {
     margin-bottom: 4rem;
+    width: 100%;
   }
 `;
 
@@ -103,14 +101,14 @@ const AboutContainer = styled.div`
 `;
 
 const CurrentHeader = styled.h2`
-  font-family: 'Satoshi';
-  font-size: 1.5rem;
+font-family: 'Hind';
+  font-size: 6rem;
   text-transform: uppercase;
-  color: #504CCF;
+  color: var(--accent-colour);
   letter-spacing: 0.1rem;
   width: 100%;
   text-align: center;
-  animation: ${hueRotate} 18s linear infinite;
+  margin-bottom: 4rem;
   @media (max-width: 768px) {
     font-size: 1rem;
     letter-spacing: 0.03rem;
@@ -142,14 +140,14 @@ const CurrentSection = styled.div`
 const CurrentIcon = styled.div`
   font-size: 2.5rem;
   line-height: 1;
-  color: #C2BBF0;
+  color: var(--offwhite);
 `;
 
 const Blurb = styled.div`
   font-family: 'Satoshi';
-  font-size: 1.5rem;
+  font-size: 2rem;
   text-align: center;
-  width: 75vmin;
+  width: 75vw;
   margin-bottom: 5rem;
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -160,7 +158,7 @@ const Blurb = styled.div`
 const Description = styled.p`
   font-family: 'Satoshi';
   font-weight: 600;
-  color: #C2BBF0;
+  color: var(--offwhite);
 `;
 
 const LogoLink = styled.a`
@@ -202,11 +200,10 @@ const Year = styled.div`
 
 const YearText = styled.h2`
   font-family: 'Poppins';
-  color: #504CCF;
+  color: var(--accent-colour);
   letter-spacing: 0.1rem;
   font-weight: 700;
   font-size: 3rem;
-  animation: ${hueRotate} 18s linear infinite;
   margin-top: 2rem;
   margin-bottom: 2rem;
   @media (max-width: 768px) {
@@ -261,8 +258,7 @@ const CenterText = styled.div`
     margin-top: -1rem;
   }
   & a, & a:visited {
-    color: #504CCF;
-    animation: ${hueRotate} 18s linear infinite;
+    color: var(--accent-colour);
     text-decoration: none;
     font-weight: 600;
   }
@@ -345,10 +341,10 @@ const FiveImage = styled.img`
   }
 `
 
-const colors = ["#FFFFFF", "#F1E3F3", "#C2BBF0"];
+const colors = ["#FFFFFF", "var(--offwhite)", "#AD5893"];
 
 const options = {
-  colors: ["#FFFFFF", "#F1E3F3", "#C2BBF0"],
+  colors: ["#FFFFFF", "var(--offwhite)", "#AD5893"],
   fontFamily: "Satoshi",
   deterministic: true,
   randomSeed: "167", // 24, 46, 50
@@ -363,7 +359,7 @@ const options = {
 };
 
 const callbacks = {
-  getWordColor: (word) => (word.value > 150 ? "#504CCF" : colors[Math.floor(Math.random() * colors.length)]),
+  getWordColor: (word) => (word.value > 150 ? "var(--accent-colour)" : colors[Math.floor(Math.random() * colors.length)]),
 };
 
 const About = () => {
@@ -417,7 +413,6 @@ const About = () => {
       <InView>
       {({ inView, ref, entry }) => (
         <AboutContainer ref={ref} className={`${inView ? 'active' : ''}`}>
-          <CurrentHeader>A Little About Me</CurrentHeader>
           <Current>
             <CurrentSection>
               <CurrentIcon>{Icons['Work']()}</CurrentIcon>

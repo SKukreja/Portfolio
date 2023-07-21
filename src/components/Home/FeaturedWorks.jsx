@@ -1,39 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
-const desktopContainerWidth = '75vw';
-
-const hueRotate = keyframes`
-    0% {
-        filter: hue-rotate(10deg);
-    }
-    
-    50% {
-        filter: hue-rotate(-30deg);
-    }
-    
-    100% {
-        filter: hue-rotate(10deg);
-    }
-`;
+const desktopContainerWidth = '70vw';
 
 const Featured = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 2rem;
+  margin-top: 10rem;
 `;
 
 const ProjectImageBorder = styled.div`
   z-index: 0;
   aspect-ratio: 16/9;
   width: 100%;
-  animation: ${hueRotate} 18s linear infinite;
-  border: 5px solid #504CCF;
+  border: 5px solid var(--accent-colour);
   @media (max-width: 1440px) {
     display: none;   
   }
@@ -44,11 +30,10 @@ const ProjectName = styled(Link)`
   font-family: 'Satoshi';
   font-weight: 600;
   font-size: 2rem;
-  color: #504CCF;
-  text-shadow: 0 0 2px #504CCF;
+  color: var(--accent-colour);
+  text-shadow: 0 0 2px var(--accent-colour);
   text-decoration: none;
   letter-spacing: 1px;
-  animation: ${hueRotate} 18s linear infinite;
   margin: 2rem 0;
   & > svg {
     font-size: 3rem;
@@ -79,7 +64,7 @@ const ProjectContent = styled.div`
   width: 33%;
   flex-direction: column;
   z-index: 10;
-  margin: -0.3rem 1rem 0 1rem;
+  margin: -0.3rem 4rem 0 4rem;
   &.odd {
     text-align: right;
   }
@@ -130,8 +115,8 @@ const ProjectImage = styled.div`
   width: 75%;
   overflow: hidden;
   margin-top: 0;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: 0rem;
+  margin-right: 0rem;
   margin-bottom: 5rem;
   z-index: 1;
   display: flex;
@@ -162,7 +147,7 @@ const Project = styled.div`
     filter: grayscale(1);
     transition: all 2s ease;
     position: relative;
-    opacity: 0;
+    opacity: 1;
     width: ${desktopContainerWidth};
     margin-bottom: 2rem;
     &.active {
@@ -194,13 +179,13 @@ const ProjectCover = styled.div`
   top: 5px;
   bottom: 5px;
   width: calc(100% - 10px);
-  height: calc(100% - 10px);
-  background-size: cover;
-  background-position: center;
+  height: calc(100% - 10px);  
+  background-position: bottom;
+  background-size: 105%;
+  background-repeat: no-repeat;
 
   @media (max-width: 768px) {
-    aspect-ratio: auto;
-    object-fit: cover;
+    background-size: cover;
   }
 `;
 
@@ -209,9 +194,9 @@ const ProjectSummary = styled.div`
   letter-spacing: 0.5px;
   margin-bottom: 1rem;
   letter-spacing: 1px;
-  color: #F1E3F3;
+  color: var(--offwhite);
   font-size: 1rem;
-  text-shadow: 0 0 1px #F1E3F3;
+  text-shadow: 0 0 1px var(--offwhite);
   @media (max-width: 768px) {
     font-size: 1rem;
   }
@@ -222,7 +207,7 @@ const ProjectNumber = styled.h1`
   font-size: 10rem;
   font-weight: 200;
   line-height: 0.8;
-  text-shadow: 0 0 2px #F1E3F3;
+  text-shadow: 0 0 2px var(--offwhite);
   margin: 0;
   filter: drop-shadow(2px 2px 2px black);
   @media (max-width: 1600px) {
@@ -246,14 +231,13 @@ const ProjectLink = styled(Link)`
   border-radius: 5px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background: #504CCF;
+  background: var(--accent-colour);
   align-items: center;
   overflow: hidden;
   text-decoration: none;
-  animation: ${hueRotate} 18s linear infinite;
   &:hover {
     color: #080708;
-    background: #C2BBF0;
+    background: var(--offwhite);
     text-decoration: none;
   }
   &:hover .btn-label {
@@ -271,14 +255,13 @@ const ProjectHeader = styled.div`
 `;
 
 const Header = styled.h1`
-  font-family: 'Satoshi';
-  font-size: 1.5rem;
+  font-family: 'Hind';
+  font-size: 6rem;
   text-transform: uppercase;
-  color: #504CCF;
+  color: var(--accent-colour);
   letter-spacing: 0.1rem;
   width: 100%;
   text-align: center;
-  animation: ${hueRotate} 18s linear infinite;
   margin-bottom: 4rem;
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -329,21 +312,47 @@ const ProjectInfo = (props) => {
 }
 
 const ProjectItem = ({ project, number }) => {
-  const [animated, setAnimated] = useState(false);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
+  const [viewRef, inView, entry] = useInView({
+    threshold: 0.1,
   });
+  const ref = useRef(null);
+  const [windowHeight, setWindowHeight] = useState(0);
+  const [elementTop, setElementTop] = useState(0);
+  const [bgY, setBgY] = useState(50);
 
+  // Update window height on resize
   useEffect(() => {
-    if (inView) {
-      setAnimated(true);
-    }
-  }, [inView]);
+    setWindowHeight(window.innerHeight);
+
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Update elementTop and bgY on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        setElementTop(rect.top);
+
+        const newBgY = (rect.top / windowHeight) * 100;
+        setBgY(newBgY);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [windowHeight]);
+
 
   return (
     <Project
-      ref={ref}
-      className={`${animated ? 'active' : ''} ${
+      ref={viewRef}
+      className={`${inView ? 'active' : ''} ${
         number % 2 == 0 ? 'odd' : 'even'
       }`}
     >
@@ -355,12 +364,14 @@ const ProjectItem = ({ project, number }) => {
       <ProjectImage>
         <ProjectImageBorder></ProjectImageBorder>
         <ProjectCover
+          ref={ref}
           style={{
             backgroundImage:
               'url(' +
               import.meta.env.VITE_APP_UPLOAD_URL +
               project.attributes.cover.data.attributes.url +
               ')',
+              backgroundPositionY: `${bgY}%`  // change background position Y as a percentage
           }}
         />
       </ProjectImage>

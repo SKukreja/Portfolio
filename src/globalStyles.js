@@ -8,13 +8,23 @@ import SatoshiBoldWoff2 from './assets/fonts/Satoshi-Bold.woff2'
 import SatoshiBlackWoff from './assets/fonts/Satoshi-Black.woff'
 import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2';
 
+import HindRegularWoff from './assets/fonts/Hind-Regular.woff'
+import HindRegularWoff2 from './assets/fonts/Hind-Regular.woff2'
+import HindBoldWoff2 from './assets/fonts/Hind-Bold.woff2'
+
 import PixelWoff from './assets/fonts/Pixel.woff'
 import PixelWoff2 from './assets/fonts/pixelsix00.woff2'
  
 
 const GlobalStyle = createGlobalStyle`
+  :root {
+    --offwhite: #FFFDF9;
+    --accent-colour: #ec4359;
+    --secondary-colour: #AD5893;
+  }
+
   @font-face {
-    font-family: 'Pixel';
+    font-family: 'Hind';
     src: url(${PixelWoff2}) format('woff2'),
         url(${PixelWoff}) format('woff');
   }
@@ -36,11 +46,22 @@ const GlobalStyle = createGlobalStyle`
         url(${SatoshiBlackWoff}) format('woff');
     font-weight: 900;
   }
+  @font-face {
+    font-family: 'Hind';
+    src: url(${HindRegularWoff2}) format('woff2'),
+        url(${HindRegularWoff}) format('woff');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Hind';
+    src: url(${HindBoldWoff2}) format('woff2');
+    font-weight: 600;
+  }
 
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #504CCF transparent;
+    scrollbar-color: var(--accent-colour) transparent;
   }
 
   /* Chrome, Edge, and Safari */
@@ -53,7 +74,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #504CCF;
+    background-color: var(--accent-colour);
     border-radius: 0px;
     border: 0px solid transparent;
   }
@@ -70,8 +91,8 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
   body {
-    background: #080708;
-    color: #F1E3F3;
+    background: #000006;
+    color: var(--offwhite);
     box-sizing: border-box;
     transition: background 0.5s ease;
     display: flex;
@@ -81,19 +102,17 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Satoshi', Open-Sans, Helvetica, Sans-Serif;
   }
   .inverted body {
-    background: #F1E3F3;
+    background: var(--offwhite);
   }
   .inverted nav {
-    background: linear-gradient(to bottom, #F1E3F3 33%, rgba(241, 227, 243, 0.25) 75%, transparent);
+    mix-blend-mode: normal;
+    background: var(--offwhite);
   }
   .inverted nav a {
     color: #080708;
   }
-  .inverted nav .logo-dark {
-    opacity: 1;
-  }
-  .inverted nav .logo-light {
-    opacity: 0;
+  .inverted nav .logo {
+    filter: brightness(0) invert(0);    
   }
   .inverted .hamburger span{
     background: #080708;
