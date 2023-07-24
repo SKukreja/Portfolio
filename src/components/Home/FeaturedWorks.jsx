@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
-const Featured = styled.div`
+const Featured = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,10 +15,9 @@ const Featured = styled.div`
 `;
 
 const ProjectImageBorder = styled.div`
-  z-index: 0;
+  z-index: 10;
   aspect-ratio: 16/9;
   width: 100%;
-  
   @media (max-width: 1440px) {
     display: none;   
   }
@@ -29,7 +29,6 @@ const ProjectName = styled(Link)`
   font-weight: 600;
   font-size: 6vw;
   color: var(--accent-colour);
-  text-shadow: 0 0 2px var(--accent-colour);
   text-decoration: none;
   letter-spacing: 1px;
   margin: 2rem 0;
@@ -61,7 +60,7 @@ const ProjectContent = styled.div`
   display: flex;
   width: 33%;
   flex-direction: column;
-  z-index: 10;
+  z-index: 2;
   margin: -0.3rem var(--default-spacing) 0 var(--default-spacing);
   &.odd {
     text-align: right;
@@ -158,19 +157,30 @@ const Project = styled.div`
     }
 `;
 
+const BackgroundImage = styled.div`
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;  
+  will-change: transform;
+  object-fit: cover;
+  width: 130%;
+  height: 130%;
+  left: 50%;  
+  position: absolute;
+  transform: translate3d(-50%, 0, 0);
+`;
+
 const ProjectCover = styled.div`
   border: 5px solid var(--accent-colour);
   position: absolute;
   width: calc(100% - 10px);
-  height: calc(100% - 10px);  
-  background-position: bottom;
-  background-size: 105%;
-  background-repeat: no-repeat;
-  will-change: background-position;
-  @media (max-width: 768px) {
-    background-size: 250%;
-  }
+  height: calc(100% - 10px);
+  
+  
+  z-index: 5;
+  overflow: hidden;
 `;
+
 
 const ProjectSummary = styled.div`
   font-family: 'Satoshi';
@@ -247,7 +257,7 @@ const Header = styled.h1`
   text-align: center;
   margin-bottom: 4rem;
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 2rem;
     letter-spacing: 0.03rem;
   }
 `;
@@ -301,7 +311,7 @@ const ProjectItem = ({ project, number }) => {
   const ref = useRef(null);
   const [windowHeight, setWindowHeight] = useState(0);
   const [elementTop, setElementTop] = useState(0);
-  const [bgY, setBgY] = useState(0);
+  const [bgY, setBgY] = useState(-100);
 
   // Update window height on resize
   useEffect(() => {
@@ -315,21 +325,23 @@ const ProjectItem = ({ project, number }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Update elementTop and bgY on scroll
+  // Update elementTop and bgY on scroll when the element is in view
   useEffect(() => {
-    const handleScroll = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        setElementTop(rect.top);
+    if (inView) {
+      const handleScroll = () => {
+        if (ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          setElementTop(rect.top);
 
-        const newBgY = (rect.top / windowHeight) * 150;
-        setBgY(newBgY);
-      }
-    };
+          const newBgY = (rect.top / windowHeight) * 140;
+          setBgY(newBgY);
+        }
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [windowHeight]);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [inView, windowHeight]);
 
 
   return (
@@ -346,17 +358,18 @@ const ProjectItem = ({ project, number }) => {
       )}
       <ProjectImage>
         <ProjectImageBorder></ProjectImageBorder>
-        <ProjectCover
-          ref={ref}
-          style={{
-            backgroundImage:
-              'url(' +
-              import.meta.env.VITE_APP_UPLOAD_URL +
-              project.attributes.cover.data.attributes.url +
-              ')',
-              backgroundPositionY: `${bgY}%`  // change background position Y as a percentage
-          }}
-        />
+        <ProjectCover ref={ref}>
+          <BackgroundImage
+            style={{
+              backgroundImage:
+                'url(' +
+                import.meta.env.VITE_APP_UPLOAD_URL +
+                project.attributes.featured.data.attributes.url +
+                ')',
+              transform: `translate3d(-50%, -${bgY}px, 0)`,  // change background position Y as a pixel value using translate3d
+            }}
+          />
+        </ProjectCover>
       </ProjectImage>
       {number % 2 != 0 ? (
         <ProjectInfo className="even" number={number} project={project} />
@@ -386,9 +399,13 @@ const FeaturedWorks = () => {
   if (error) return (
     <>{error}</>
   )
-
+  
   return (
-    <Featured>
+    <Featured
+      initial={{ y: 100, opacity: 0}}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.7 }}
+    >
       <Header>Featured Works</Header>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (

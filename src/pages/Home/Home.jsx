@@ -1,6 +1,5 @@
 import React from 'react'
 import Landing from '../../components/Home/Landing'
-import FeaturedWorks from '../../components/Home/FeaturedWorks'
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet'
 
@@ -22,7 +21,6 @@ const Home = () => {
         <title>Sumit Kukreja</title>
       </Helmet>
       <Landing />
-      <FeaturedWorks />
     </motion.div>
   )
 } 

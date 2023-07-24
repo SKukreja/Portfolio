@@ -25,12 +25,12 @@ const Nav = styled.nav`
   padding-right: calc((100vw - var(--desktop-container-width))/2);
   position: fixed;
   box-sizing: border-box;
-  top: 0rem;
+  top: 0;
   padding-top: 1rem;
   padding-bottom: 1rem;
   transform: ${({ scrollPos }) =>
     scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
-  transition: transform 0.5s ease, background 0.3s linear 1s;
+  transition: transform 0.5s ease, background 0.5s ease;
   background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
   display: flex;
   z-index: 20;
@@ -43,8 +43,8 @@ const Nav = styled.nav`
   box-sizing: border-box;  
   opacity: 1;
   & .logo {
-    filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : 'brightness(0) invert(1)'};
-    transition: transform 0.5s ease, filter 2s ease;
+    filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(1)')};
+    transition: transform 0.5s ease, filter 0.5s ease;
   }
   & .logo:hover {
     transform: scale(1.1);
@@ -75,8 +75,8 @@ const Center = styled.div`
 const SocialLink = styled.a`
   font-size: 1.5rem;
   margin-left: 1rem;
-  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};
-  transition: color 2s ease;
+  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
+  transition: color 0.5s ease;
   &:hover {
     color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};
   }
@@ -108,23 +108,26 @@ const Menu = styled.nav`
   font-family: 'Satoshi';
   font-weight: 600;
   text-transform: uppercase;
+  transition: background 0.5s ease;
+  background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
 const NavLink = styled(Link)`
-  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};
+  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--black)' : 'var(--black)') : 'var(--offwhite)'};
   text-decoration: none;
   letter-spacing: 1px;
-  font-size: 1.25rem;
+  font-size: var(--body-text);
   font-family: 'Hind';
   user-select: none;
-  transition: color 2s ease;
+  will-change: color;
+  transition: color 0.5s ease;
   pointer-events: auto;
   padding: 1rem;
   &:hover {
-    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};  
+    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--offwhite)' : 'var(--offwhite)') : 'var(--accent-colour)'};  
   }
 `;
 
@@ -217,9 +220,9 @@ const HamburgerButton = styled.button`
     display: block;
     width: 27px;
     height: 2px;    
-    background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : 'white'};  
+    background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--black)' : 'var(--black)') :  (isMobile ? 'var(--black)' : 'var(--offwhite)')};  
     margin: 7px 0;
-    transition: transform 0.3s ease, background 2s ease;
+    transition: transform 0.3s ease, background 0.5s ease;
   }
 
   @media (max-width: 768px) {
@@ -276,7 +279,6 @@ function Navbar({ socialData }) {
   };
 
   useEffect(() => {
-    console.log('UE');
     if(path === '/') {
       setOnHomePage(true);
       setIsSolid(false);
@@ -294,7 +296,7 @@ function Navbar({ socialData }) {
       prevScrollpos = currentScrollPos;
       // handle the path check within the scroll event listener
       if(path === '/') {
-        setIsSolid(currentScrollPos >= window.innerHeight);
+        setIsSolid(currentScrollPos >= window.innerHeight - 200);
       } else {
         setIsSolid(true);
       }
@@ -343,12 +345,13 @@ function Navbar({ socialData }) {
           <span></span>
           <span></span>
         </HamburgerButton>
-        <Menu className="nav-menu">
-          {data?.attributes.links.map((link) => (
-            <NavLink key={link.id} to={link.url} isNavSolid={isSolid} onHome={onHomePage}>
-              {link.text}
-            </NavLink>
-          ))}
+        <Menu className="nav-menu" isNavSolid={isSolid}
+          isMobile={isModalOpen}>
+          {data?.attributes.links.map((link) => {
+            if(link.text !== 'Home') {
+              return (<NavLink className='nav-link' key={link.id} to={link.url} isNavSolid={isSolid} onHome={onHomePage}>{link.text}</NavLink>);
+            }
+          })}
         </Menu>
       </Center>
       <Right>

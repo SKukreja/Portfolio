@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { motion, useAnimate, stagger } from "framer-motion";
+import { motion, stagger } from "framer-motion";
+import { useLocation } from 'react-router-dom';
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 
 const desktopContainerWidth = 'var(--desktop-container-width)';
 
-const FooterContainer = styled.div`
+const FooterContainer = styled(motion.div)`
   width: ${desktopContainerWidth};
   height: calc(50vh - 8rem);
   margin-left: auto;
@@ -15,7 +16,9 @@ const FooterContainer = styled.div`
   overflow: visible;
   position: relative;
   padding: 4rem 0;
-  display: flex;
+  display: ${({ onHome }) => onHome ? 'none' : 'flex'};
+  opacity: ${({ onHome }) => onHome ? '0' : '1'};
+  transition: opacity 1s ease 2s;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
@@ -86,9 +89,32 @@ const TopSection = styled.div`
   }
 `;
 
-const Footer = ({socialData}) => {
-  const data = socialData;
+const usePath = () => {
+  const location = useLocation();
+  const [path, setPath] = useState(location.pathname);
+
+  useEffect(() => {
+    console.log("Setting path:", location.pathname);
+    setPath(location.pathname);
+  }, [location]);
+
+  return path;
+};
+
+const Footer = () => {
+  const { data, loading, error } = use('/social?populate=deep');  
   const currentYear = new Date().getFullYear();
+  const [onHomePage, setOnHomePage] = useState(false);
+  const path = usePath(); 
+
+  useEffect(() => {
+    if(path === '/') {
+      setOnHomePage(true);
+    } else {
+      setOnHomePage(false);
+    }
+  }, [onHomePage, path]);
+
   const variants = {
     initial: { x: "-10rem" },
     animate: {
@@ -98,7 +124,16 @@ const Footer = ({socialData}) => {
   }
 
   return (
-    <FooterContainer>
+    <FooterContainer initial={{ 
+      opacity: 0,      
+     }} 
+    animate={{ 
+      opacity: 1,      
+    }} 
+    exit={{ 
+      opacity: 0,
+     }} 
+    transition={{ duration: 2 }} onHome={onHomePage}>
       <TopSection>
         <Contact>Let's connect</Contact>
         <Socials>

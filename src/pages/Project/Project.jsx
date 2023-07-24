@@ -7,9 +7,8 @@ import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import Slider from '../../components/Project/Slider';
 import { motion } from 'framer-motion'
+import Footer from '../../components/Common/Footer';
 import { Helmet } from 'react-helmet';
-
-const desktopContainerWidth = 'var(--desktop-container-width)';
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -18,17 +17,16 @@ const ProjectContainer = styled.div`
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 25vh;
-  padding-top: 25svg;
+  padding-top: var(--content-margin-top);
 `;
 
 const Browser = styled.div`
-  width: ${desktopContainerWidth};
+  width: var(--desktop-container-width);
   position: relative;
   aspect-ratio: 16/9;
   margin-bottom: var(--article-spacing);
   @media (max-width: 768px) {
-    width: 90%;
+    width: calc(100% - 3rem);
   }
 `;
 
@@ -147,7 +145,7 @@ const ProjectInfo = styled.div`
 
 const Section = styled.div`
   display: flex;
-  width: calc(${desktopContainerWidth} * 3/4);
+  width: calc(var(--desktop-container-width) * 3/4);
   margin-bottom: var(--article-spacing);
   &.bw {
     opacity: 0;
@@ -284,7 +282,7 @@ const TopicText = styled.div`
 
 const ProjectLinks = styled.div`
   height: 50vh;
-  width: ${desktopContainerWidth};
+  width: var(--desktop-container-width);
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -338,6 +336,8 @@ const Caption = styled.span`
   overflow: visible;
   width: 100%;  
   display: block;
+  font-size: var(--body-text);
+  font-family: 'Satoshi';
   color: var(--black);
 `;
 
@@ -352,11 +352,6 @@ const FigureMedia = ({item}) => {
   const type = getMediaType(item.attributes.mime);
   const src = import.meta.env.VITE_APP_UPLOAD_URL + item.attributes.url;
   const videoRef = useRef(null);
-  useEffect(() => {
-    if (type === "video") {
-      videoRef.current.play();
-    }
-  }, [type]);
 
     return (
       <>
@@ -365,9 +360,10 @@ const FigureMedia = ({item}) => {
         ) : (
         <video
             ref={videoRef}
-            src={src}
-            autoplay muted playsinline loop
-        ></video>
+            autoPlay muted playsInline loop controls
+        >
+          <source src={src} type="video/mp4" />
+        </video>
         )}
         </>
     )
@@ -376,6 +372,10 @@ const FigureMedia = ({item}) => {
 const Project = () => {
   const { id } = useParams();
   const [isInverted, setIsInverted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+  };
 
   const { data, loading, error } = use(
     `/slugify/slugs/work/` + id + `?populate=deep`
@@ -398,6 +398,17 @@ const Project = () => {
         elem.classList.remove("active");
       });
     } else {
+      document.querySelector("html").classList.remove("inverted");
+      lightElems.forEach((elem) => {
+        elem.classList.remove("active");
+      });
+      darkElems.forEach((elem) => {
+        elem.classList.add("active");
+      });
+    }
+
+    // Cleanup function
+    return () => {
       document.querySelector("html").classList.remove("inverted");
       lightElems.forEach((elem) => {
         elem.classList.remove("active");
@@ -434,7 +445,7 @@ const Project = () => {
     exit={{ 
       opacity: 0,
      }} 
-    transition={{ duration: 1 }}
+    transition={{ duration: 0.5 }}
     >
       <Helmet>      
         <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        
@@ -526,6 +537,7 @@ const Project = () => {
         </ProjectLinks>
       </ProjectInfo>
     </ProjectContainer>
+    <Footer />
     </motion.div>
   )
 }

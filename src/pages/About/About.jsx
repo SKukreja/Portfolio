@@ -7,21 +7,7 @@ import ReactWordcloud from 'react-wordcloud';
 import { Icons } from '../../components/Common/Icons';
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
-import { BrightnessContrast } from '@react-three/postprocessing';
-
-const hueRotate = keyframes`
-    0% {
-        filter: hue-rotate(10deg);
-    }
-    
-    50% {
-        filter: hue-rotate(-30deg);
-    }
-    
-    100% {
-        filter: hue-rotate(10deg);
-    }
-`;
+import Footer from '../../components/Common/Footer';
 
 const typewriter = keyframes`
   from { width: 0 }
@@ -35,8 +21,7 @@ const blink = keyframes`
 
 const Container = styled.div`
   display: flex;
-  padding-top: 25vh;
-  padding-top: 25svh;
+  padding-top: var(--content-margin-top);
   flex-direction: column;
   align-items: center;
 `;
@@ -50,9 +35,6 @@ const Bio = styled.div`
   align-items: center;
   &.active {
     filter: grayscale(0);
-  }
-  & span {
-    animation: ${hueRotate} 18s linear infinite;
   }
 `;
 
@@ -510,6 +492,7 @@ const About = () => {
         })}
         </Timeline>
       </AboutContainer>
+      <Footer />
     </Container>
   )
 }

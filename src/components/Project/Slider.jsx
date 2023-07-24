@@ -2,15 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const SliderWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 50vmin;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: visible;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50vmin;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: visible;
+    @media (max-width: 768px) {
+        height: 80vmin;
+    }
 `;
 
 const Slides = styled.div`
@@ -26,6 +29,7 @@ const Slide = styled.div`
     position: absolute;
     width: 50%;
     height: auto;
+    max-height: 100%;
     opacity: 0.5;
     display: flex;
     justify-content: center;

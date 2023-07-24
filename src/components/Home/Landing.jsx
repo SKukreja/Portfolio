@@ -3,21 +3,13 @@ import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react'
 import { Canvas, extend, useThree, useLoader, useFrame } from '@react-three/fiber'
 import { Effects, Image } from '@react-three/drei'
 import { motion } from 'framer-motion'
-import { Bloom, EffectComposer, Noise } from '@react-three/postprocessing'
+import { Bloom, DepthOfField, EffectComposer, Noise } from '@react-three/postprocessing'
 import { Water } from 'three-stdlib';
 import { useInView } from 'react-intersection-observer'
 import { BlendFunction, KernelSize } from 'postprocessing'
 import styled, { keyframes, css } from 'styled-components';
-
-const bounce = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-10px, -10px);
-  }
-`;
+import { Icons } from '../Common/Icons'
+import { Link } from 'react-router-dom'
 
 const Scene = styled(motion.div)`
   background: var(--black);
@@ -31,8 +23,8 @@ const Scene = styled(motion.div)`
 
 const SceneCanvas = styled(Canvas)`
   z-index: 4;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: absolute;
   pointer-events: none;
   overflow-y: visible;
@@ -43,100 +35,138 @@ const SceneCanvas = styled(Canvas)`
 
 const Name = styled.h1`
     font-family: 'Hind', 'Satoshi', sans-serif;
-    font-weight: 400;
+    font-weight: 700;
+    width: 100%;
     font-size: 7vw;
-    color: white;
+    color: var(--offwhite);
+    mix-blend-mode: difference;
     z-index: 10;
-    pointer-events: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    width: var(--desktop-container-width);
-    margin-left: auto;
-    margin-right: auto;
-    top: 16vh;
-    top: 16svh;
-    mix-blend-mode: difference;    
-    @media (max-width: 768px) {
-      display: block;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: -0.2vw;
+    @media (max-width: 1024px) {
+      margin-left: 0;
       font-weight: 700;
       font-size: 9vw;
-      text-align: center;
       color: var(--black);
-      mix-blend-mode: normal;
     }
 `;
 
-const Caption = styled.h2`
+const Intro = styled.h2`
   font-family: 'Satoshi', sans-serif;
-  font-weight: 700;
-  font-size: 1.6vw;
-  letter-spacing: 0.3vw;
-  text-align: left;
-  color: white;
-  z-index: 10;
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: var(--desktop-container-width);
-  margin-left: auto;
-  margin-right: auto;
-  top: 40vh;
-  top: 40svh;
-  mix-blend-mode: difference;
-  @media (max-width: 768px) {
-    display: block;
-    font-size: 5vw;
-    font-weight: 400;
-    top 25vh;
-    top: 25svh;
-    text-align: center;
+  font-weight: 600;
+  font-size: 1.3vw;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--offwhite);
+  @media (max-width: 1024px) {
+    width: calc(var(--desktop-container-width) - var(--default-spacing));
     color: var(--black);
-    mix-blend-mode: normal;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    font-size: 4vw;
+    font-weight: 400;
+    text-align: center;    
   }
 `;
 
-const Seal = styled.div`
-  width: 60px;
-  height: 60px;
-  padding: 0;
-  border-radius: 50%;
-  display: flex;
-  z-index: 10;
+const SceneText = styled(motion.div)`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 1rem;
-  opacity: 1;
+  width: var(--desktop-container-width);
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  mix-blend-mode: difference;
+  flex-direction: column;
+  top: 20vh;
+  top: 20svh;
+  @media (max-width: 1024px) {
+    top: 20vh;
+    top: 20svh;
+    text-align: center;
+    color: var(--black);
+    mix-blend-mode: darken;
+  }
 `;
 
-const Arrow = styled.div`
-  width: 30px;
-  height: 30px;
-  top: 40%;
-  margin: -15px 0 0 -15px;
-  -webkit-transform: rotate(45deg);
-  border-left: none;
-  border-top: none;
-  z-index: 10;
-  border-right: 2px #a0536e solid;
-  border-bottom: 2px #a0536e solid;
-  position: absolute;
-  left: 50%;
-  &::before {
-    position: absolute;
-    left: 50%;
-    content: '';
-    width: 15px;
-    height: 15px;
-    top: 50%;
-    margin: -7.5px 0 0 -7.5px;
-    border-left: none;
-    border-top: none;
-    border-right: 1px #a0536e solid;
-    border-bottom: 1px #a0536e solid;
-    animation: ${bounce} 0.5s infinite alternate;
+const ActionButtons = styled.div`
+  pointer-events: none;
+  display: flex;
+  width: 100%;
+  mix-blend-mode: difference;
+  justify-content: start;
+  @media (max-width: 1024px) {
+    margin-top: 30vh;
+    margin-top: 30svh;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  @media (max-width: 900px) {
+    margin-top: 25vh;
+    margin-top: 25svh;
+  }
+  @media (max-width: 768px) {
+    margin-top: 27.5vh;
+    margin-top: 27.5svh;
+  }
+  @media (max-width: 768px) {
+    margin-top: 27.5vh;
+    margin-top: 27.5svh;
+  }
+
+`;
+
+const Button = styled(Link)`
+  pointer-events: all;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin: var(--default-spacing);
+  font-family: 'Satoshi', sans-serif;
+  font-size: calc(var(--body-text) * 1.5);
+  font-weight: 600;  
+  color: white;
+  opacity: 1;
+  transition: all 0.5s ease;
+  &:hover {
+    transform: scale(1.1);
+    opacity: 0.5;
+    &:hover svg {
+      margin-right: 1rem;
+    }
+  }
+  & svg {
+    margin-right: 0.5rem;
+    transition: margin 0.5s ease;
+  }
+  & p {
+    display: flex;
+    align-items: center;  
+  }
+  @media (max-width: 1024px) {
+    width: fit-content;
+    justify-content: center;
+    font-size: calc(var(--body-text) * 3);
+    color: white;    
+    margin: 0;    
+    & p {
+      background: rgba(0,0,6,0.9);
+      padding: 1rem;
+    }
+  }
+  @media (max-width: 900px) {    
+    font-size: calc(var(--body-text) * 2);
+  }
+  @media (max-width: 768px) {    
+    font-size: 1rem;
   }
 `;
 
@@ -191,14 +221,14 @@ function Ocean({waterPos}) {
     textureWidth: 512,
     textureHeight: 512,
     waterNormals,
-    sunDirection: new THREE.Vector3(0,0,0),
+    sunDirection: new THREE.Vector3(0,-1,-1),
     sunColor: 0x47234d,
     waterColor: 0xec4359,
-    distortionScale: 0.3,
+    distortionScale: 0.5,
     fog: true,
   }; // Moved outside of useMemo
 
-  useFrame((state, delta) => (ref.current.material.uniforms.time.value += delta / 20))
+  useFrame((state, delta) => (ref.current.material.uniforms.time.value += delta / 15))
   return <water ref={ref} args={[geom, config]} rotation-x={-Math.PI / 2} position={waterPos} />
 }
 
@@ -229,37 +259,52 @@ function Layers() {
   )
 }
 
-const DisableRender = () => useFrame(() => null, 1000)
 
 function Landing() {
-  const { ref, inView } = useInView()
+  const { ref, inView } = useInView();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
 
   return (
-    <Scene ref={ref} 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 1, duration: 2 }}
+    <Scene
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 4s ease'
+      }}
     >
       <SceneCanvas dpr={[1, 2]}
         camera={{ position: [0, 0, 10], fov: 25, near: 0.01, far: 100 }}
       >
-        {!inView && <DisableRender />}
         <color attach="background" args={['#EC4359']} />
         <Suspense fallback={null}>
           <Layers />
         </Suspense>
         <EffectComposer>
-          <Noise opacity={0.5} blendFunction={BlendFunction.OVERLAY} />
+          <Noise opacity={0.3} blendFunction={BlendFunction.OVERLAY} />
           <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
+          <DepthOfField
+            focusDistance={0} // where to focus
+            focalLength={0.01} // focal length
+            bokehScale={3} // bokeh size
+          />
         </EffectComposer>
       </SceneCanvas>
-      <Name>SUMIT KUKREJA</Name>
-      <Caption>DIGITAL DREAM WEAVER</Caption>
-      <Seal>
-        <Arrow />      
-      </Seal>
+      <SceneText>
+        <Intro>Hi, my name is</Intro>
+        <Name>SUMIT KUKREJA</Name>
+        <Intro>I'm a full-stack web developer with a passion for creating unique digital experiences.</Intro>
+        <ActionButtons>
+          <Button to="/work"><p>{Icons["Arrow Right"]()} View my work</p></Button>
+          <Button to="/about"><p>{Icons["Arrow Right"]()} More about me</p></Button>
+        </ActionButtons>
+      </SceneText>
     </Scene>
-  )
+  );
 }
+
 
 export default Landing;

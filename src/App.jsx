@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
-import Footer from './components/Common/Footer';
 import Home from './pages/Home/Home';
 import Work from './pages/Work/Work';
 import About from './pages/About/About';
@@ -74,7 +73,6 @@ const Layout = ({ children }) => {
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </AnimatePresence>
-        <Footer socialData={data} />
       </Blur>
     </div>
   );

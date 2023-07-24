@@ -1,13 +1,14 @@
 import { FiGithub, FiLinkedin, FiCodesandbox, FiArrowUpRight, FiLink, FiCodepen } from 'react-icons/fi'
-import { SiWordpress, SiLoopback, SiPhp, SiJavascript, SiMysql, SiApache, SiAngular } from 'react-icons/si'
+import { SiWordpress, SiLoopback, SiPhp, SiJavascript, SiMysql, SiApache, SiAngular, SiFramer, SiStrapi, SiReact, SiCodesandbox } from 'react-icons/si'
 import { MdOpenInNew } from 'react-icons/md'
 import { FaAws } from 'react-icons/fa'
-import { BsInfo } from 'react-icons/bs'
+import { BsInfo, BsArrowRight } from 'react-icons/bs'
 import { GiGraduateCap } from 'react-icons/gi'
 import { VscChromeMinimize, VscChromeMaximize, VscChromeClose } from 'react-icons/vsc'
 import { MdWork } from 'react-icons/md'
 import { BiCoffee, BiEnvelope } from 'react-icons/bi'
 import { AiFillHeart, AiOutlinePlus } from 'react-icons/ai'
+import { TbBrandThreejs } from 'react-icons/tb'
 
 export const Icons = {    
     "Github" : FiGithub,
@@ -15,7 +16,7 @@ export const Icons = {
     "Info" : BsInfo,
     "Codepen" : FiCodepen,
     "LinkedIn" : FiLinkedin,
-    "Code Sandbox" : FiCodesandbox,
+    "Code Sandbox" : SiCodesandbox,
     "Up Right" : FiArrowUpRight,
     "WordPress" : SiWordpress,
     "PHP" : SiPhp,
@@ -35,4 +36,9 @@ export const Icons = {
     "Heart" : AiFillHeart,
     "Plus" : AiOutlinePlus,
     "Envelope" : BiEnvelope,
+    "Arrow Right" : BsArrowRight,
+    "Three.js" : TbBrandThreejs,
+    "Framer Motion" : SiFramer,
+    "Strapi" : SiStrapi,
+    "React" : SiReact,
 }

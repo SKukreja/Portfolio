@@ -22,10 +22,12 @@ const GlobalStyle = createGlobalStyle`
     --accent-colour: #ec4359;
     --secondary-colour: #AD5893;
     --black: #000006;
-    --body-text: 0.9vw;
+    --body-text: clamp(1rem,0.9vw,2rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
     --default-spacing: 2rem;
+    --content-margin-top: 25vh;
+    --content-margin-top: 25svh;
     @media (max-width: 1920px) {      
       --article-spacing: 4rem;
       --desktop-container-width: 70vw;
@@ -38,9 +40,9 @@ const GlobalStyle = createGlobalStyle`
       --article-spacing: 4rem;
       --desktop-container-width: 90vw;
     }
-    @media (max-width: 1024px) {
-      --body-text: 3vw;
-      --desktop-container-width: 100vw;
+    @media (max-width: 900px) {
+      --body-text: 1.5vw;
+      --desktop-container-width: 95vw;
     }
     @media (max-width: 768px) {
       --body-text: 4vw;
@@ -86,6 +88,7 @@ const GlobalStyle = createGlobalStyle`
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--accent-colour) transparent;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Chrome, Edge, and Safari */
@@ -128,7 +131,7 @@ const GlobalStyle = createGlobalStyle`
   .inverted body {
     background: var(--offwhite);
   }
-  .inverted nav {
+  .inverted nav, .inverted .nav-menu {
     mix-blend-mode: normal;
     background: var(--offwhite);
   }
