@@ -1,0 +1,12 @@
+{
+    "presets": ["@babel/preset-env"],
+    "plugins": [
+      [
+        "module:@react-three/babel",
+        {
+          "importSources": ["three", "three-stdlib"]
+        }
+      ]
+    ]
+  }
+  

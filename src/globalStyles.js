@@ -1,6 +1,8 @@
 // globalStyles.js
 import { createGlobalStyle } from 'styled-components';
 
+import ChristopherRobinWoff2 from './assets/fonts/ChristopherRobin.woff2'
+
 import SatoshiRegularWoff from './assets/fonts/Satoshi-Regular.woff'
 import SatoshiRegularWoff2 from './assets/fonts/Satoshi-Regular.woff2'
 import SatoshiBoldWoff from './assets/fonts/Satoshi-Bold.woff'
@@ -10,18 +12,14 @@ import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2';
 
 import HindRegularWoff from './assets/fonts/Hind-Regular.woff'
 import HindRegularWoff2 from './assets/fonts/Hind-Regular.woff2'
-import HindBoldWoff2 from './assets/fonts/Hind-Bold.woff2'
-
-import PixelWoff from './assets/fonts/Pixel.woff'
-import PixelWoff2 from './assets/fonts/pixelsix00.woff2'
- 
+import HindBoldWoff2 from './assets/fonts/Hind-Bold.woff2' 
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --offwhite: #FFFDF9;
-    --accent-colour: #ec4359;
+    --offwhite: #F8F8F8;
+    --accent-colour: #4F54D5;
     --secondary-colour: #AD5893;
-    --black: #000006;
+    --black: #121518;
     --body-text: clamp(1rem,0.9vw,2rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
@@ -48,11 +46,10 @@ const GlobalStyle = createGlobalStyle`
       --body-text: 4vw;
     }
   }
-
   @font-face {
-    font-family: 'Hind';
-    src: url(${PixelWoff2}) format('woff2'),
-        url(${PixelWoff}) format('woff');
+    font-family: 'Christopher Robin';
+    src: url(${ChristopherRobinWoff2}) format('woff2');
+    font-weight: 700;
   }
   @font-face {
     font-family: 'Satoshi';
@@ -107,7 +104,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .app {
-    width: 100vw;    
+    width: 100vw;     
     margin: 0 auto;
     box-sizing: border-box;
   }
@@ -115,7 +112,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
     background: var(--black);

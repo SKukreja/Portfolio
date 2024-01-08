@@ -445,7 +445,7 @@ const Project = () => {
     exit={{ 
       opacity: 0,
      }} 
-    transition={{ duration: 0.5 }}
+    transition={{ duration: 1 }}
     >
       <Helmet>      
         <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        

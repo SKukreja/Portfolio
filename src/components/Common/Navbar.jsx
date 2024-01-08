@@ -20,43 +20,46 @@ const slideInFromRight = keyframes`
 `;
 
 const Nav = styled.nav`
-  width: 100vw;
-  padding-left: calc((100vw - var(--desktop-container-width))/2);
-  padding-right: calc((100vw - var(--desktop-container-width))/2);
   position: fixed;
-  box-sizing: border-box;
   top: 0;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  transform: ${({ scrollPos }) =>
-    scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
-  transition: transform 0.5s ease, background 0.5s ease;
-  background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
-  display: flex;
-  z-index: 20;
   left: 0;
-  margin-right: auto;
-  margin-left: auto;  
-  right: 0;
+  height: 100vh; 
+  width: 80px;
+  padding-top: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column; 
+  drop-shadow: 0 0 10px rgba(0, 0, 0, 0.5);  
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;  
+  transition: background 0.5s ease;
+  background: ${({ isNavSolid }) => isNavSolid ? 'var(--black)' : 'transparent'};
+  z-index: 20;
   opacity: 1;
+
   & .logo {
-    filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(1)')};
+    filter: ${({ isNavSolid }) => isNavSolid ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
     transition: transform 0.5s ease, filter 0.5s ease;
   }
+
   & .logo:hover {
     transform: scale(1.1);
   }
-  @media (max-width: 768px) {
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;    
-  }
 
-`
+  @media (max-width: 768px) {
+    top: 0;
+    left: 0;
+    height: auto; 
+    width: 100vw; 
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+`;
 
 const Left = styled.div`
   width: 200px;
@@ -73,8 +76,8 @@ const Center = styled.div`
 `;
 
 const SocialLink = styled.a`
-  font-size: 1.5rem;
-  margin-left: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
   color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   &:hover {
@@ -83,22 +86,24 @@ const SocialLink = styled.a`
 `;
 
 const Branding = styled.img`
-  width: 80px;
+  width: 50px;
   pointer-events: auto;  
   cursor: pointer;
   user-select: none;
   transition: opacity 0.5s ease;
   opacity: 1;
   z-index: 50;
-  position: absolute;
+  position: absolute;  
   @media (max-width: 768px) {
     width: 60px;
   }
 `;
 
 const Right = styled.div`
-  text-align: right;
-  width: 200px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;  
   @media (max-width: 768px) {
     display: none;
   }
@@ -134,8 +139,9 @@ const NavLink = styled(Link)`
 const LogoContainer = styled(Link)`
   position: relative;
   display: flex;
-  height: 80px;
-  width: fit-content;
+  width: 100%;
+  height: 50px;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -281,7 +287,7 @@ function Navbar({ socialData }) {
   useEffect(() => {
     if(path === '/') {
       setOnHomePage(true);
-      setIsSolid(false);
+      setIsSolid(true);
     } else {
       setOnHomePage(false);
       setIsSolid(true);
@@ -296,7 +302,7 @@ function Navbar({ socialData }) {
       prevScrollpos = currentScrollPos;
       // handle the path check within the scroll event listener
       if(path === '/') {
-        setIsSolid(currentScrollPos >= window.innerHeight - 200);
+        setIsSolid(true);
       } else {
         setIsSolid(true);
       }
@@ -328,7 +334,7 @@ function Navbar({ socialData }) {
 
   return (
     <>
-      <Nav onHomePage={onHomePage} scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
+      <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
       <Left>
         <LogoContainer to="/">
           <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
@@ -345,14 +351,6 @@ function Navbar({ socialData }) {
           <span></span>
           <span></span>
         </HamburgerButton>
-        <Menu className="nav-menu" isNavSolid={isSolid}
-          isMobile={isModalOpen}>
-          {data?.attributes.links.map((link) => {
-            if(link.text !== 'Home') {
-              return (<NavLink className='nav-link' key={link.id} to={link.url} isNavSolid={isSolid} onHome={onHomePage}>{link.text}</NavLink>);
-            }
-          })}
-        </Menu>
       </Center>
       <Right>
         {socials?.attributes.links.map((link, index) => (
