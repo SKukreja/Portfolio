@@ -2,34 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import ProjectImage from './ProjectImage';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
 const Featured = styled(motion.div)`
+  width: 100vw;
   display: flex;
-  flex-direction: column;
+  position: relative;
   align-items: center;
-  margin-bottom: 2rem;
-  margin-top: 10rem;
-`;
-
-const ProjectImageBorder = styled.div`
-  z-index: 10;
-  aspect-ratio: 16/9;
-  width: 100%;
-  @media (max-width: 1440px) {
-    display: none;   
-  }
+  overflow: visible;
 `;
 
 const ProjectName = styled(Link)`
-  text-transform: uppercase;
-  font-family: 'Satoshi';
+  text-transform: lowercase;
+  font-family: 'adobe-garamond-pro', sans-serif;
   font-weight: 600;
   font-size: 6vw;
-  color: var(--accent-colour);
+  color: var(--black);  
   text-decoration: none;
+  z-index: 2;
   letter-spacing: 1px;
   margin: 2rem 0;
   & > svg {
@@ -55,18 +48,37 @@ const ProjectName = styled(Link)`
   }
 `;
 
-const ProjectContent = styled.div`
-  position: relative;
+const Projects = styled(motion.div)`
   display: flex;
-  width: 33%;
+  margin-top: 10rem;
+  height: calc(100% - 10rem);
+  overflow: visible;
+`;
+
+const ProjectContent = styled.div`
+  display: flex;
+  width: 75%;
+  height: fit-content;
   flex-direction: column;
   z-index: 2;
-  margin: -0.3rem var(--default-spacing) 0 var(--default-spacing);
+  position: absolute;
   &.odd {
-    text-align: right;
+   top: 0;
   }
   &.even {
-    text-align: left;
+   bottom: 0;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    opacity: 1;
+    height: 100%;
+    width: 100%;
+    left: 0;  
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%);
+    z-index: -1;
   }
   @media (max-width: 1920px) {
     width: 40%;
@@ -101,59 +113,18 @@ const ProjectContent = styled.div`
   }
 `;
 
-const ProjectImage = styled.div`
-  position: relative;
-  width: 60%;
-  overflow: hidden;
-  margin-top: 0;
-  margin-left: 0rem;
-  margin-right: 0rem;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 1920px) {
-    width: 60%;
-  }
-  @media (max-width: 1440px) {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin-bottom: 0;
-    filter: blur(15px) saturation(180%);
-  }
-  @media (max-width: 768px) {
-
-  }
-`;
 
 const Project = styled.div`
     display: flex;
-    filter: grayscale(1);
-    transition: all 2s ease;
     position: relative;
-    opacity: 1;
-    width: var(--desktop-container-width);
-    margin-bottom: calc(var(--default-spacing) * 2);
-    &.active {
-      filter: grayscale(0);
+    margin-left: 10rem;
+    width: 33vw;
+    height: 100%;
+    &.odd {
+      margin-top: 10rem;
     }
-    &.active.odd, &.active.even {
-      opacity: 1;
-    }
-    @media (max-width: 768px) {      
-      height: 60vh;
-      height: 60svh;
-      flex-direction: column;      
-    }
-    @media (max-width: 600px) {      
-      height: 75vh;
-      height: 75svh;
+    &.even {
+      margin-top: -10rem;
     }
 `;
 
@@ -163,43 +134,33 @@ const BackgroundImage = styled.div`
   background-position: center center;  
   will-change: transform;
   object-fit: cover;
-  width: 130%;
-  height: 130%;
-  left: 50%;  
-  position: absolute;
-  transform: translate3d(-50%, 0, 0);
+  width: 100%;
+  height: 100%;
 `;
 
 const ProjectCover = styled.div`
-  border: 5px solid var(--accent-colour);
-  position: absolute;
   width: calc(100% - 10px);
-  height: calc(100% - 10px);
-  
-  
-  z-index: 5;
-  overflow: hidden;
+  height: calc(100% - 10px);  
 `;
 
 
 const ProjectSummary = styled.div`
-  font-family: 'Satoshi';
-  letter-spacing: 0.5px;
+  font-family: 'adobe-garamond-pro', sans-serif;
+  letter-spacing: 0.5px;  
+  position: relative;  
   margin-bottom: 1rem;
-  letter-spacing: 1px;
-  color: var(--offwhite);
+  letter-spacing: 0.5px;
   font-size: var(--body-text);
-  text-shadow: 0 0 1px var(--offwhite);
+  font-weight: 600;
 `;
 
 const ProjectNumber = styled.h1`
-  font-family: 'Satoshi';
-  font-size: 8rem;
+  font-family: 'adobe-garamond-pro', sans-serif;
   font-weight: 200;
   line-height: 0.8;
-  text-shadow: 0 0 2px var(--offwhite);
+  padding-right: 1rem;
+  text-shadow: 0 0 2px var(--black);
   margin: 0;
-  filter: drop-shadow(2px 2px 2px black);
   @media (max-width: 1920px) {
     font-size: 6rem;
   }
@@ -218,6 +179,7 @@ const ProjectActions = styled.div`
 const ProjectLink = styled(Link)`
   color: white;
   display: inline-flex;
+  display: none;
   font-size: 1.5rem;
   padding: 0.5rem;
   line-height: 1;
@@ -244,21 +206,39 @@ const ProjectLink = styled(Link)`
 
 const ProjectHeader = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
 `;
 
 const Header = styled.h1`
-  font-family: 'Hind';
+  font-family: 'adobe-garamond-pro', sans-serif;
   font-size: 6rem;
-  text-transform: uppercase;
-  color: var(--accent-colour);
-  letter-spacing: 0.1rem;
-  width: 100%;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  position: absolute;  
+  z-index: 2;
+  height: auto;
+  top: -20rem;
+  left: -10rem;
+  padding-top: 20rem;
+  padding-left: 6rem;
+  padding-bottom: 2rem;
   text-align: center;
-  margin-bottom: 4rem;
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    letter-spacing: 0.03rem;
+  @media (max-width: 768px) {    
+    
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;    
+    height: 100%;
+    width: 100%;
+    left: 0;  
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%);
+    z-index: -1;
+
   }
 `;
 
@@ -281,6 +261,11 @@ const LabelContainer = styled.span`
   padding-right: 0.5rem;
 `;
 
+const Image = styled(motion.svg)`  
+  width: 100%;
+  height: 100%;
+`
+
 const padNum = (num, targetLength) => {
   return num.toString().padStart(targetLength, "0");
 }
@@ -291,86 +276,43 @@ const ProjectInfo = (props) => {
       <ProjectHeader>
         <ProjectNumber>{padNum(props.number + 1, 2)}</ProjectNumber>
         <ProjectName to={"/project/" + props.project.attributes.slug}>{props.project.attributes.title}</ProjectName>
+        {props.project.attributes.links?.map((link) => (
+          <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]()}
+            <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
+          </ProjectLink>
+        ))}        
       </ProjectHeader>
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
-      {props.project.attributes.links?.map((link) => (
-        <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]()}
-          <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
-        </ProjectLink>
-      ))}        
       </ProjectActions>
     </ProjectContent>
   );
 }
 
 const ProjectItem = ({ project, number }) => {
-  const [viewRef, inView, entry] = useInView({
+  const ref = useRef(null);
+  const [viewRef, inView] = useInView({
     threshold: 0.1,
   });
-  const ref = useRef(null);
-  const [windowHeight, setWindowHeight] = useState(0);
-  const [elementTop, setElementTop] = useState(0);
-  const [bgY, setBgY] = useState(-100);
+  const [circleRadius, setCircleRadius] = useState(0);
+  const [displacementScale, setDisplacementScale] = useState(150);
+  const [blurStdDeviation, setBlurStdDeviation] = useState(10);
 
-  // Update window height on resize
-  useEffect(() => {
-    setWindowHeight(window.innerHeight);
-
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Update elementTop and bgY on scroll when the element is in view
   useEffect(() => {
     if (inView) {
-      const handleScroll = () => {
-        if (ref.current) {
-          const rect = ref.current.getBoundingClientRect();
-          setElementTop(rect.top);
-
-          const newBgY = (rect.top / windowHeight) * 140;
-          setBgY(newBgY);
-        }
-      };
-
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+      // Set the radius to a value that reveals the entire image
+      setCircleRadius(400); // Adjust this value based on your image size
     }
-  }, [inView, windowHeight]);
-
+  }, [inView]);
 
   return (
-    <Project
-      ref={viewRef}
-      className={`${inView ? 'active' : ''} ${
-        number % 2 == 0 ? 'odd' : 'even'
-      }`}
-    >
+    <Project ref={viewRef} className={`${inView ? 'active' : ''} ${number % 2 === 0 ? 'odd' : 'even'}`}>
       {number % 2 == 0 ? (
         <ProjectInfo className="odd" number={number} project={project} />
       ) : (
         ''
       )}
-      <ProjectImage>
-        <ProjectImageBorder></ProjectImageBorder>
-        <ProjectCover ref={ref}>
-          <BackgroundImage
-            style={{
-              backgroundImage:
-                'url(' +
-                import.meta.env.VITE_APP_UPLOAD_URL +
-                project.attributes.featured.data.attributes.url +
-                ')',
-              transform: `translate3d(-50%, -${bgY}px, 0)`,  // change background position Y as a pixel value using translate3d
-            }}
-          />
-        </ProjectCover>
-      </ProjectImage>
+      <ProjectImage even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <ProjectInfo className="even" number={number} project={project} />
       ) : (
@@ -407,10 +349,12 @@ const FeaturedWorks = () => {
       transition={{ duration: 0.7 }}
     >
       <Header>Featured Works</Header>
+      <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
         <ProjectItem key={project.id} project={project} number={number} />
       ))}
+      </Projects>
     </Featured>
   )
 }

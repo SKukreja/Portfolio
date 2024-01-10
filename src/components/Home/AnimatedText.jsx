@@ -16,7 +16,7 @@ const AnimatedText = ({ text }) => {
       opacity: 1,
       transition: {
         delay: Math.random() * 1 + 1, // Random delay for each character
-        duration: 0.5, // Duration of the animation
+        duration: 2, // Duration of the animation
         type: 'spring',
         stiffness: 120,
       },

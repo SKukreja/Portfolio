@@ -115,8 +115,8 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: clip;
   }
   body {
-    background: var(--black);
-    color: var(--offwhite);
+    background: var(--white);
+    color: var(--black);
     box-sizing: border-box;
     transition: background 0.5s ease;
     display: flex;

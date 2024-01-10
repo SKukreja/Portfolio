@@ -1,7 +1,10 @@
 import React, { useRef } from 'react'
 import Landing from '../../components/Home/Landing'
+import Splash from '../../components/Home/Splash'
+import FeaturedWorks from '../../components/Home/FeaturedWorks'
 import Project from '../../components/Project/Project'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { cubicBezier, motion, useScroll, useTransform } from 'framer-motion'
+import useSmoothScroll from '../../hooks/useSmoothScroll'
 import { Helmet } from 'react-helmet'
 import styled, { keyframes } from 'styled-components'
 
@@ -13,13 +16,13 @@ const Content = styled(motion.div)`
   background: var(--offwhite);
   filter: url(#wavy2);
   position: sticky;
-  overflow-x: hidden;
+  overflow: hidden;
   top: 0;
 `;
 
 const HorizontalScrollContainer = styled(motion.div)`
   position: relative;
-  height: 300vh;
+  height: 300vh;  
 `;
 
 const Filter = styled.svg`
@@ -52,7 +55,10 @@ const Home = () => {
     target: targetRef,
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], ["0vw", "-200vw"]);
+  // How do I make this linear interpolate so it smooth scrolls?
+
+  const x = useSmoothScroll(scrollYProgress, 0, -200); 
+  const projectScroll = useSmoothScroll(scrollYProgress, 0, 50); 
 
   return (
     <motion.div
@@ -77,11 +83,12 @@ const Home = () => {
         </filter>
       </Filter>
       <HorizontalScrollContainer ref={targetRef}>
-        <Content style={{ x }}>
+        <Content style={{ x: x + 'vw' }}>
           <Noise />
           <BoxShadow />
           <Landing />
-          <Project />
+          <Splash customScroll={{ x: projectScroll + 'vw'}} />
+          <FeaturedWorks />
         </Content>
       </HorizontalScrollContainer>
     </motion.div>
