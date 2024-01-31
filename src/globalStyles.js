@@ -20,12 +20,15 @@ const GlobalStyle = createGlobalStyle`
     --accent-colour: #4F54D5;
     --secondary-colour: #AD5893;
     --black: #121518;
-    --body-text: clamp(1rem,0.9vw,2rem);
+    --body-text: clamp(1rem,1.3vw,2rem);
+    --title-text: clamp(1.5rem,2vw,3rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
     --default-spacing: 2rem;
     --content-margin-top: 25vh;
     --content-margin-top: 25svh;
+    --body-font: 'adobe-garamond-pro', sans-serif;
+    --body-weight: 400;
     @media (max-width: 1920px) {      
       --article-spacing: 4rem;
       --desktop-container-width: 70vw;
@@ -115,7 +118,7 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: clip;
   }
   body {
-    background: var(--white);
+    background: var(--offwhite);
     color: var(--black);
     box-sizing: border-box;
     transition: background 0.5s ease;

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { set } from 'react-ga';
@@ -13,7 +13,8 @@ const Scene = styled(motion.div)`
   background-position: center;
   background-repeat: no-repeat;
   margin-left: 100px;
-  width: calc(90vw - 100px);
+  margin-right: 100px;
+  width: calc(85vw - 100px);
   height: 100vh;
   position: relative;
   overflow: clip;
@@ -33,12 +34,33 @@ const Image = styled.svg`
   }
 `;
 
+const Spin = keyframes`
+  0% {
+    transform: rotate(0deg);    
+  }
+  100% {
+    transform: rotate(360deg);    
+  }
+`;
+
 const Frame = styled.svg`
   position: absolute;
   top: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;  
+  bottom: 0;
+  transform-origin: center;
   left: 0;
-  width: 100%;
-  height: 100%;
+  will-change: transform;
+  width: calc(120vh * 4/3 * 1.05);
+  height: calc(120vh * 4/3 * 1.05);
+  animation: ${({ isVisible, index }) =>
+  isVisible
+    ? css`${Spin} 90s linear infinite reverse`
+    : 'none'};
 `;
 
 function Splash({ customScroll, imageUrls }) {
@@ -55,9 +77,7 @@ function Splash({ customScroll, imageUrls }) {
   const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
   const [pulsingDirection, setPulsingDirection] = useState(true);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [scrollDependentRadius, setScrollDependentRadius] = useState(0);
-  const maxRadius = 500;
+  const previousBaseRadiusRef = useRef(500 * entry?.intersectionRatio);
   const svgVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 1 } }
@@ -67,67 +87,60 @@ function Splash({ customScroll, imageUrls }) {
   const totalFrames = 41; // Total number of frame images in the directory
   const walkingFrames = Array.from({ length: totalFrames }, (_, i) => `/splash/frame${i + 1}.jpg`);
 
+  const easeInOut = (t) => {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  };
+
   const lerp = (start, end, alpha) => {
-    return start * (1 - alpha) + end * alpha;
+    const easedAlpha = easeInOut(alpha);
+    return start * (1 - easedAlpha) + end * easedAlpha;
   };
 
   useEffect(() => {
     controls.start("visible");
   }, [controls]);
 
-  // Function to calculate the scroll-adjusted radius
-  const calculateScrollAdjustedRadius = (progress) => {
-    // Adjust the progress to be within 0.25 to 0.75 range
-    const adjustedProgress = Math.min(Math.max(progress, 0.25), 0.75);    
-    // Calculate the radius based on adjusted progress
-    return maxRadius - (adjustedProgress - 0.25) * 2 * maxRadius;
-  };
-
   // Combined Intro and Pulsing Animation
   useEffect(() => {
-
     let animationFrameId;
-
+  
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
         const baseRadius = 500 * visibility;
         let newRadius = circleRadius;
         let direction = pulsingDirection;
-
+  
+        const baseRadiusChange = Math.abs(baseRadius - previousBaseRadiusRef.current);
+  
         if (!animationCompleted) {
-          // Intro animation logic
-          newRadius += 1.5; // Increment radius for intro animation
-          if (newRadius >= baseRadius) {
+          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
+          const increment = (baseRadius - newRadius) * 0.01; // 0.1 is the easing factor
+  
+          newRadius += increment;
+          if (newRadius >= baseRadius - 10) {
             setAnimationCompleted(true);
             setIsPulsing(true);
             setPulsingDirection(true);
           }
         } else {
-          const pulsingRange = 10; // Fixed pulsing range
+          const pulsingRange = 15;
+          const minRadius = Math.max(baseRadius - pulsingRange, 0);
+          const maxRadius = baseRadius + pulsingRange;
+          const targetRadius = direction ? maxRadius : minRadius;
 
-          // Adjust the pulsing range based on scroll progress
-          const minRadius = baseRadius >= pulsingRange ? baseRadius - pulsingRange : pulsingRange;
-          const maxRadius = minRadius + 2 * pulsingRange;
-
-          
-          // Pulsing logic
-          if (newRadius >= maxRadius) {
-            newRadius = lerp(newRadius, minRadius, 0.1);
+          // Dynamic alpha based on base radius change
+          const dynamicAlpha = Math.max(0.05 * visibility + baseRadiusChange / 50, 0.03); // Adjust the divisor for sensitivity
+  
+          newRadius = lerp(newRadius, targetRadius, 0.05);
+  
+          if (Math.abs(newRadius - targetRadius) < 10) {
             setPulsingDirection(!direction);
-          }
-          else if (newRadius <= minRadius) {
-            newRadius = lerp(newRadius, maxRadius, 0.1);
-            setPulsingDirection(!direction);
-          }
-          else {
-            newRadius = direction == 1 ? lerp(newRadius, newRadius + 0.5, 0.1) : lerp(newRadius, newRadius - 0.5, 0.1);
           }
         }
-
-        // Update both circleRadius and scrollDependentRadius
+  
         setCircleRadius(newRadius);
-        setScrollDependentRadius(newRadius);
+        previousBaseRadiusRef.current = baseRadius;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -178,11 +191,10 @@ function Splash({ customScroll, imageUrls }) {
         scrub: true,
         onUpdate: self => {
           const progress = self.progress;
-          setScrollProgress(progress);
 
           // Frame animation logic
           const totalFrames = walkingFrames.length;
-          const frameIndex = Math.floor(progress * 2 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 2 * (totalFrames - 1)) : totalFrames - 1;
+          const frameIndex = Math.floor(progress * 4 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 4 * (totalFrames - 1)) : totalFrames - 1;
           setFrame(frameIndex);
         }
       },
@@ -204,18 +216,18 @@ function Splash({ customScroll, imageUrls }) {
               <feGaussianBlur stdDeviation={blurStdDeviation} />
             </filter>
             <mask id="circleMask6">
-              <circle cx="50%" cy="50%" r={scrollDependentRadius * 1.2} fill="#F8F8F8" style={{ filter: 'url(#displacementFilter6)' }} />
+              <circle cx="50%" cy="50%" r={circleRadius * 1.2} fill="#F8F8F8" style={{ filter: 'url(#displacementFilter6)' }} />
             </mask>
           </defs>
           <image xlinkHref="bg.png" width="1200" height="900" mask="url(#circleMask6)" />
           <image xlinkHref={walkingFrames[frame]} width="1200" height="900" mask="url(#circleMask6)" />
         </Image>
-        <Frame width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
+        <Frame width="1200" height="900" isVisible={inView} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>
             <mask id="invertedCircleMask">
               <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
               {/* Use scrollDependentRadius here if scroll is affecting the radius */}
-              <circle cx="50%" cy="50%" r={scrollProgress > 0 ? scrollDependentRadius : circleRadius} fill="black" style={{ filter: 'url(#displacementFilter6)' }} />
+              <circle cx="50%" cy="50%" r={circleRadius} fill="black" style={{ filter: 'url(#displacementFilter6)' }} />
             </mask>
           </defs>
           <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" mask="url(#invertedCircleMask)" />

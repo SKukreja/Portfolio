@@ -303,7 +303,7 @@ const ProjectInfo = (props) => {
   useEffect(() => {
     if (inView) {
       const isVisible = entry.intersectionRatio; // Get the visibility ratio
-      console.log(isVisible);
+
       // Update opacity based on visibility ratio
       if (isVisible > 1) {
         setOpacity(0.97);

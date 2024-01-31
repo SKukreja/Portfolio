@@ -1,43 +1,50 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
-const AnimatedText = ({ text }) => {
-  // Split the text into words, then map each word to its characters
-  const words = text.split(' ').map((word) => [...word.split(''), ' ']);
+const AnimatedText = React.memo(({ text, startImmediately }) => {
+  const [ref, inView] = useInView({ threshold: 0 });
+  const animationDelays = useRef(text.split(' ').flatMap(word => 
+    [...word.split(''), ' '].map(() => Math.random())
+  ));
 
-  // Flatten the array of characters
-  const characters = words.flat();
-
-  // Animation variants for each character
   const charVariants = {
     hidden: { scale: 0, opacity: 0 },
-    visible: () => ({
+    visible: i => ({
       scale: 1,
       opacity: 1,
       transition: {
-        delay: Math.random() * 1 + 1, // Random delay for each character
-        duration: 2, // Duration of the animation
+        delay: animationDelays.current[i],
+        duration: 1,
         type: 'spring',
         stiffness: 120,
-      },
+      }, 
     }),
   };
 
+  const characters = useMemo(() => text.split(' ').flatMap((word, i) => 
+    [...word.split(''), i < text.split(' ').length - 1 ? ' ' : '']
+  ), [text]);
+
   return (
-    <div style={{ display: 'inline-block' }}>
-      {characters.map((char, index) => (
-        <motion.span
-          key={index}
-          variants={charVariants}
-          initial="hidden"
-          animate="visible"
-          style={{ display: 'inline-block', whiteSpace: 'pre' }}
-        >
-          {char}
-        </motion.span>
-      ))}
+    <div ref={ref} style={{ display: 'inline-block' }}>
+      <span aria-hidden="true">
+        {characters.map((char, index) => (
+          <motion.span
+            key={index}
+            variants={charVariants}
+            initial="hidden"
+            animate={inView || startImmediately ? 'visible' : 'hidden'}
+            custom={index}
+            style={{ display: 'inline-block', whiteSpace: 'pre', willChange: 'transform, opacity' }}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </span>
+      <span style={{ display: 'none' }}>{text}</span>
     </div>
   );
-};
+});
 
 export default AnimatedText;
