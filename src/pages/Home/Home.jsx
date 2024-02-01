@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import Landing from '../../components/Home/Landing'
 import Splash from '../../components/Home/Splash'
 import FeaturedWorks from '../../components/Home/FeaturedWorks'
@@ -12,21 +12,25 @@ import styled, { keyframes } from 'styled-components'
 import FootprintTracker from '../../components/Common/FootprintTracker'
 
 const Content = styled(motion.div)`
-  display: flex;  
+  display: flex;
   height: 100vh;
-  height: 100svh;
   width: 1000vw;
   background: var(--offwhite);
-  filter: url(#wavy2);
   position: sticky;
   overflow: hidden;
   top: 0;
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    width: 100vw;
+    height: auto;
+    min-height: 1000vh; // Adjust based on content
+  }
 `;
 
 const HorizontalScrollContainer = styled(motion.div)`
   position: relative;
   background: var(--black);
-  height: 1000vh; // Scroll speed
+  height: 1000vh; // Adjust based on content for vertical scrolling
 `;
 
 const Filter = styled.svg`
@@ -51,6 +55,9 @@ const BoxShadow = styled.div`
   inset: 0;
   z-index: 6;
   pointer-events: none;
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 
 const Home = () => {
@@ -58,51 +65,59 @@ const Home = () => {
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024); // Adjusted to 1024px for consistency with your media query
 
-  // How do I make this linear interpolate so it smooth scrolls?
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024); // Ensure consistency with the media query
+    };
 
-  const x = useSmoothScroll(scrollYProgress, 0, -600); 
-  const splashScroll = useSmoothScroll(scrollYProgress, 0, 100); 
-  const projectScroll = useSmoothScroll(scrollYProgress, 0, 30); 
-  const projectTextScroll = useSmoothScroll(scrollYProgress, 10, -10); 
-  const headerScroll = useSmoothScroll(scrollYProgress, 0, 50); 
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // General horizontal scroll for the Content component on desktop
+  const contentScroll = useSmoothScroll(scrollYProgress, 0, -900);
+  // Ensure the content style dynamically switches between horizontal and vertical based on the viewport
+  const contentStyle = isMobile ? {} : { transform: `translateX(${contentScroll}vw)` };
+
+  // Scroll calculations
+  const splashScroll = useSmoothScroll(scrollYProgress, 0, 100);
+  const projectScroll = useSmoothScroll(scrollYProgress, 0, 50);
+  const projectTextScroll = useSmoothScroll(scrollYProgress, 10, -10);
+  const headerScroll = useSmoothScroll(scrollYProgress, 0, 50);
+
+  // Conditional prop logic for vertical/horizontal scrolling
+  const getScrollProps = (scrollValue, multiplier = 1) => {
+    return isMobile
+      ? { y: scrollValue * multiplier + 'vh' }
+      : { x: scrollValue * multiplier + 'vw' };
+  };
 
   return (
     <motion.div
-    initial={{ 
-      opacity: 0,      
-     }} 
-    animate={{ 
-      opacity: 1,      
-    }} 
-    exit={{ 
-      opacity: 0,
-     }} 
-    transition={{ duration: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
     >
       <Helmet>
         <title>Sumit Kukreja</title>
       </Helmet>
-      <Filter>
-        <filter id="wavy">
-          <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
-          <feDisplacementMap in="SourceGraphic" scale="20" />
-        </filter>
-      </Filter>
       <HorizontalScrollContainer ref={targetRef}>
-        <Content style={{ x: x + 'vw' }}>
+      <Content style={contentStyle}>
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash customScroll={{ x: splashScroll + 'vw'}} />
-          <FeaturedWorks customScroll={{ x: projectScroll * 2 + 'vw'}} headerScroll={{marginLeft: headerScroll * 2 + 'vw'}} textScroll={projectTextScroll} />
-          <About headerScroll={{ x: headerScroll + 'vw'}} treeScroll={{ x: -projectScroll * 8 + 'vw', y: 30 -projectScroll * 2 + 'vw', scale: 0.1 + projectScroll * 0.06}} bgScroll={{ x: -projectTextScroll * 0.5 + 'vw', scale: 1 - projectTextScroll * 0.05}} />
-          <Experience headerScroll={{ x: headerScroll + 'vw'}} treeScroll={{ x: -projectScroll * 6 + 'vw', scale: projectScroll}} bgScroll={{ x: projectTextScroll + 'vw'}} />
-          <Cover headerScroll={{ x: headerScroll + 'vw'}} treeScroll={{ x: -projectScroll * 6 + 'vw', scale: projectScroll}} bgScroll={{ x: projectTextScroll + 'vw'}} />
-        </Content>    
-      </HorizontalScrollContainer>      
+          <Splash customScroll={getScrollProps(splashScroll)} />
+          <FeaturedWorks customScroll={getScrollProps(projectScroll, 2)} headerScroll={getScrollProps(headerScroll, 2)} textScroll={getScrollProps(projectTextScroll)} />
+          <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
+          <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
+          <Cover headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
+        </Content>
+      </HorizontalScrollContainer>
     </motion.div>
-  )
-} 
+  );
+};
 
-export default Home
+export default Home;

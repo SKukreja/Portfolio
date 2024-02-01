@@ -19,6 +19,10 @@ const Scene = styled(motion.div)`
   display: flex;
   align-items: center;
   z-index: 2;
+  @media (max-width: 1024px) {
+    width: 100%;
+    margin-left: 0;
+  }
 `;
 
 const Intro = styled.h2`
@@ -28,15 +32,8 @@ const Intro = styled.h2`
   margin-top: 0;
   margin-bottom: 0;
   color: var(--black);
-  @media (max-width: 1024px) {
-    width: calc(var(--desktop-container-width) - var(--default-spacing));
-    color: var(--black);
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    font-size: 4vw;
-    font-weight: 400;
-    text-align: center;    
+  @media (max-width: 1024px) {                
+    margin-left: 0;
   }
 `;
 
@@ -68,9 +65,9 @@ const SceneText = styled(motion.div)`
     z-index: -1;
   }
   @media (max-width: 1024px) {
-    text-align: center;
-    color: var(--black);
-    mix-blend-mode: darken;
+    width: calc(100% - var(--default-spacing) * 2);
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 
@@ -126,15 +123,6 @@ const Button = styled(Link)`
     align-items: center;  
   }
   @media (max-width: 1024px) {
-    width: fit-content;
-    justify-content: center;
-    font-size: calc(var(--body-text) * 3);
-    color: white;    
-    margin: 0;    
-    & p {
-      background: rgba(0,0,6,0.9);
-      padding: 1rem;
-    }
   }
   @media (max-width: 900px) {    
     font-size: calc(var(--body-text) * 2);

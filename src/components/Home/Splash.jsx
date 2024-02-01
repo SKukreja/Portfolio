@@ -63,7 +63,7 @@ const Frame = styled.svg`
     : 'none'};
 `;
 
-function Splash({ customScroll, imageUrls }) {
+function Splash({ style }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -206,7 +206,7 @@ function Splash({ customScroll, imageUrls }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene style={customScroll}>
+    <Scene style={style}>
       <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
       <Image ref={imageRef} width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>
