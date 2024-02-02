@@ -28,6 +28,9 @@ const Container = styled.div`
   position: relative;
   background: var(--offwhite);
   color: var(--black);
+  @media (max-width: 768px) {
+    width: calc(100% - 20vw);
+  }
 `;
 
 const Bio = styled.div`
@@ -86,7 +89,6 @@ const Blurb = styled.div`
   z-index: 2;
   font-weight: var(--body-weight);    
   @media (max-width: 768px) {
-    font-size: 1rem;
     width: 85%;
   }
   & > p {
@@ -157,13 +159,19 @@ const TwoColumn = styled.div`
   margin-top: 5vh;
   width: 100%;
   z-index: 3;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const Column = styled.div`
   width: 50%;
   text-align: left;
   font-family: var(--body-font);
-  font-size: var(--body-text);    
+  font-size: var(--body-text);
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Time = styled.td`

@@ -29,7 +29,6 @@ const Nav = styled.nav`
   box-sizing: border-box;
   display: flex;
   flex-direction: column; 
-  drop-shadow: 0 0 10px rgba(0, 0, 0, 0.5);  
   justify-content: space-between;
   align-items: center;
   transition: background 0.5s ease;
@@ -38,7 +37,7 @@ const Nav = styled.nav`
   opacity: 1;
 
   & .logo {
-    filter: ${({ isNavSolid }) => isNavSolid ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+    filter:  ${({ isNavSolid, isMobile }) => isNavSolid && !isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
     transition: transform 0.5s ease, filter 0.5s ease;
   }
 
@@ -92,8 +91,8 @@ const Branding = styled.img`
   user-select: none;
   transition: opacity 0.5s ease;
   opacity: 1;
-  z-index: 50;
-  position: absolute;  
+  z-index: 50;  
+  position: absolute; 
   @media (max-width: 768px) {
     width: 60px;
   }
@@ -125,7 +124,7 @@ const NavLink = styled(Link)`
   text-decoration: none;
   letter-spacing: 1px;
   font-size: var(--body-text);
-  font-family: 'Hind';
+  font-family: var(--body-font);
   user-select: none;
   will-change: color;
   transition: color 0.5s ease;
@@ -143,6 +142,9 @@ const LogoContainer = styled(Link)`
   height: 50px;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    justify-content: flex-start;
+  }
 `;
 
 const Overlay = styled.div`
@@ -157,7 +159,7 @@ const Overlay = styled.div`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: visibility 0s ${({ isVisible }) => (isVisible ? '0s' : '0.3s')}, opacity 0.3s ease-out;
   flex-direction: column;
-  background: linear-gradient(to bottom right, rgba(255, 255, 243, 0.6), rgba(255, 155, 168, 0.6));
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
   z-index: 10;
 
   &::before {
@@ -202,7 +204,7 @@ const OverlayMenu = styled.nav`
   align-items: center;
   justify-content: center;
   height: 100%;
-  font-family: 'Poppins';
+  font-family: var(--body-font);
   font-weight: 500;
   text-transform: uppercase;
 
@@ -337,7 +339,7 @@ function Navbar({ socialData }) {
       <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
       <Left>
         <LogoContainer to="/">
-          <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
+          <Branding className="logo" src="/logo.svg" isDark={isModalOpen} />
         </LogoContainer>
       </Left>
       <Center>

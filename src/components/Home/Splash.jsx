@@ -12,15 +12,21 @@ const Scene = styled(motion.div)`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-left: 100px;
+  margin-left: -20vw;
   margin-right: 100px;
   width: calc(85vw - 100px);
   height: 100vh;
   position: relative;
+  will-change: transform;
   overflow: clip;
   display: flex;
   align-items: center;
   z-index: 1;
+  @media (max-width: 768px) {
+    margin-left: ${({ customScroll }) => 'calc(-' + customScroll + 'px)'};      
+    margin-top: -70vh;
+    width: 100vw;
+  }
 `;
 
 const Image = styled.svg`
@@ -28,7 +34,7 @@ const Image = styled.svg`
   position: relative;
   height: 120vh;
   object-fit: cover;
-  @media (max-width: 768px) {
+  @media (max-width: 768px) {    
     width: 120vw;
     height: auto;
   }
@@ -54,16 +60,20 @@ const Frame = styled.svg`
   bottom: 0;
   transform-origin: center;
   left: 0;
+  display: none;
   will-change: transform;
   width: calc(120vh * 4/3 * 1.05);
   height: calc(120vh * 4/3 * 1.05);
   animation: ${({ isVisible, index }) =>
   isVisible
-    ? css`${Spin} 90s linear infinite reverse`
+    ? css`${Spin} 120s linear infinite reverse`
     : 'none'};
+  @media (max-width: 768px) {
+    width: calc(100vw * 4/3 * 1.05);      
+  }
 `;
 
-function Splash({ style }) {
+function Splash({ customScroll }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -124,7 +134,7 @@ function Splash({ style }) {
             setPulsingDirection(true);
           }
         } else {
-          const pulsingRange = 15;
+          const pulsingRange = 10;
           const minRadius = Math.max(baseRadius - pulsingRange, 0);
           const maxRadius = baseRadius + pulsingRange;
           const targetRadius = direction ? maxRadius : minRadius;
@@ -206,7 +216,7 @@ function Splash({ style }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene style={style}>
+    <Scene style={customScroll} customScroll={customScroll}>
       <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
       <Image ref={imageRef} width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>

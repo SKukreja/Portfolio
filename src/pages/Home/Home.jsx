@@ -20,6 +20,7 @@ const Content = styled(motion.div)`
   overflow: hidden;
   top: 0;
   @media (max-width: 1024px) {
+    padding-top: calc(var(--default-spacing) * 2);
     flex-direction: column;
     width: 100vw;
     height: auto;
@@ -46,7 +47,7 @@ const Noise = styled.div`
   pointer-events: none;
   position: absolute;
   inset: 0;
-  z-index: 7;
+  z-index: 1000;
 `;
 
 const BoxShadow = styled.div`
@@ -85,7 +86,7 @@ const Home = () => {
   const splashScroll = useSmoothScroll(scrollYProgress, 0, 100);
   const projectScroll = useSmoothScroll(scrollYProgress, 0, 50);
   const projectTextScroll = useSmoothScroll(scrollYProgress, 10, -10);
-  const headerScroll = useSmoothScroll(scrollYProgress, 0, 50);
+  const headerScroll = useSmoothScroll(scrollYProgress, 0, 100);
 
   // Conditional prop logic for vertical/horizontal scrolling
   const getScrollProps = (scrollValue, multiplier = 1) => {
@@ -109,7 +110,7 @@ const Home = () => {
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash customScroll={getScrollProps(splashScroll)} />
+          <Splash customScroll={getScrollProps(splashScroll, 3.5)} />
           <FeaturedWorks customScroll={getScrollProps(projectScroll, 2)} headerScroll={getScrollProps(headerScroll, 2)} textScroll={getScrollProps(projectTextScroll)} />
           <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
           <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />

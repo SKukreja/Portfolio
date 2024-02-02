@@ -32,6 +32,12 @@ const Container = styled.div`
   position: relative;
   background: var(--black);
   color: var(--offwhite);
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100vh;
+    margin-left: 0;
+    padding: 0;
+  }
 `;
 
 const Bio = styled.div`

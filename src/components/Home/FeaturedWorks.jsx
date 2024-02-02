@@ -14,6 +14,7 @@ const Featured = styled(motion.div)`
   position: relative;
   align-items: center;
   overflow: visible;
+  margin-left: 60vw;
 `;
 
 const ProjectName = styled(Link)`

@@ -46,7 +46,7 @@ const GlobalStyle = createGlobalStyle`
       --desktop-container-width: 95vw;
     }
     @media (max-width: 768px) {
-      --body-text: 4vw;
+      --body-text: 5vw;
     }
   }
   @font-face {
@@ -87,7 +87,7 @@ const GlobalStyle = createGlobalStyle`
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--accent-colour) transparent;
+    scrollbar-color: var(--black) transparent;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -101,7 +101,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: var(--accent-colour);
+    background-color: var(--black);
     border-radius: 0px;
     border: 0px solid transparent;
   }
