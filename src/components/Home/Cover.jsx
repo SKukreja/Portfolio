@@ -28,15 +28,16 @@ const Container = styled.div`
   margin-left: 35vw;
   padding-left: 5vw;
   padding-right: 5vw;
+  padding-top: var(--default-spacing);
   z-index: 6;
   position: relative;
   background: var(--black);
   color: var(--offwhite);
   @media (max-width: 768px) {
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - var(--default-spacing));
     margin-left: 0;
-    padding: 0;
+    padding: 0;padding-top: var(--default-spacing);
   }
 `;
 

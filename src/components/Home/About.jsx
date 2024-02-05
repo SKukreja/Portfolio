@@ -24,12 +24,13 @@ const Container = styled.div`
   align-items: flex-start;
   width: 50vw;
   padding-left: 10vw;
-  padding-right: 10vw;
+  padding-right: 10vw;  
   position: relative;
   background: var(--offwhite);
   color: var(--black);
   @media (max-width: 768px) {
     width: calc(100% - 20vw);
+    padding-bottom: calc(var(--default-spacing) * 2);
   }
 `;
 
@@ -45,11 +46,17 @@ const Bio = styled.div`
   &.active {
     filter: grayscale(0);
   }
+  @media (max-width: 768px) {
+    padding-top: 0;
+    margin-top: var(--default-spacing);
+    text-align: left;
+    align-items: flex-start;
+  }
 `;
 
 const Intro = styled.h1`  
   font-family: var(--body-font);
-  font-size: 6rem;  
+  font-size: var(--title-text);  
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -62,13 +69,13 @@ const Intro = styled.h1`
   padding-bottom: 2rem;
   text-align: left;
   @media (max-width: 768px) {    
-    
+    position: relative;
   }
 `;
 
 const ColumnHeader = styled.h2`
   font-family: var(--body-font);
-  font-size: 2rem; 
+  font-size: calc(var(--body-text) * 2); 
   margin-bottom: 2rem;   
 `;
 
@@ -128,6 +135,9 @@ const Tree = styled(motion.img)`
 
 const TreeContainer = styled(motion.div)`
 pointer-events: none;
+@media (max-width: 768px) {
+  display: none;
+}
 `;
 
 const TreeMask = styled(motion.img)`
@@ -161,6 +171,7 @@ const TwoColumn = styled.div`
   z-index: 3;
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 0;
   }
 `;
 

@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { cubicBezier, motion, useScroll, useTransform } from 'framer-motion'
 import styled, { keyframes } from 'styled-components'
 import use from '../../hooks/use';
+import { Icons } from '../Common/Icons';
 
 const Container = styled(motion.div)`
     margin-top: 4rem;
@@ -19,9 +20,15 @@ const SocialLink = styled.a`
   text-decoration: none;
   margin-bottom: 2rem;
   transition: color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
   &:hover {
     color: var(--primary);
   }
+  & svg {
+    margin-right: 1rem;
+    margin-bottom: 0.1rem;
+  }  
 `;
 
 const Socials = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
@@ -36,7 +43,7 @@ const Socials = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
             key={link.id}
             href={link.url} target="_blank"
         >
-            -> {link.name}
+            {Icons["Arrow Right"]()} {link.name}
         </SocialLink>          
         ))}
         </Container>

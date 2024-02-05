@@ -15,6 +15,42 @@ const Featured = styled(motion.div)`
   align-items: center;
   overflow: visible;
   margin-left: 60vw;
+  @media (max-width: 768px) {
+    margin-top: 60vh;
+    margin-left: 0;
+  }
+`;
+
+const Header = styled.h1`
+  font-family: var(--body-font);
+  font-size: var(--title-text);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  position: absolute;  
+  z-index: 4;
+  height: auto;
+  top: 7.5rem;
+  margin: 0;
+  left: -10rem;  
+  text-align: center;
+  @media (max-width: 768px) {    
+    left: var(--default-spacing);  
+    top: 0;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;    
+    height: 100%;
+    width: 100%;
+    left: 0;  
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%);
+    z-index: -1;
+
+  }
 `;
 
 const ProjectName = styled(Link)`
@@ -48,6 +84,9 @@ const Projects = styled(motion.div)`
   margin-top: 10rem;
   height: calc(100% - 10rem);
   overflow: visible;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const ProjectContent = styled.div`
@@ -57,7 +96,7 @@ const ProjectContent = styled.div`
   flex-direction: column;
   z-index: 2;
   position: absolute;
-  margin-left: 10rem;
+  margin-left: 20rem;
   &.odd {
     bottom: 50%;
     &::before {
@@ -82,36 +121,18 @@ const ProjectContent = styled.div`
     background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%), radial-gradient(var(--offwhite) 0%,transparent 40%);
     z-index: -1;
   }
-  @media (max-width: 1920px) {
-    width: 40%;
-  }
-  @media (max-width: 1440px) {
-    width: 50%;
-    &.odd .summary {
-      padding-left: 0;
-    }
-    &.even .summary {
-      padding-right: 0;
-    }
-  }
-  @media (max-width: 1440px) {
-    width: calc(100% - 4rem);
-    margin: 0;
-    padding: 2rem;
-    background: rgba(8,7,8,0.9);
-    justify-content: center;
-    &.odd .summary {
-      padding-left: 0;
-    }
-    &.even .summary {
-      padding-right: 0;
-    }
-    &.even, &.odd {
-      text-align: center;
-    }
-  }
   @media (max-width: 768px) {
-    height: 100%;
+    width: calc(100% - 2 * var(--default-spacing));
+    margin: 0;
+    padding: var(--default-spacing);
+    &.odd, &.even {
+      top: 0%;
+      bottom: 0%;
+      &::before {        
+        top: 0%;
+        bottom: 0%;
+      }
+    }
   }
 `;
 
@@ -119,7 +140,8 @@ const ProjectContent = styled.div`
 const Project = styled.div`
     display: flex;
     position: relative;
-    margin-left: 10rem;
+    margin-left: 5vw;
+    margin-right: 5vw;
     width: 33vw;
     height: 100%;
     &.odd {
@@ -127,6 +149,20 @@ const Project = styled.div`
     }
     &.even {
       margin-top: -10rem;
+    }
+    @media (max-width: 768px) {
+      width: 100vw;
+      margin-left: 0;
+      flex-direction: column;
+      &.odd {
+        margin-top: 5rem;
+        margin-bottom: 5rem;        
+        flex-direction: column-reverse;
+      }
+      &.even {
+        margin-top: 6rem;
+        margin-bottom: 6rem;      
+      }
     }
 `;
 
@@ -163,17 +199,15 @@ const ProjectActions = styled.div`
   margin: 2rem -0.5rem;
 `;
 
-const ProjectLink = styled(Link)`
-  color: white;
+const ProjectLink = styled(Link)`  
   display: inline-flex;
   display: none;
-  font-size: 1.5rem;
+  font-size: var(--body-text);
   padding: 0.5rem;
   line-height: 1;
   border-radius: 5px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background: var(--accent-colour);
   align-items: center;
   overflow: hidden;
   text-decoration: none;
@@ -187,44 +221,13 @@ const ProjectLink = styled(Link)`
     opacity: 1;
   }
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+
   }
 `;
 
 const ProjectHeader = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const Header = styled.h1`
-  font-family: var(--body-font);
-  font-size: 6rem;
-  color: var(--black);
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  position: absolute;  
-  z-index: 2;
-  height: auto;
-  top: 7.5rem;
-  margin: 0;
-  left: -10rem;  
-  text-align: center;
-  @media (max-width: 768px) {    
-    
-  }
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;    
-    height: 100%;
-    width: 100%;
-    left: 0;  
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%), radial-gradient(var(--offwhite) 0%,transparent 70%);
-    z-index: -1;
-
-  }
 `;
 
 const ButtonLabel = styled.span`
@@ -286,6 +289,7 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
       </ProjectHeader>
       <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>{project.attributes.summary}</ProjectSummary>
       <ProjectActions>
+        <ProjectLink to={"/project/" + project.attributes.slug}>View Project</ProjectLink>
       </ProjectActions>
     </ProjectContent>
   );
@@ -312,7 +316,7 @@ const ProjectItem = ({ project, number, customScroll, textScroll }) => {
       ) : (
         ''
       )}
-      <ProjectImage customScroll={customScroll} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage customScroll={customScroll} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <ProjectInfo textScroll={textScroll} isInView={inView} className="even" number={number} project={project} />
       ) : (
@@ -337,7 +341,7 @@ const FeaturedWorks = ({ customScroll, textScroll, headerScroll }) => {
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} project={project} number={number} customScroll={customScroll} textScroll={{marginLeft: (textScroll * 2 + 5 * (number + 1)) + 'vw'}} />
+        <ProjectItem key={project.id} project={project} number={number} customScroll={customScroll} textScroll={textScroll} />
       ))}
       </Projects>
     </Featured>

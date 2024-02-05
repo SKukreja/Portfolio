@@ -19,9 +19,11 @@ const Scene = styled(motion.div)`
   display: flex;
   align-items: center;
   z-index: 2;
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) {
     width: 100%;    
     margin-left: 0;
+    align-items: flex-start;
+    margin-top: var(--default-spacing);
   }
 `;
 
@@ -68,8 +70,10 @@ const SceneText = styled(motion.div)`
   @media (max-width: 768px) {
     padding: var(--default-spacing);
     width: calc(100% - var(--default-spacing) * 2);
+    margin-top: var(--default-spacing);
     margin-left: auto;
     margin-right: auto;
+    justify-content: flex-start;
     &::before {
       background: transparent;
       background: transparent;
@@ -81,28 +85,22 @@ const ActionButtons = styled(motion.div)`
   pointer-events: none;
   display: flex;
   width: 100%;
-  justify-content: start;
+  justify-content: flex-start;
   @media (max-width: 1024px) {
     margin-top: 30vh;
     margin-top: 30svh;
-    justify-content: center;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
   @media (max-width: 900px) {
     margin-top: 25vh;
     margin-top: 25svh;
   }
-  @media (max-width: 768px) {
-    margin-top: 27.5vh;
-    margin-top: 27.5svh;
+  @media (max-width: 768px) {    
+    margin-top: var(--default-spacing);
+    margin-top: var(--default-spacing);
   }
-  @media (max-width: 768px) {
-    margin-top: 27.5vh;
-    margin-top: 27.5svh;
-  }
-
 `;
 
 const Button = styled(Link)`
@@ -128,7 +126,8 @@ const Button = styled(Link)`
     display: flex;
     align-items: center;  
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) {
+    margin: 0;
   }
 `;
 
@@ -166,8 +165,8 @@ const ColoredBG = styled.div`
 
 const NameContainer = styled(motion.div)`
   width: 100%;
-  margin-top: 2rem;
-  margin-bottom: 2rem;  
+  margin-top: 1rem;
+  margin-bottom: 1rem;  
 `;
 
 const NameSvg = styled(motion.svg)`  

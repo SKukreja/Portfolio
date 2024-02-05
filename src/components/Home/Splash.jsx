@@ -23,9 +23,11 @@ const Scene = styled(motion.div)`
   align-items: center;
   z-index: 1;
   @media (max-width: 768px) {
-    margin-left: ${({ customScroll }) => 'calc(-' + customScroll + 'px)'};      
-    margin-top: -70vh;
-    width: 100vw;
+    will-change: transform, margin-left;
+    margin-left: ${({x}) => `${-60}vw`};
+    margin-top: -60vh;
+    width: 160vw;
+    height: 160vw;
   }
 `;
 
@@ -33,10 +35,11 @@ const Image = styled.svg`
   width: auto;
   position: relative;
   height: 120vh;
-  object-fit: cover;
+  object-fit: cover;  
   @media (max-width: 768px) {    
-    width: 120vw;
+    width: 140%;
     height: auto;
+    aspect-ratio: 4/3;
   }
 `;
 
@@ -62,14 +65,14 @@ const Frame = styled.svg`
   left: 0;
   display: none;
   will-change: transform;
-  width: calc(120vh * 4/3 * 1.05);
-  height: calc(120vh * 4/3 * 1.05);
+  width: calc(120% * 4/3 * 1.05);
+  height: calc(120% * 4/3 * 1.05);
   animation: ${({ isVisible, index }) =>
   isVisible
     ? css`${Spin} 120s linear infinite reverse`
     : 'none'};
   @media (max-width: 768px) {
-    width: calc(100vw * 4/3 * 1.05);      
+    width: calc(100% * 4/3 * 1.05);      
   }
 `;
 
@@ -117,7 +120,7 @@ function Splash({ customScroll }) {
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
-        const baseRadius = 500 * visibility;
+        const baseRadius = 250 * visibility + 150;
         let newRadius = circleRadius;
         let direction = pulsingDirection;
   
@@ -201,7 +204,7 @@ function Splash({ customScroll }) {
         scrub: true,
         onUpdate: self => {
           const progress = self.progress;
-
+          console.log(customScroll);
           // Frame animation logic
           const totalFrames = walkingFrames.length;
           const frameIndex = Math.floor(progress * 4 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 4 * (totalFrames - 1)) : totalFrames - 1;
@@ -216,7 +219,7 @@ function Splash({ customScroll }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene style={customScroll} customScroll={customScroll}>
+    <Scene style={customScroll} x={customScroll}>
       <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
       <Image ref={imageRef} width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>

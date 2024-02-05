@@ -22,6 +22,11 @@ const Scene = styled(motion.div)`
   align-items: center;
   z-index: 1;
   overflow: visible;
+  margin-left: ${(props) => `calc(${Number(props.number)} * -2rem)`};
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-top: ${(props) => `calc(${Number(props.number)} * -2rem)`};
+  }
 `;
 
 const Image = styled.svg`
@@ -49,13 +54,18 @@ const Container = styled(motion.div)`
   &.odd svg {
     bottom: 10%;
   }
-  
+  @media (max-width: 768px) {
+    &.even svg, &.odd svg {
+      top: -50%;
+      bottom: 0;
+    }
+  }
 `;
 
 let uniqueIdCounter = 0;
 
 
-function ProjectImage({ customScroll, imageUrl, even }) {
+function ProjectImage({ customScroll, number, imageUrl, even }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -97,6 +107,7 @@ function ProjectImage({ customScroll, imageUrl, even }) {
 
   useEffect(() => {
     controls.start("visible");
+    console.log(number);
   }, [controls]);
 
   // Function to calculate the scroll-adjusted radius
@@ -147,7 +158,7 @@ function ProjectImage({ customScroll, imageUrl, even }) {
             setPulsingDirection(!direction);
           }
           else {
-            newRadius = direction == 1 ? lerp(newRadius, newRadius + 0.05, 0.1) : lerp(newRadius, newRadius - 0.05, 0.1);
+            newRadius = direction == 1 ? lerp(newRadius, newRadius + 0.05, 0.2) : lerp(newRadius, newRadius - 0.05, 0.2);
           }
         }
 
@@ -188,7 +199,7 @@ function ProjectImage({ customScroll, imageUrl, even }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene className={even ? 'even' : 'odd'} style={customScroll}>
+    <Scene className={even ? 'even' : 'odd'} number={number} style={customScroll}>
       <Container className={even ? 'even' : 'odd'} ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
         <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>

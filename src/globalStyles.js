@@ -21,7 +21,7 @@ const GlobalStyle = createGlobalStyle`
     --secondary-colour: #AD5893;
     --black: #121518;
     --body-text: clamp(1rem,1.3vw,2rem);
-    --title-text: clamp(1.5rem,2vw,3rem);
+    --title-text: clamp(1.5rem,10vw,6rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
     --default-spacing: 2rem;
@@ -46,7 +46,8 @@ const GlobalStyle = createGlobalStyle`
       --desktop-container-width: 95vw;
     }
     @media (max-width: 768px) {
-      --body-text: 5vw;
+      --title-text: 12vw;
+      --body-text: 4vw;
     }
   }
   @font-face {

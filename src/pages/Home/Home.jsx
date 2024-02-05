@@ -85,7 +85,7 @@ const Home = () => {
   // Scroll calculations
   const splashScroll = useSmoothScroll(scrollYProgress, 0, 100);
   const projectScroll = useSmoothScroll(scrollYProgress, 0, 50);
-  const projectTextScroll = useSmoothScroll(scrollYProgress, 10, -10);
+  const projectTextScroll = useSmoothScroll(scrollYProgress, 0, 100);
   const headerScroll = useSmoothScroll(scrollYProgress, 0, 100);
 
   // Conditional prop logic for vertical/horizontal scrolling
@@ -111,7 +111,7 @@ const Home = () => {
           <BoxShadow />
           <Landing />
           <Splash customScroll={getScrollProps(splashScroll, 3.5)} />
-          <FeaturedWorks customScroll={getScrollProps(projectScroll, 2)} headerScroll={getScrollProps(headerScroll, 2)} textScroll={getScrollProps(projectTextScroll)} />
+          <FeaturedWorks customScroll={getScrollProps(headerScroll, 1/2)} headerScroll={getScrollProps(headerScroll)} textScroll={getScrollProps(headerScroll)} />
           <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
           <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
           <Cover headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
