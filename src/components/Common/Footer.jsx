@@ -94,7 +94,6 @@ const usePath = () => {
   const [path, setPath] = useState(location.pathname);
 
   useEffect(() => {
-    console.log("Setting path:", location.pathname);
     setPath(location.pathname);
   }, [location]);
 

@@ -17,17 +17,18 @@ const Scene = styled(motion.div)`
   width: calc(85vw - 100px);
   height: 100vh;
   position: relative;
-  will-change: transform;
   overflow: clip;
   display: flex;
+  will-change: transform;
   align-items: center;
   z-index: 1;
+  transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
   @media (max-width: 768px) {
-    will-change: transform, margin-left;
-    margin-left: ${({x}) => `${-60}vw`};
+    transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
+    margin-left: -90vw;
     margin-top: -60vh;
-    width: 160vw;
-    height: 160vw;
+    width: 200vw;
+    height: 200vw;
   }
 `;
 
@@ -63,14 +64,10 @@ const Frame = styled.svg`
   bottom: 0;
   transform-origin: center;
   left: 0;
-  display: none;
   will-change: transform;
-  width: calc(120% * 4/3 * 1.05);
-  height: calc(120% * 4/3 * 1.05);
-  animation: ${({ isVisible, index }) =>
-  isVisible
-    ? css`${Spin} 120s linear infinite reverse`
-    : 'none'};
+  width: calc(120vh * 4/3 * 1.05);
+  height: calc(120vh * 4/3 * 1.05);
+
   @media (max-width: 768px) {
     width: calc(100% * 4/3 * 1.05);      
   }
@@ -120,12 +117,10 @@ function Splash({ customScroll }) {
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
-        const baseRadius = 250 * visibility + 150;
+        const baseRadius = 150 * visibility + 250;
         let newRadius = circleRadius;
         let direction = pulsingDirection;
-  
-        const baseRadiusChange = Math.abs(baseRadius - previousBaseRadiusRef.current);
-  
+    
         if (!animationCompleted) {
           // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
           const increment = (baseRadius - newRadius) * 0.01; // 0.1 is the easing factor
@@ -137,13 +132,10 @@ function Splash({ customScroll }) {
             setPulsingDirection(true);
           }
         } else {
-          const pulsingRange = 10;
+          const pulsingRange = 12;
           const minRadius = Math.max(baseRadius - pulsingRange, 0);
           const maxRadius = baseRadius + pulsingRange;
           const targetRadius = direction ? maxRadius : minRadius;
-
-          // Dynamic alpha based on base radius change
-          const dynamicAlpha = Math.max(0.05 * visibility + baseRadiusChange / 50, 0.03); // Adjust the divisor for sensitivity
   
           newRadius = lerp(newRadius, targetRadius, 0.05);
   
@@ -161,38 +153,7 @@ function Splash({ customScroll }) {
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
   }, [inView, animationCompleted, isPulsing, circleRadius, pulsingDirection, entry?.intersectionRatio]);
-
-
-
-  useEffect(() => {
-    // Only add event listeners if the animation has completed
-    if (animationCompleted) {
-      const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        // Calculate movement and apply to image
-        const moveX = -(clientX - window.innerWidth / 2) / 70;
-        const moveY = -(clientY - window.innerHeight / 2) / 70;
-        imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
-      };
-
-      // Function to handle gyroscopic movement
-      const handleOrientation = (e) => {
-        const { beta, gamma } = e;
-        // Calculate movement and apply to image
-        const moveX = gamma / 70;
-        const moveY = beta / 70;
-        imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
-      };
-
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('deviceorientation', handleOrientation);
-
-      return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('deviceorientation', handleOrientation);
-      };
-    }
-  }, [animationCompleted]);
+  
 
    // Scroll Handling
   useEffect(() => {
@@ -202,9 +163,8 @@ function Splash({ customScroll }) {
         start: "top bottom",
         end: "bottom top",
         scrub: true,
-        onUpdate: self => {
+        onUpdate: self => { 
           const progress = self.progress;
-          console.log(customScroll);
           // Frame animation logic
           const totalFrames = walkingFrames.length;
           const frameIndex = Math.floor(progress * 4 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 4 * (totalFrames - 1)) : totalFrames - 1;
@@ -219,7 +179,7 @@ function Splash({ customScroll }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene style={customScroll} x={customScroll}>
+    <Scene scroll={customScroll.get()}>
       <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
       <Image ref={imageRef} width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>

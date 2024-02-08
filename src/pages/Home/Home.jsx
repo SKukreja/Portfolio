@@ -34,10 +34,6 @@ const HorizontalScrollContainer = styled(motion.div)`
   height: 1000vh; // Adjust based on content for vertical scrolling
 `;
 
-const Filter = styled.svg`
-  display: none;
-`;
-
 const Noise = styled.div`
   background: url("Noise.png");
   background-repeat: repeat;
@@ -110,8 +106,8 @@ const Home = () => {
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash customScroll={getScrollProps(splashScroll, 3.5)} />
-          <FeaturedWorks customScroll={getScrollProps(headerScroll, 1/2)} headerScroll={getScrollProps(headerScroll)} textScroll={getScrollProps(headerScroll)} />
+          <Splash customScroll={scrollYProgress} />
+          <FeaturedWorks customScroll={getScrollProps(headerScroll, 1/2)} scrollYProgress={scrollYProgress} headerScroll={getScrollProps(headerScroll)} textScroll={getScrollProps(headerScroll)} />
           <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
           <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
           <Cover headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />

@@ -16,7 +16,7 @@ const Featured = styled(motion.div)`
   overflow: visible;
   margin-left: 60vw;
   @media (max-width: 768px) {
-    margin-top: 60vh;
+    margin-top: 0vh;
     margin-left: 0;
   }
 `;
@@ -27,7 +27,7 @@ const Header = styled.h1`
   color: var(--black);
   display: flex;
   align-items: center;
-  white-space: nowrap;
+  white-space: nowrap;  
   position: absolute;  
   z-index: 4;
   height: auto;
@@ -85,6 +85,7 @@ const Projects = styled(motion.div)`
   height: calc(100% - 10rem);
   overflow: visible;
   @media (max-width: 768px) {
+    margin-top: 16rem;
     flex-direction: column;
   }
 `;
@@ -264,7 +265,7 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
 
   const textVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 3, delay: 1, ease: "easeInOut" } },
+    visible: { opacity: 1, transition: { duration: 2, delay: 0.5, ease: "easeInOut" } },
   };
 
   useEffect(() => {
@@ -295,7 +296,7 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
   );
 }
 
-const ProjectItem = ({ project, number, customScroll, textScroll }) => {
+const ProjectItem = ({ project, number, customScroll, scrollYProgress, textScroll }) => {
   const ref = useRef(null);
   const [viewRef, inView] = useInView({
     threshold: 0.1,
@@ -316,7 +317,7 @@ const ProjectItem = ({ project, number, customScroll, textScroll }) => {
       ) : (
         ''
       )}
-      <ProjectImage customScroll={customScroll} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage customScroll={customScroll} scrollYProgress={scrollYProgress} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <ProjectInfo textScroll={textScroll} isInView={inView} className="even" number={number} project={project} />
       ) : (
@@ -326,7 +327,7 @@ const ProjectItem = ({ project, number, customScroll, textScroll }) => {
   );
 };
 
-const FeaturedWorks = ({ customScroll, textScroll, headerScroll }) => {
+const FeaturedWorks = ({ customScroll, textScroll, headerScroll, scrollYProgress }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
@@ -341,7 +342,7 @@ const FeaturedWorks = ({ customScroll, textScroll, headerScroll }) => {
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} project={project} number={number} customScroll={customScroll} textScroll={textScroll} />
+        <ProjectItem key={project.id} project={project} number={number} scrollYProgress={scrollYProgress} customScroll={customScroll} textScroll={textScroll} />
       ))}
       </Projects>
     </Featured>

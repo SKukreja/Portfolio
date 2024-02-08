@@ -479,7 +479,7 @@ const Project = () => {
                 <Headers className='topic-header'>Introduction</Headers>
                 <Topic>
                   <TopicText>
-                    <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{data?.attributes.summary}</ReactMarkdown>
+                    {data?.attributes.summary}
                   </TopicText>
                 </Topic>
               </TextSection>  

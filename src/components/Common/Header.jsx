@@ -20,45 +20,43 @@ const slideInFromRight = keyframes`
 `;
 
 const Nav = styled.nav`
+  width: 100vw;
+  padding-left: calc((100vw - var(--desktop-container-width))/2);
+  padding-right: calc((100vw - var(--desktop-container-width))/2);
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh; 
-  width: 80px;
-  padding-top: 1rem;
   box-sizing: border-box;
+  top: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  transform: ${({ scrollPos }) =>
+    scrollPos === 'down' ? 'translateY(-100%)' : 'translateY(0)'};
+  transition: transform 0.5s ease, background 0.5s ease;
+  background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
   display: flex;
-  flex-direction: column; 
+  z-index: 20;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;  
+  right: 0;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.5s ease;
-  background: ${({ isNavSolid }) => isNavSolid ? 'var(--black)' : 'transparent'};
-  z-index: 20;
+  box-sizing: border-box;  
   opacity: 1;
-
   & .logo {
-    filter:  ${({ isNavSolid, isMobile }) => isNavSolid && !isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+    filter: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(0)') : (isMobile ? 'brightness(0) invert(0)' : 'brightness(0) invert(1)')};
     transition: transform 0.5s ease, filter 0.5s ease;
   }
-
   & .logo:hover {
     transform: scale(1.1);
   }
-
   @media (max-width: 768px) {
-    top: 0;
-    left: 0;
-    height: auto; 
-    width: 100vw; 
-    flex-direction: row;
-    justify-content: space-between; 
-    align-items: center;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
     padding-left: 1rem;
-    padding-right: 1rem;
+    padding-right: 1rem;    
   }
-`;
+
+`
 
 const Left = styled.div`
   width: 200px;
@@ -75,8 +73,8 @@ const Center = styled.div`
 `;
 
 const SocialLink = styled.a`
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-left: 1rem;
   color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   &:hover {
@@ -85,31 +83,29 @@ const SocialLink = styled.a`
 `;
 
 const Branding = styled.img`
-  width: 50px;
+  width: 80px;
   pointer-events: auto;  
   cursor: pointer;
   user-select: none;
   transition: opacity 0.5s ease;
   opacity: 1;
-  z-index: 50;  
-  position: absolute; 
+  z-index: 50;
+  position: absolute;
   @media (max-width: 768px) {
     width: 60px;
   }
 `;
 
 const Right = styled.div`
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  width: 100%;  
+  text-align: right;
+  width: 200px;
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
 const Menu = styled.nav`
-  font-family: 'Satoshi';
+  font-family: var(--body-font);
   font-weight: 600;
   text-transform: uppercase;
   transition: background 0.5s ease;
@@ -138,13 +134,9 @@ const NavLink = styled(Link)`
 const LogoContainer = styled(Link)`
   position: relative;
   display: flex;
-  width: 100%;
-  height: 50px;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-  }
+  height: 80px;
+  width: fit-content;
+  align-items: center;  
 `;
 
 const Overlay = styled.div`
@@ -159,7 +151,7 @@ const Overlay = styled.div`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: visibility 0s ${({ isVisible }) => (isVisible ? '0s' : '0.3s')}, opacity 0.3s ease-out;
   flex-direction: column;
-  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(to bottom right, rgba(255, 255, 243, 0.6), rgba(255, 155, 168, 0.6));
   z-index: 10;
 
   &::before {
@@ -204,7 +196,7 @@ const OverlayMenu = styled.nav`
   align-items: center;
   justify-content: center;
   height: 100%;
-  font-family: var(--body-font);
+  font-family: 'Poppins';
   font-weight: 500;
   text-transform: uppercase;
 
@@ -257,6 +249,7 @@ const usePath = () => {
   const [path, setPath] = useState(location.pathname);
 
   useEffect(() => {
+    console.log("Setting path:", location.pathname);
     setPath(location.pathname);
   }, [location]);
 
@@ -335,10 +328,10 @@ function Navbar({ socialData }) {
 
   return (
     <>
-      <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
+      <Nav onHomePage={onHomePage} scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
       <Left>
         <LogoContainer to="/">
-          <Branding className="logo" src="/logo.svg" isDark={isModalOpen} />
+          <Branding className="logo" src="/logo.png" isDark={isModalOpen} />
         </LogoContainer>
       </Left>
       <Center>
@@ -352,6 +345,14 @@ function Navbar({ socialData }) {
           <span></span>
           <span></span>
         </HamburgerButton>
+        <Menu className="nav-menu" isNavSolid={isSolid}
+          isMobile={isModalOpen}>
+          {data?.attributes.links.map((link) => {
+            if(link.text !== 'Home') {
+              return (<NavLink className='nav-link' key={link.id} to={link.url} isNavSolid={isSolid} onHome={onHomePage}>{link.text}</NavLink>);
+            }
+          })}
+        </Menu>
       </Center>
       <Right>
         {socials?.attributes.links.map((link, index) => (

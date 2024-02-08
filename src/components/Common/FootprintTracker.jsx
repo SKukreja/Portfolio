@@ -45,7 +45,6 @@ const FootprintTracker = ({ horizontalOffset }) => {
     let throttleTimeout = null;
 
     const handleMouseMove = (e) => {
-        console.log(e.clientX + horizontalOffset, e.clientY);
         const vwToPixels = value => (document.documentElement.clientWidth * value) / 100;
 
         // Listen for scroll events to update the last known position

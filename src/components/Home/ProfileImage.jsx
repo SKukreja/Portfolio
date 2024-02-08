@@ -56,7 +56,7 @@ function ProfileImage({ customScroll, imageUrl, even }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
-    threshold: 1
+    threshold: 0.5
   });
   const imageRef = useRef(null); // Ref for the image container
   const [displacementScale, setDisplacementScale] = useState(75);
@@ -95,12 +95,12 @@ function ProfileImage({ customScroll, imageUrl, even }) {
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
-        const baseRadius = 440 * visibility;
+        const baseRadius = 550 * visibility;
         let newRadius = circleRadius;
   
         if (!animationCompleted) {
           // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-          const increment = (baseRadius - newRadius) * 0.01; // 0.1 is the easing factor
+          const increment = (baseRadius - newRadius) * 0.05; // 0.1 is the easing factor
   
           newRadius += increment;
   

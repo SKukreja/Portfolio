@@ -19,13 +19,13 @@ const Scene = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: 2rem;
   align-items: center;
   z-index: 1;
   overflow: visible;
-  margin-left: ${(props) => `calc(${Number(props.number)} * -2rem)`};
+  transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
   @media (max-width: 768px) {
-    margin-left: 0;
-    margin-top: ${(props) => `calc(${Number(props.number)} * -2rem)`};
+    transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
   }
 `;
 
@@ -65,7 +65,7 @@ const Container = styled(motion.div)`
 let uniqueIdCounter = 0;
 
 
-function ProjectImage({ customScroll, number, imageUrl, even }) {
+function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -80,7 +80,7 @@ function ProjectImage({ customScroll, number, imageUrl, even }) {
   const [isPulsing, setIsPulsing] = useState(true);
   const [pulsingDirection, setPulsingDirection] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [scrollDependentRadius, setScrollDependentRadius] = useState(0);
+  const previousBaseRadiusRef = useRef(600 * entry?.intersectionRatio);
   const maxRadius = 600;
   const svgVariants = {
     hidden: { opacity: 0 },
@@ -107,71 +107,39 @@ function ProjectImage({ customScroll, number, imageUrl, even }) {
 
   useEffect(() => {
     controls.start("visible");
-    console.log(number);
   }, [controls]);
-
-  // Function to calculate the scroll-adjusted radius
-  const calculateScrollAdjustedRadius = (progress) => {
-    // Adjust the progress to be within 0.25 to 0.75 range
-    const adjustedProgress = Math.min(Math.max(progress, 0.25), 0.75);    
-    // Calculate the radius based on adjusted progress
-    return maxRadius - (adjustedProgress - 0.25) * 2 * maxRadius;
-  };
 
   // Combined Intro and Pulsing Animation
   useEffect(() => {
-
     let animationFrameId;
-
+  
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
-        const baseRadius = maxRadius * visibility;
+        const baseRadius = 600 * visibility;
         let newRadius = circleRadius;
-        let direction = pulsingDirection;
-
-        if (!animationCompleted) {
-          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-          const increment = (baseRadius - newRadius) * 0.01; // 0.1 is the easing factor
   
+        // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
+        const increment = Math.abs((baseRadius - newRadius) * 0.1); // 0.1 is the easing factor
+
+        console.log(newRadius + " " + baseRadius + " " + increment);
+        
+        if (newRadius < baseRadius - 10) {
           newRadius += increment;
-          if (newRadius >= baseRadius) {
-            setAnimationCompleted(true);
-            setIsPulsing(true);
-            setPulsingDirection(true);
-          }
-        } else {
-          const pulsingRange = 10; // Fixed pulsing range
-
-          // Adjust the pulsing range based on scroll progress
-          const minRadiusBound = baseRadius >= pulsingRange ? baseRadius - pulsingRange : pulsingRange;
-          const maxRadiusBound = minRadiusBound + 2 * pulsingRange;
-
-          
-          // Pulsing logic
-          if (newRadius >= maxRadiusBound) {
-            newRadius = lerp(newRadius, minRadiusBound, 0.1);
-            setPulsingDirection(!direction);
-          }
-          else if (newRadius <= minRadiusBound) {
-            newRadius = lerp(newRadius, maxRadiusBound, 0.1);
-            setPulsingDirection(!direction);
-          }
-          else {
-            newRadius = direction == 1 ? lerp(newRadius, newRadius + 0.05, 0.2) : lerp(newRadius, newRadius - 0.05, 0.2);
-          }
+        }
+        else if (newRadius > baseRadius + 10) {
+          newRadius -= increment;
         }
 
-        // Update both circleRadius and scrollDependentRadius
         setCircleRadius(newRadius);
-        setScrollDependentRadius(newRadius);
+        previousBaseRadiusRef.current = baseRadius;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [inView, animationCompleted, isPulsing, circleRadius, pulsingDirection, entry?.intersectionRatio]);
+  }, [circleRadius, inView, entry?.intersectionRatio]);
 
    // Scroll Handling
   useEffect(() => {
@@ -184,11 +152,6 @@ function ProjectImage({ customScroll, number, imageUrl, even }) {
         onUpdate: self => {
           const progress = self.progress;
           setScrollProgress(progress);
-
-          // Frame animation logic
-          const totalFrames = walkingFrames.length;
-          const frameIndex = Math.floor(progress * 2 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 2 * (totalFrames - 1)) : totalFrames - 1;
-          setFrame(frameIndex);
         }
       },
     });
@@ -199,7 +162,7 @@ function ProjectImage({ customScroll, number, imageUrl, even }) {
   }, [walkingFrames.length]);
 
   return (
-    <Scene className={even ? 'even' : 'odd'} number={number} style={customScroll}>
+    <Scene className={even ? 'even' : 'odd'} number={number} scrollYProgress={scrollYProgress} isInView={inView}>
       <Container className={even ? 'even' : 'odd'} ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
         <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>

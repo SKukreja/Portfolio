@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
@@ -227,7 +226,7 @@ const About = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
           <Bio style={headerScroll} ref={ref} className={`${inView ? 'active' : ''}`}>
             <Intro>About Me</Intro>           
             <Blurb>
-              <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{data?.attributes.blurb}</ReactMarkdown>           
+              {data?.attributes.blurb}         
             </Blurb>
             <TwoColumn>
               <Column>
