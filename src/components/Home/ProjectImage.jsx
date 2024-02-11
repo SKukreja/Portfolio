@@ -67,29 +67,23 @@ let uniqueIdCounter = 0;
 
 function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress }) {
   const controls = useAnimation();
-  const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
+  const thresholds = Array.from({ length: 25 }, (_, index) => index * 0.04);
   const [ref, inView, entry] = useInView({
     threshold: thresholds
   });
   const imageRef = useRef(null); // Ref for the image container
-  const [displacementScale, setDisplacementScale] = useState(75);
-  const [blurStdDeviation, setBlurStdDeviation] = useState(10);
+  const [lastFrameTime, setLastFrameTime] = useState(Date.now());
+  const [lastSecond, setLastSecond] = useState(Date.now());
+  const [frames, setFrames] = useState(0);
+  const targetFPS = 30; // You can adjust this value based on your needs
+  const frameDuration = 1000 / targetFPS;
   const introStartRadius = 0; // Starting radius for the intro animation
-  const [circleRadius, setCircleRadius] = useState(introStartRadius);
-  const [animationCompleted, setAnimationCompleted] = useState(false);
-  const [isPulsing, setIsPulsing] = useState(true);
-  const [pulsingDirection, setPulsingDirection] = useState(true);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [circleRadius, setCircleRadius] = useState(introStartRadius);  
   const previousBaseRadiusRef = useRef(600 * entry?.intersectionRatio);
-  const maxRadius = 600;
   const svgVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 1 } }
   };
-
-  const [frame, setFrame] = useState(0); // For walking animation frames
-  const totalFrames = 41; // Total number of frame images in the directory
-  const walkingFrames = Array.from({ length: totalFrames }, (_, i) => `/splash/frame${i + 1}.jpg`);
 
   const easeInOut = (t) => {
     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -114,52 +108,43 @@ function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress })
     let animationFrameId;
   
     const animate = () => {
-      if (inView) {
-        const visibility = entry.intersectionRatio;
-        const baseRadius = 600 * visibility;
-        let newRadius = circleRadius;
-  
-        // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-        const increment = Math.abs((baseRadius - newRadius) * 0.1); // 0.1 is the easing factor
+      const now = Date.now();
+      const elapsed = now - lastFrameTime;
+      // Console log the frame rate
+      setFrames(frames + 1);      
+      if (now - lastSecond >= 1000) {        
+        setLastSecond(now);
+        setFrames(0); // Reset frame count for the next second
+      }
 
-        console.log(newRadius + " " + baseRadius + " " + increment);
-        
-        if (newRadius < baseRadius - 10) {
-          newRadius += increment;
-        }
-        else if (newRadius > baseRadius + 10) {
-          newRadius -= increment;
-        }
+      if (elapsed > frameDuration) 
+      {
+        setLastFrameTime(now - (elapsed % frameDuration));
+        if (inView) {
+          const visibility = entry.intersectionRatio;
+          const baseRadius = 600 * visibility;
+          let newRadius = circleRadius;
+    
+          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
+          const increment = Math.abs((baseRadius - newRadius) * 0.2); // 0.1 is the easing factor
+          
+          if (newRadius < baseRadius - 10) {
+            newRadius += increment;
+          }
+          else if (newRadius > baseRadius + 10) {
+            newRadius -= increment;
+          }
 
-        setCircleRadius(newRadius);
-        previousBaseRadiusRef.current = baseRadius;
+          setCircleRadius(newRadius);
+          previousBaseRadiusRef.current = baseRadius;
+        }
       }
       animationFrameId = requestAnimationFrame(animate);
     };
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [circleRadius, inView, entry?.intersectionRatio]);
-
-   // Scroll Handling
-  useEffect(() => {
-    const scrollAnimation = gsap.to(ref.current, {
-      scrollTrigger: {
-        trigger: ref.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-        onUpdate: self => {
-          const progress = self.progress;
-          setScrollProgress(progress);
-        }
-      },
-    });
-
-    return () => {
-      scrollAnimation.kill();
-    };
-  }, [walkingFrames.length]);
+  }, [circleRadius, inView, lastFrameTime]);
 
   return (
     <Scene className={even ? 'even' : 'odd'} number={number} scrollYProgress={scrollYProgress} isInView={inView}>
@@ -172,15 +157,6 @@ function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress })
           </defs>
           <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${maskId})`} />
         </Image>
-        <Frame width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
-          <defs>
-            <mask id={invertedMaskId}>
-              <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
-              <ellipse cx="50%" cy="50%" rx={circleRadius} ry={circleRadius * 3/4} fill="black" style={{ filter: `url(#displacementFilter6)` }} />
-            </mask>
-          </defs>
-          <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" mask={`url(#${invertedMaskId})`} />
-        </Frame>
       </Container>
     </Scene>
   );

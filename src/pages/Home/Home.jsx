@@ -9,7 +9,10 @@ import { cubicBezier, motion, useScroll, useTransform } from 'framer-motion'
 import useSmoothScroll from '../../hooks/useSmoothScroll'
 import { Helmet } from 'react-helmet'
 import styled, { keyframes } from 'styled-components'
+import gsap from 'gsap'
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import FootprintTracker from '../../components/Common/FootprintTracker'
+
 
 const Content = styled(motion.div)`
   display: flex;
@@ -18,20 +21,23 @@ const Content = styled(motion.div)`
   background: var(--offwhite);
   position: sticky;
   overflow: hidden;
+  will-change: transform;
   top: 0;
   @media (max-width: 1024px) {
     padding-top: calc(var(--default-spacing) * 2);
     flex-direction: column;
     width: 100vw;
     height: auto;
-    min-height: 1000vh; // Adjust based on content
+    min-height: 1000vh;
+    min-height: 1000svh;
   }
 `;
 
 const HorizontalScrollContainer = styled(motion.div)`
   position: relative;
   background: var(--black);
-  height: 1000vh; // Adjust based on content for vertical scrolling
+  height: 1000vh;
+  height: 1000svh; 
 `;
 
 const Noise = styled.div`
@@ -57,24 +63,44 @@ const BoxShadow = styled.div`
   }
 `;
 
+// Helper function to debounce a function call
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 const Home = () => {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024); // Adjusted to 1024px for consistency with your media query
-
+  const lenisRef = useRef()
+  
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024); // Ensure consistency with the media query
-    };
+    function update(time) {
+      lenisRef.current?.lenis?.raf(time * 1000)
+    }
+  
+    gsap.ticker.add(update)
+  
+    return () => {
+      gsap.ticker.remove(update)
+    }
+  })
+  
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+
 
   // General horizontal scroll for the Content component on desktop
-  const contentScroll = useSmoothScroll(scrollYProgress, 0, -900);
+  const contentScroll = useSmoothScroll(scrollYProgress, 0, -900, 0.1);
   // Ensure the content style dynamically switches between horizontal and vertical based on the viewport
   const contentStyle = isMobile ? {} : { transform: `translateX(${contentScroll}vw)` };
 
@@ -97,22 +123,24 @@ const Home = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
-    >
-      <Helmet>
-        <title>Sumit Kukreja</title>
-      </Helmet>
-      <HorizontalScrollContainer ref={targetRef}>
-      <Content style={contentStyle}>
-          <Noise />
-          <BoxShadow />
-          <Landing />
-          <Splash customScroll={scrollYProgress} />
-          <FeaturedWorks customScroll={getScrollProps(headerScroll, 1/2)} scrollYProgress={scrollYProgress} headerScroll={getScrollProps(headerScroll)} textScroll={getScrollProps(headerScroll)} />
-          <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
-          <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
-          <Cover headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
-        </Content>
-      </HorizontalScrollContainer>
+    > 
+      <ReactLenis root ref={lenisRef} autoRaf={true} options={{smoothWheel: true, lerp: 0.1, wheelMultiplier: 0.5, touchMultiplier: 0.1}}>
+        <Helmet>
+          <title>Sumit Kukreja</title>
+        </Helmet>
+        <HorizontalScrollContainer ref={targetRef}>
+        <Content style={contentStyle}>
+            <Noise />
+            <BoxShadow />
+            <Landing />
+            <Splash customScroll={scrollYProgress} />
+            <FeaturedWorks customScroll={getScrollProps(headerScroll, 1/2)} scrollYProgress={scrollYProgress} headerScroll={getScrollProps(headerScroll)} textScroll={getScrollProps(headerScroll)} />
+            <About headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -8)} bgScroll={getScrollProps(projectTextScroll, -0.5)} />
+            <Experience headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
+            <Cover headerScroll={getScrollProps(headerScroll)} treeScroll={getScrollProps(projectScroll, -6)} bgScroll={getScrollProps(projectTextScroll)} />
+          </Content>
+        </HorizontalScrollContainer>
+      </ReactLenis>
     </motion.div>
   );
 };

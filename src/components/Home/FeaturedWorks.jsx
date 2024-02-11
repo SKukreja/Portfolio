@@ -278,7 +278,7 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
   }, [controls, isInView]);
 
   return (
-    <ProjectContent ref={projectRef} style={textScroll} className={className}>
+    <ProjectContent ref={projectRef} className={className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
         <ProjectName to={"/project/" + project.attributes.slug}><AnimatedText startImmediately={false} text={project.attributes.title} /></ProjectName>
@@ -299,17 +299,9 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
 const ProjectItem = ({ project, number, customScroll, scrollYProgress, textScroll }) => {
   const ref = useRef(null);
   const [viewRef, inView] = useInView({
-    threshold: 0.1,
+    threshold: 0.5,
   });
   const [circleRadius, setCircleRadius] = useState(0);
-
-  useEffect(() => {
-    if (inView) {
-      // Set the radius to a value that reveals the entire image
-      setCircleRadius(400); // Adjust this value based on your image size
-    }
-  }, [inView]);
-
   return (
     <Project ref={viewRef} className={`${inView ? 'active' : ''} ${number % 2 === 0 ? 'odd' : 'even'}`}>
       {number % 2 == 0 ? (
@@ -338,7 +330,7 @@ const FeaturedWorks = ({ customScroll, textScroll, headerScroll, scrollYProgress
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7 }}
     >
-      <Header style={headerScroll}>Featured Work</Header>
+      <Header>Featured Work</Header>
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (

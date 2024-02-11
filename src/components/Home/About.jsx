@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import ReactWordcloud from 'react-wordcloud';
 import { motion } from 'framer-motion'
 import Footer from '../../components/Common/Footer';
 import ProfileImage from './ProfileImage';

@@ -50,10 +50,9 @@ const SceneText = styled(motion.div)`
   padding-bottom: 6rem;
   z-index: 1;
   display: flex;
-  white-space: normal; /* Change this from nowrap to normal */
-  overflow-wrap: break-word; /* Ensure words break properly */
+  white-space: normal; 
+  overflow-wrap: break-word; 
   justify-content: center;
-  overflow: visible;
   flex-direction: column;
   &::before {
     content: "";
@@ -76,7 +75,6 @@ const SceneText = styled(motion.div)`
     justify-content: flex-start;
     &::before {
       background: transparent;
-      background: transparent;
     }
   }
 `;
@@ -98,7 +96,6 @@ const ActionButtons = styled(motion.div)`
     margin-top: 25svh;
   }
   @media (max-width: 768px) {    
-    margin-top: var(--default-spacing);
     margin-top: var(--default-spacing);
   }
 `;

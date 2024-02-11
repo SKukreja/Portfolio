@@ -14,10 +14,9 @@ const Scene = styled(motion.div)`
   background-repeat: no-repeat;
   margin-left: -20vw;
   margin-right: 100px;
-  width: calc(85vw - 100px);
+  width: 100vh;
   height: 100vh;
   position: relative;
-  overflow: clip;
   display: flex;
   will-change: transform;
   align-items: center;
@@ -44,6 +43,21 @@ const Image = styled.svg`
   }
 `;
 
+const BG = styled.video`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: calc(100svh * 16/9);
+  height: 100svh;
+  width: calc(100vh * 16/9);
+  height: 100vh;
+  aspect-ratio: 16/9;
+  z-index: 1;
+  mask: url(#circleMask6);
+`;
+
 const Spin = keyframes`
   0% {
     transform: rotate(0deg);    
@@ -56,7 +70,7 @@ const Spin = keyframes`
 const Frame = styled.svg`
   position: absolute;
   top: 0;
-  right: 0;
+  right: 0;  
   margin-left: auto;
   margin-right: auto;
   margin-top: auto;
@@ -64,10 +78,9 @@ const Frame = styled.svg`
   bottom: 0;
   transform-origin: center;
   left: 0;
-  will-change: transform;
-  width: calc(120vh * 4/3 * 1.05);
-  height: calc(120vh * 4/3 * 1.05);
-
+  z-index: 2;
+  width: 100vh;
+  height: 100vh;  
   @media (max-width: 768px) {
     width: calc(100% * 4/3 * 1.05);      
   }
@@ -79,23 +92,25 @@ function Splash({ customScroll }) {
   const [ref, inView, entry] = useInView({
     threshold: thresholds
   });
-  const imageRef = useRef(null); // Ref for the image container
-  const [displacementScale, setDisplacementScale] = useState(75);
-  const [blurStdDeviation, setBlurStdDeviation] = useState(10);
+  const video = useRef(null); // Ref for the image container
+  const [displacementScale, setDisplacementScale] = useState(1);
+  const [blurStdDeviation, setBlurStdDeviation] = useState(1);
   const introStartRadius = 0; // Starting radius for the intro animation
   const [circleRadius, setCircleRadius] = useState(introStartRadius);
   const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
   const [pulsingDirection, setPulsingDirection] = useState(true);
+  const [lastFrameTime, setLastFrameTime] = useState(Date.now());
+  const [lastSecond, setLastSecond] = useState(Date.now());
+  const [frames, setFrames] = useState(0);
+  // Target FPS for throttling the animation
+  const targetFPS = 30; // You can adjust this value based on your needs
+  const frameDuration = 1000 / targetFPS;
   const previousBaseRadiusRef = useRef(500 * entry?.intersectionRatio);
   const svgVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 1 } }
   };
-
-  const [frame, setFrame] = useState(0); // For walking animation frames
-  const totalFrames = 41; // Total number of frame images in the directory
-  const walkingFrames = Array.from({ length: totalFrames }, (_, i) => `/splash/frame${i + 1}.jpg`);
 
   const easeInOut = (t) => {
     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -113,39 +128,58 @@ function Splash({ customScroll }) {
   // Combined Intro and Pulsing Animation
   useEffect(() => {
     let animationFrameId;
-  
+
     const animate = () => {
-      if (inView) {
-        const visibility = entry.intersectionRatio;
-        const baseRadius = 150 * visibility + 250;
-        let newRadius = circleRadius;
-        let direction = pulsingDirection;
+      const now = Date.now();
+      const elapsed = now - lastFrameTime;
+      // Console log the frame rate
+      setFrames(frames + 1);      
+      if (now - lastSecond >= 1000) {        
+        setLastSecond(now);
+        setFrames(0); // Reset frame count for the next second
+      }
+
+      if (elapsed > frameDuration) 
+      {
+        setLastFrameTime(now - (elapsed % frameDuration));
+        if (inView) 
+        {
+          const visibility = entry.intersectionRatio * 3;
+          const baseRadius = 200 * visibility + 150;
+          let newRadius = circleRadius;
+          let direction = pulsingDirection;              
+
+          if (!animationCompleted)
+          {
+            // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
+            const increment = (baseRadius - newRadius) * 0.03; // 0.1 is the easing factor
     
-        if (!animationCompleted) {
-          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-          const increment = (baseRadius - newRadius) * 0.01; // 0.1 is the easing factor
-  
-          newRadius += increment;
-          if (newRadius >= baseRadius - 10) {
-            setAnimationCompleted(true);
-            setIsPulsing(true);
-            setPulsingDirection(true);
+            newRadius += increment;
+            if (newRadius >= baseRadius - 10) 
+            {
+              setAnimationCompleted(true);
+              setIsPulsing(true);
+              setPulsingDirection(true);
+            }
+          } 
+          else 
+          {
+            const pulsingRange = 12;
+            const minRadius = Math.max(baseRadius - pulsingRange, 0);
+            const maxRadius = baseRadius + pulsingRange;
+            const targetRadius = direction ? maxRadius : minRadius;
+    
+            newRadius = lerp(newRadius, targetRadius, 0.05);
+    
+            if (Math.abs(newRadius - targetRadius) < 10) 
+            {
+              setPulsingDirection(!direction);
+            }
           }
-        } else {
-          const pulsingRange = 12;
-          const minRadius = Math.max(baseRadius - pulsingRange, 0);
-          const maxRadius = baseRadius + pulsingRange;
-          const targetRadius = direction ? maxRadius : minRadius;
-  
-          newRadius = lerp(newRadius, targetRadius, 0.05);
-  
-          if (Math.abs(newRadius - targetRadius) < 10) {
-            setPulsingDirection(!direction);
-          }
+    
+          setCircleRadius(newRadius);
+          previousBaseRadiusRef.current = baseRadius;
         }
-  
-        setCircleRadius(newRadius);
-        previousBaseRadiusRef.current = baseRadius;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -153,59 +187,32 @@ function Splash({ customScroll }) {
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
   }, [inView, animationCompleted, isPulsing, circleRadius, pulsingDirection, entry?.intersectionRatio]);
-  
 
-   // Scroll Handling
-  useEffect(() => {
-    const scrollAnimation = gsap.to(ref.current, {
-      scrollTrigger: {
-        trigger: ref.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-        onUpdate: self => { 
-          const progress = self.progress;
-          // Frame animation logic
-          const totalFrames = walkingFrames.length;
-          const frameIndex = Math.floor(progress * 4 * (totalFrames - 1)) < totalFrames ? Math.floor(progress * 4 * (totalFrames - 1)) : totalFrames - 1;
-          setFrame(frameIndex);
-        }
-      },
-    });
-
-    return () => {
-      scrollAnimation.kill();
-    };
-  }, [walkingFrames.length]);
-
-  return (
-    <Scene scroll={customScroll.get()}>
-      <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
-      <Image ref={imageRef} width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
-          <defs>
-            <filter id="displacementFilter6">
-              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacementScale} xChannelSelector="R" yChannelSelector="G" />
-              <feGaussianBlur stdDeviation={blurStdDeviation} />
-            </filter>
-            <mask id="circleMask6">
-              <circle cx="50%" cy="50%" r={circleRadius * 1.2} fill="#F8F8F8" style={{ filter: 'url(#displacementFilter6)' }} />
-            </mask>
-          </defs>
-          <image xlinkHref="bg.png" width="1200" height="900" mask="url(#circleMask6)" />
-          <image xlinkHref={walkingFrames[frame]} width="1200" height="900" mask="url(#circleMask6)" />
-        </Image>
-        <Frame width="1200" height="900" isVisible={inView} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
-          <defs>
-            <mask id="invertedCircleMask">
+  return ( 
+    <Scene ref={ref}>
+      <BG muted playsInline ref={video} src="woods.mp4" />
+      <Frame width="100%" height="100%" viewBox="0 0 1100 1100" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="displacementFilter6">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacementScale * 75} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={blurStdDeviation * 10} />
+          </filter>
+          <filter id="displacementFilter7">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacementScale * 15} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={blurStdDeviation * 5} />
+          </filter>
+          <mask id="circleMask6">
+            <circle cx="50%" cy="50%" r={circleRadius * 0.75} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
+          </mask>
+          <mask id="invertedCircleMask">
               <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
               {/* Use scrollDependentRadius here if scroll is affecting the radius */}
               <circle cx="50%" cy="50%" r={circleRadius} fill="black" style={{ filter: 'url(#displacementFilter6)' }} />
             </mask>
-          </defs>
-          <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" mask="url(#invertedCircleMask)" />
-        </Frame>
-      </motion.div>
+        </defs>
+      </Frame>
     </Scene>
   );
 }

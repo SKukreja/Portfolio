@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import ReactWordcloud from 'react-wordcloud';
 import { Icons } from '../../components/Common/Icons';
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet';
@@ -423,7 +422,7 @@ const About = () => {
       <InView>
       {({ inView, ref, entry }) => (
         <SkillsContainer ref={ref} className={`${inView ? 'active' : ''}`}>
-          <ReactWordcloud className='words' words={data?.attributes.words} callbacks={callbacks} options={options} />
+
         </SkillsContainer>
       )}
       </InView>
