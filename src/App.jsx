@@ -60,11 +60,7 @@ const Layout = ({ children }) => {
         <link rel="icon" type="image/png" href="/favicon.ico" />         
       </Helmet>
       <Blur isModalOpen={isModalOpen}>
-          <AnimatePresence mode='wait' onExitComplete={() => {
-              if (typeof window !== "undefined") {
-                  window.scrollTo({ top: 0, behavior: "instant" });
-              }
-          }}>
+          <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="/project/:id" element={<Project />} />
