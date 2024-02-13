@@ -14,7 +14,7 @@ const Featured = styled(motion.div)`
   position: relative;
   align-items: center;
   overflow: visible;
-  margin-left: 60vw;
+  margin-left: 30vw;
   @media (max-width: 768px) {
     margin-top: 0vh;
     margin-left: 0;
@@ -259,7 +259,7 @@ const padNum = (num, targetLength) => {
   return num.toString().padStart(targetLength, "0");
 }
 
-const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
+const ProjectInfo = ({ className, number, project, isInView }) => {
   const controls = useAnimation();
   const projectRef = useRef(null);
 
@@ -296,22 +296,23 @@ const ProjectInfo = ({ className, number, project, textScroll, isInView }) => {
   );
 }
 
-const ProjectItem = ({ project, number, customScroll, scrollYProgress, textScroll }) => {
+const ProjectItem = ({ project, number, scrollYProgress}) => {
   const ref = useRef(null);
   const [viewRef, inView] = useInView({
-    threshold: 0.5,
+    threshold: 0.25,
+    triggerOnce: true
   });
   const [circleRadius, setCircleRadius] = useState(0);
   return (
     <Project ref={viewRef} className={`${inView ? 'active' : ''} ${number % 2 === 0 ? 'odd' : 'even'}`}>
       {number % 2 == 0 ? (
-        <ProjectInfo textScroll={textScroll} isInView={inView} className="odd" number={number} project={project} />
+        <ProjectInfo isInView={inView} className="odd" number={number} project={project} />
       ) : (
         ''
       )}
-      <ProjectImage customScroll={customScroll} scrollYProgress={scrollYProgress} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage scrollYProgress={scrollYProgress} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
-        <ProjectInfo textScroll={textScroll} isInView={inView} className="even" number={number} project={project} />
+        <ProjectInfo isInView={inView} className="even" number={number} project={project} />
       ) : (
         ''
       )}
@@ -319,7 +320,7 @@ const ProjectItem = ({ project, number, customScroll, scrollYProgress, textScrol
   );
 };
 
-const FeaturedWorks = ({ customScroll, textScroll, headerScroll, scrollYProgress }) => {
+const FeaturedWorks = ({ scrollYProgress }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
@@ -334,7 +335,7 @@ const FeaturedWorks = ({ customScroll, textScroll, headerScroll, scrollYProgress
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} project={project} number={number} scrollYProgress={scrollYProgress} customScroll={customScroll} textScroll={textScroll} />
+        <ProjectItem key={project.id} project={project} number={number} scrollYProgress={scrollYProgress} />
       ))}
       </Projects>
     </Featured>

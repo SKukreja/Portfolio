@@ -72,7 +72,7 @@ const ProfileSection = styled.div`
   position: relative;
 `;
 
-const Cover = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
+const Cover = () => {
   const { data, loading, error } = use(
     `/about?populate=deep`
   );

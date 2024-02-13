@@ -40,7 +40,7 @@ const Frame = styled.svg`
   height: 100%;
 `;
 
-function Project({ customScroll }) {
+function Project() {
   const controls = useAnimation();
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5 });
   const imageContainerRef = useRef(null);
@@ -126,7 +126,7 @@ function Project({ customScroll }) {
   }, []);
 
   return (
-    <Scene style={customScroll}>
+    <Scene>
       <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
         <Image ref={imageRef}  width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
             <defs>

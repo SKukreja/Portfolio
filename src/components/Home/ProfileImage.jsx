@@ -52,7 +52,7 @@ const Container = styled(motion.div)`
 let uniqueIdCounter = 0;
 
 
-function ProfileImage({ customScroll, imageUrl, even }) {
+function ProfileImage({ imageUrl, even }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -142,7 +142,7 @@ function ProfileImage({ customScroll, imageUrl, even }) {
   
 
   return (
-    <Scene style={customScroll}>
+    <Scene>
       <Container ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
         <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 1200">
           <defs>

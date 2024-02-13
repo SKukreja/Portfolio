@@ -87,6 +87,7 @@ const GlobalStyle = createGlobalStyle`
 
   html.lenis {
     height: auto;
+    display: table;
   }
   
   .lenis.lenis-smooth {
@@ -115,6 +116,7 @@ const GlobalStyle = createGlobalStyle`
   /* Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
     width: 3px;
+    background: transparent;
   }
 
   *::-webkit-scrollbar-track {
@@ -127,16 +129,17 @@ const GlobalStyle = createGlobalStyle`
     border: 0px solid transparent;
   }
 
-  .app {
-    width: 100vw;     
+  .app { 
     margin: 0 auto;
-    box-sizing: border-box;
+    box-sizing: border-box;    
   }
   html, body {
     margin: 0;
-    padding: 0;
+    padding: 0;    
     box-sizing: border-box;
-    overflow-x: clip;
+    max-height: 100vh;
+    max-height: 100svh;
+    overflow-y: hidden;
   }
   body {
     background: var(--offwhite);
@@ -144,10 +147,8 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     transition: background 0.5s ease;
     display: flex;
-    width: 100%;
-    min-height: 100vh;
     justify-content: center;
-    font-family: 'Satoshi', Open-Sans, Helvetica, Sans-Serif;
+    font-family: 'Garamond', Open-Sans, Helvetica, Sans-Serif;
   }
   .inverted body {
     background: var(--offwhite);

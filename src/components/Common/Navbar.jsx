@@ -328,7 +328,7 @@ function Navbar({ socialData }) {
         document.body.style.position = '';
         document.body.style.width = '';
         document.body.style.top = '';
-        window.scrollTo(0, originalScrollY);        
+        //window.scrollTo(0, originalScrollY);        
       };
     } 
   }, [isModalOpen]);

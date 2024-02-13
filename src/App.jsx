@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import GlobalStyle from './globalStyles';
@@ -13,6 +13,8 @@ import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 import use from './hooks/use';
+import gsap from 'gsap';
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
 
 const Blur = styled.div`
@@ -20,7 +22,7 @@ const Blur = styled.div`
     isModalOpen
       ? `
     filter: blur(10px);
-    transition: filter 0.3s ease-in-out;
+    transition: filter 0.3s ease-in-out;    
   `
       : ''};
 `;
@@ -75,14 +77,44 @@ const Layout = ({ children }) => {
 };
 
 const App = () => {
+  const lenisRef = useRef()  
+  const [isMobile, setIsMobile] = useState(false);
+
+  const lenis = useLenis()
+
+  useEffect(() => {
+
+  }, [lenis])
+ 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+
+    // Handler to set state based on the media query
+    function handleResize(e) {
+      // Update state based on the media query result
+      setIsMobile(e.matches);
+    }
+
+    // Register event listener
+    mediaQuery.addEventListener('change', handleResize);
+
+    // Initial check
+    handleResize(mediaQuery);
+
+    // Cleanup function to remove the event listener
+    return () => mediaQuery.removeEventListener('change', handleResize);
+  }, [isMobile]);
+
   return (
-    <MotionConfig reducedMotion="user">
-      <ModalProvider>
-        <Router>
-          <Layout />
-        </Router>
-      </ModalProvider>
-    </MotionConfig>
+    <ReactLenis root ref={lenisRef} autoRaf={true} options={{smoothWheel: true, lerp: 0.075, wheelMultiplier: 0.5, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
+      <MotionConfig reducedMotion="user">
+        <ModalProvider>
+          <Router>
+            <Layout />
+          </Router>
+        </ModalProvider>
+      </MotionConfig>
+    </ReactLenis>
   );
 }
 

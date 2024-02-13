@@ -3,18 +3,6 @@ import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
-import Footer from '../../components/Common/Footer';
-import ProfileImage from './ProfileImage';
-
-const typewriter = keyframes`
-  from { width: 0 }
-  to { width: 100% }
-`;
-
-const blink = keyframes`
-  from, to { border-color: white; }
-  50% { border-color: white; }
-`;
 
 const Container = styled.div`
   display: flex;
@@ -187,7 +175,16 @@ const Time = styled.td`
   width: 30%;
   vertical-align: top;
   text-align: right;
-  font-weight: var(--body-weight); 
+  font-weight: var(--body-weight);
+  text-shadow: 0px 0px 32px var(--offwhite), 
+      0px 0px 32px var(--offwhite), 
+      0px 0px 32px var(--offwhite), 
+      0px 0px 32px var(--offwhite), 
+      0px 0px 32px var(--offwhite),
+      0px 0px 32px var(--offwhite),
+      0px 0px 32px var(--offwhite),
+      0px 0px 32px var(--offwhite), 
+      0px 0px 32px var(--offwhite);
 `;
 
 const TableColumn = styled.td`
@@ -208,7 +205,7 @@ const Table = styled.table`
   width: 100%;
 `;
 
-const About = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
+const About = () => {
   const { data, loading, error } = use(
     `/about?populate=deep`
   );
@@ -216,13 +213,13 @@ const About = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
   return (
     <Container as={motion.div}>
       <TreeContainer>
-        <Background style={bgScroll} src='bg.png' />
-        <Tree style={treeScroll} src='tree.png' />
+        <Background src='bg.png' />
+        <Tree src='tree.png' />
       </TreeContainer>
       <ProfileSection>
         <InView>
         {({ inView, ref, entry }) => (
-          <Bio style={headerScroll} ref={ref} className={`${inView ? 'active' : ''}`}>
+          <Bio ref={ref} className={`${inView ? 'active' : ''}`}>
             <Intro>About Me</Intro>           
             <Blurb>
               {data?.attributes.blurb}         

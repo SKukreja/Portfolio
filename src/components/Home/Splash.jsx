@@ -12,7 +12,7 @@ const Scene = styled(motion.div)`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-left: -20vw;
+  margin-left: -5vw;
   margin-right: 100px;
   width: 100vh;
   height: 100vh;
@@ -25,21 +25,9 @@ const Scene = styled(motion.div)`
   @media (max-width: 768px) {
     transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
     margin-left: -90vw;
-    margin-top: -60vh;
+    margin-top: -50vh;
     width: 200vw;
     height: 200vw;
-  }
-`;
-
-const Image = styled.svg`
-  width: auto;
-  position: relative;
-  height: 120vh;
-  object-fit: cover;  
-  @media (max-width: 768px) {    
-    width: 140%;
-    height: auto;
-    aspect-ratio: 4/3;
   }
 `;
 
@@ -49,10 +37,10 @@ const BG = styled.video`
   right: 0;
   left: 0;
   bottom: 0;
-  width: calc(100svh * 16/9);
+  height: 100vh;
   height: 100svh;
   width: calc(100vh * 16/9);
-  height: 100vh;
+  width: calc(100svh * 16/9);
   aspect-ratio: 16/9;
   z-index: 1;
   mask: url(#circleMask6);
@@ -78,15 +66,16 @@ const Frame = styled.svg`
   bottom: 0;
   transform-origin: center;
   left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 2;
-  width: 100vh;
-  height: 100vh;  
   @media (max-width: 768px) {
     width: calc(100% * 4/3 * 1.05);      
   }
 `;
 
-function Splash({ customScroll }) {
+function Splash() {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
@@ -191,7 +180,7 @@ function Splash({ customScroll }) {
   return ( 
     <Scene ref={ref}>
       <BG muted playsInline ref={video} src="woods.mp4" />
-      <Frame width="100%" height="100%" viewBox="0 0 1100 1100" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox="0 0 1600 1080" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="displacementFilter6">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
@@ -204,17 +193,20 @@ function Splash({ customScroll }) {
             <feGaussianBlur stdDeviation={blurStdDeviation * 5} />
           </filter>
           <mask id="circleMask6">
-            <circle cx="50%" cy="50%" r={circleRadius * 0.75} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
+            <circle cx="50%" cy="50%" r={circleRadius} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
           </mask>
-          <mask id="invertedCircleMask">
-              <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
-              {/* Use scrollDependentRadius here if scroll is affecting the radius */}
-              <circle cx="50%" cy="50%" r={circleRadius} fill="black" style={{ filter: 'url(#displacementFilter6)' }} />
-            </mask>
+
         </defs>
-      </Frame>
+      </svg>
     </Scene>
   );
 }
 
 export default Splash;
+
+/*
+  <mask id="invertedCircleMask">
+    <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
+    <circle cx="50%" cy="50%" r={circleRadius} fill="black" style={{ filter: 'url(#displacementFilter6)' }} />
+  </mask>
+*/

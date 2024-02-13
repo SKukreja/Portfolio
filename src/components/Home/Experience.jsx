@@ -204,7 +204,7 @@ const Experience = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
       <ProfileSection>
         <InView>
         {({ inView, ref, entry }) => (
-          <Bio style={headerScroll} ref={ref} className={`${inView ? 'active' : ''}`}>    
+          <Bio ref={ref} className={`${inView ? 'active' : ''}`}>    
             <Blurb>
               {data?.attributes.blurb}
             </Blurb>  

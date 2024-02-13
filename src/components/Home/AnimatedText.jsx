@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const AnimatedText = React.memo(({ text, startImmediately }) => {
-  const [ref, inView] = useInView({ threshold: 0 });
+  const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true });
 
   // Calculate delays only once to prevent recalculations on each render
   const animationDelays = useRef(text.split(' ').flatMap(

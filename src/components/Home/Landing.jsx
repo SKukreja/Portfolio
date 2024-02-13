@@ -128,38 +128,6 @@ const Button = styled(Link)`
   }
 `;
 
-const GraphicContainer = styled.div`
-  position: relative;  
-  width: 100vw;
-  height: 100vh;  
-`;
-
-const Graphic = styled.img`
-  position: absolute;
-  inset: 0;
-  max-width: 100vw;
-  max-height: 100vh;
-  object-fit: contain;
-`;
-
-const ColoredBG = styled.div`
-  background-image: url('bg-coloured.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  max-width: 100vw;
-  max-height: 100vh;
-  position: absolute;
-  inset: 0;
-  -webkit-mask-image: url('ink.png');
-  -webkit-mask-size: cover;
-  -webkit-mask-position: 0% 0%;
-  transition:
-    -webkit-mask-position 1.6s steps(24);
-  &:hover {
-    -webkit-mask-position: 100% 0%;
-  }
-`;
-
 const NameContainer = styled(motion.div)`
   width: 100%;
   margin-top: 1rem;

@@ -65,7 +65,7 @@ const Container = styled(motion.div)`
 let uniqueIdCounter = 0;
 
 
-function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress }) {
+function ProjectImage({ number, imageUrl, even, scrollYProgress }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 25 }, (_, index) => index * 0.04);
   const [ref, inView, entry] = useInView({
@@ -76,10 +76,10 @@ function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress })
   const [lastSecond, setLastSecond] = useState(Date.now());
   const [frames, setFrames] = useState(0);
   const targetFPS = 30; // You can adjust this value based on your needs
+  const [targetRadius, setTargetRadius] = useState(0);
   const frameDuration = 1000 / targetFPS;
   const introStartRadius = 0; // Starting radius for the intro animation
   const [circleRadius, setCircleRadius] = useState(introStartRadius);  
-  const previousBaseRadiusRef = useRef(600 * entry?.intersectionRatio);
   const svgVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 1 } }
@@ -120,31 +120,33 @@ function ProjectImage({ customScroll, number, imageUrl, even, scrollYProgress })
       if (elapsed > frameDuration) 
       {
         setLastFrameTime(now - (elapsed % frameDuration));
-        if (inView) {
-          const visibility = entry.intersectionRatio;
-          const baseRadius = 600 * visibility;
-          let newRadius = circleRadius;
-    
-          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-          const increment = Math.abs((baseRadius - newRadius) * 0.2); // 0.1 is the easing factor
-          
-          if (newRadius < baseRadius - 10) {
-            newRadius += increment;
-          }
-          else if (newRadius > baseRadius + 10) {
-            newRadius -= increment;
-          }
-
-          setCircleRadius(newRadius);
-          previousBaseRadiusRef.current = baseRadius;
+        if (inView && entry.intersectionRatio > 0) {          
+          setTargetRadius(600 * entry.intersectionRatio);
         }
+        else {
+          setTargetRadius(0);
+        }
+
+        let newRadius = circleRadius;
+  
+        // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
+        const increment = Math.abs((targetRadius - newRadius) * 0.1); // 0.1 is the easing factor
+        
+        if (newRadius <= targetRadius) {
+          newRadius += increment;
+        }
+        else if (newRadius >= targetRadius) {
+          newRadius -= increment;
+        }
+
+        setCircleRadius(newRadius);
       }
       animationFrameId = requestAnimationFrame(animate);
     };
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [circleRadius, inView, lastFrameTime]);
+  }, [inView, lastFrameTime]);
 
   return (
     <Scene className={even ? 'even' : 'odd'} number={number} scrollYProgress={scrollYProgress} isInView={inView}>
