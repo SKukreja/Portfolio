@@ -78,7 +78,7 @@ function debounce(func, wait) {
   };
 }
 
-const Home = () => {
+const Home = ({ isMobile }) => {
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -89,11 +89,11 @@ const Home = () => {
         <Helmet>
           <title>Sumit Kukreja</title>
         </Helmet>        
-        <Content>
+        <Content id="content-container">
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash />
+          <Splash isMobile={isMobile} />
           <FeaturedWorks />
           <About />
           <Experience />

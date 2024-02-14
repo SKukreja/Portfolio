@@ -33,7 +33,7 @@ const Nav = styled.nav`
   align-items: center;
   transition: background 0.5s ease;
   background: ${({ isNavSolid }) => isNavSolid ? 'var(--black)' : 'transparent'};
-  z-index: 20;
+  z-index: 40;
   opacity: 1;
 
   & .logo {
@@ -48,13 +48,14 @@ const Nav = styled.nav`
   @media (max-width: 768px) {
     top: 0;
     left: 0;
-    height: auto; 
+    height: 6vh; 
+    height: 6lvh; 
     width: 100vw; 
     flex-direction: row;
     justify-content: space-between; 
     align-items: center;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
     padding-left: 1rem;
     padding-right: 1rem;
   }
@@ -72,6 +73,18 @@ const Center = styled.div`
     margin-left: 0;
     margin-right: 0;
   }
+`;
+
+const Noise = styled.div`
+  background: url("Noise.png");
+  background-repeat: repeat;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
 `;
 
 const SocialLink = styled.a`
@@ -94,7 +107,7 @@ const Branding = styled.img`
   z-index: 50;  
   position: absolute; 
   @media (max-width: 768px) {
-    width: 60px;
+    width: 40px;
   }
 `;
 
@@ -157,9 +170,9 @@ const Overlay = styled.div`
   width: 100%;
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  transition: visibility 0s ${({ isVisible }) => (isVisible ? '0s' : '0.3s')}, opacity 0.3s ease-out;
+
   flex-direction: column;
-  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
   z-index: 10;
 
   &::before {
@@ -206,7 +219,7 @@ const OverlayMenu = styled.nav`
   height: 100%;
   font-family: var(--body-font);
   font-weight: 500;
-  text-transform: uppercase;
+
 
   @media (max-width: 768px) {
     display: flex;
@@ -226,10 +239,10 @@ const HamburgerButton = styled.button`
 
   & span {
     display: block;
-    width: 27px;
+    width: 22px;
     height: 2px;    
     background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--black)' : 'var(--black)') :  (isMobile ? 'var(--black)' : 'var(--offwhite)')};  
-    margin: 7px 0;
+    margin: 5px 0;
     transition: transform 0.3s ease, background 0.5s ease;
   }
 
@@ -239,7 +252,7 @@ const HamburgerButton = styled.button`
 
   &.buttonActive {
     span:nth-child(1) {
-      transform: rotate(45deg) translate(6px, 7px);
+      transform: rotate(45deg) translate(5px, 5px);
     }
 
     span:nth-child(2) {
@@ -247,8 +260,19 @@ const HamburgerButton = styled.button`
     }
 
     span:nth-child(3) {
-      transform: rotate(-45deg) translate(6px, -7px);
+      transform: rotate(-45deg) translate(5px, -5px);
     }
+  }
+`;
+
+const BoxShadow = styled.div`
+  box-shadow: 2px 3px 20px black, 0 0 250px #8f5922 inset;
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  @media (max-width: 1024px) {
+    width: 100%;
   }
 `;
 
@@ -336,6 +360,7 @@ function Navbar({ socialData }) {
   return (
     <>
       <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
+      <Noise />
       <Left>
         <LogoContainer to="/">
           <Branding className="logo" src="/logo.svg" isDark={isModalOpen} />
@@ -359,6 +384,8 @@ function Navbar({ socialData }) {
         ))}
       </Right>
       <Overlay isVisible={isModalOpen}>
+      <Noise />
+      <BoxShadow />
         <OverlayMenu>
           {data?.attributes.links.map((link, index) => (
             <OverlayLink

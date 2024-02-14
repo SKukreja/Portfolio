@@ -15,7 +15,9 @@ const Container = styled.div`
   background: var(--offwhite);
   color: var(--black);
   @media (max-width: 768px) {
-    width: calc(100% - 20vw);
+    padding-left: var(--default-spacing);
+    padding-right: var(--default-spacing);
+    width: calc(100% - var(--default-spacing) * 2);
     padding-bottom: calc(var(--default-spacing) * 2);
   }
 `;
@@ -80,10 +82,7 @@ const Blurb = styled.div`
   text-align: left;
   bottom: 7.5rem;
   z-index: 2;
-  font-weight: var(--body-weight);    
-  @media (max-width: 768px) {
-    width: 85%;
-  }
+  font-weight: var(--body-weight);
   & > p {
     margin: 0;
   }
@@ -108,6 +107,10 @@ const ProfileSection = styled.div`
   flex-wrap: nowrap;
   position: relative;
   padding-top: 7.5rem;
+  @media (max-width: 768px) {
+    padding-top: 0;
+    margin-top: -10rem;
+  }
 `;
 
 const Tree = styled(motion.img)`
@@ -176,15 +179,6 @@ const Time = styled.td`
   vertical-align: top;
   text-align: right;
   font-weight: var(--body-weight);
-  text-shadow: 0px 0px 32px var(--offwhite), 
-      0px 0px 32px var(--offwhite), 
-      0px 0px 32px var(--offwhite), 
-      0px 0px 32px var(--offwhite), 
-      0px 0px 32px var(--offwhite),
-      0px 0px 32px var(--offwhite),
-      0px 0px 32px var(--offwhite),
-      0px 0px 32px var(--offwhite), 
-      0px 0px 32px var(--offwhite);
 `;
 
 const TableColumn = styled.td`

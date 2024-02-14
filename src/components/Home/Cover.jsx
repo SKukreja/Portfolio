@@ -33,7 +33,8 @@ const Container = styled.div`
   color: var(--offwhite);
   @media (max-width: 768px) {
     width: 100%;
-    height: calc(100vh - var(--default-spacing));
+    height: calc(100vh - 6vh - var(--default-spacing));
+    height: calc(100lvh - 6lvh - var(--default-spacing));
     margin-left: 0;
     padding: 0;padding-top: var(--default-spacing);
   }
@@ -43,7 +44,7 @@ const Bio = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
-  max-width: 50vw;
+  max-width: calc(100% - var(--default-spacing) * 2);
   align-items: center;  
 `;
 
@@ -56,7 +57,6 @@ const Blurb = styled.div`
   font-weight: var(--body-weight);    
   @media (max-width: 768px) {
     font-size: 1rem;
-    width: 85%;
   }
   & > p {
     margin: 0;

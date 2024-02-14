@@ -14,9 +14,9 @@ const Featured = styled(motion.div)`
   position: relative;
   align-items: center;
   overflow: visible;
-  margin-left: 30vw;
+  margin-left: 40vw;
   @media (max-width: 768px) {
-    margin-top: 0vh;
+    margin-top:30vh;
     margin-left: 0;
   }
 `;
@@ -161,8 +161,8 @@ const Project = styled.div`
         flex-direction: column-reverse;
       }
       &.even {
-        margin-top: 6rem;
-        margin-bottom: 6rem;      
+        margin-top: 5rem;
+        margin-bottom: 5rem;      
       }
     }
 `;
@@ -330,6 +330,7 @@ const FeaturedWorks = ({ scrollYProgress }) => {
       initial={{ y: 100, opacity: 0}}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7 }}
+      id="featured"
     >
       <Header>Featured Work</Header>
       <Projects>

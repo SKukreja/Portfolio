@@ -4,7 +4,6 @@ import { useInView } from 'react-intersection-observer';
 import styled, { css, keyframes } from 'styled-components';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { set } from 'react-ga';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,8 +11,8 @@ const Scene = styled(motion.div)`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-left: -5vw;
-  margin-right: 100px;
+  margin-left: -20vw;
+  margin-right: 100px;  
   width: 100vh;
   height: 100vh;
   position: relative;
@@ -21,15 +20,16 @@ const Scene = styled(motion.div)`
   will-change: transform;
   align-items: center;
   z-index: 1;
-  transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
   @media (max-width: 768px) {
-    transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
-    margin-left: -90vw;
+    
     margin-top: -50vh;
-    width: 200vw;
-    height: 200vw;
+    width: 180vw;
+    height: 180vw;
   }
 `;
+
+//transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
+//transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
 
 const BG = styled.video`
   position: absolute;
@@ -43,6 +43,7 @@ const BG = styled.video`
   width: calc(100svh * 16/9);
   aspect-ratio: 16/9;
   z-index: 1;
+  pointer-events: none;
   mask: url(#circleMask6);
 `;
 
@@ -75,17 +76,19 @@ const Frame = styled.svg`
   }
 `;
 
-function Splash() {
+function Splash({ isMobile }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
   const [ref, inView, entry] = useInView({
     threshold: thresholds
   });
-  const video = useRef(null); // Ref for the image container
+  const videoRef = useRef(null); // Ref for the image container
   const [displacementScale, setDisplacementScale] = useState(1);
   const [blurStdDeviation, setBlurStdDeviation] = useState(1);
   const introStartRadius = 0; // Starting radius for the intro animation
   const [circleRadius, setCircleRadius] = useState(introStartRadius);
+  const [circleCenterY, setCircleCenterY] = useState('450');
+  const [circleCenterX, setCircleCenterX] = useState('800');
   const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
   const [pulsingDirection, setPulsingDirection] = useState(true);
@@ -111,6 +114,64 @@ function Splash() {
   };
 
   useEffect(() => {
+    const updateCirclePosition = () => {
+      const screenHeight = window.innerHeight;
+      const screenWidth = window.innerWidth;
+      const viewBoxWidth = 1600; 
+      const viewBoxHeight = 900;
+      const centerX = (screenWidth / viewBoxWidth) * 800;
+      const centerY = (screenHeight / viewBoxHeight) * 450;
+      setCircleCenterX(centerX.toString());
+      setCircleCenterY(centerY.toString());
+    };
+  
+    updateCirclePosition();
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+  
+    const playAndPauseVideo = () => {
+      video.play();
+      video.pause();
+    };
+  
+    document.documentElement.addEventListener('touchstart', playAndPauseVideo, { once: true });
+  
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        defaults: { duration: 1 },
+        trigger: video,
+        start: isMobile ? "top top" : "left center",
+        end: isMobile ? "bottom bottom" : "right center",
+        scrub: true,
+        horizontal: isMobile ? false : true,
+      }
+    });
+    
+    function clampVideoPlayback(video, atStart) {
+      if (!video) return;
+      // Adjust video.currentTime to either its start or just before its end based on the atStart flag.
+      video.currentTime = atStart ? 0 : Math.max(0, video.duration - 0.1); // Subtract a small time to avoid flickering at the end.
+    }
+
+    const onMetadataLoaded = () => {      
+      tl.fromTo(video, { currentTime: 0 }, { currentTime: video.duration});
+    };
+  
+    video.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
+
+    let src = video.currentSrc || video.src;
+  
+    return () => {
+      document.documentElement.removeEventListener('touchstart', playAndPauseVideo);
+      video.removeEventListener('loadedmetadata', onMetadataLoaded);
+      if (tl) { tl.kill(); }
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  }, []);
+
+  useEffect(() => {
     controls.start("visible");
   }, [controls]);
 
@@ -134,7 +195,7 @@ function Splash() {
         if (inView) 
         {
           const visibility = entry.intersectionRatio * 3;
-          const baseRadius = 200 * visibility + 150;
+          const baseRadius = isMobile ? 350 : 550;
           let newRadius = circleRadius;
           let direction = pulsingDirection;              
 
@@ -179,8 +240,8 @@ function Splash() {
 
   return ( 
     <Scene ref={ref}>
-      <BG muted playsInline ref={video} src="woods.mp4" />
-      <svg viewBox="0 0 1600 1080" preserveAspectRatio="xMidYMid meet">
+      <BG muted playsInline ref={videoRef} src="woods.mp4" />
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="displacementFilter6">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
@@ -193,7 +254,7 @@ function Splash() {
             <feGaussianBlur stdDeviation={blurStdDeviation * 5} />
           </filter>
           <mask id="circleMask6">
-            <circle cx="50%" cy="50%" r={circleRadius} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
+            <circle cx={circleCenterX} cy={circleCenterY} r={circleRadius} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
           </mask>
 
         </defs>

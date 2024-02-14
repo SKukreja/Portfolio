@@ -95,7 +95,7 @@ function ProfileImage({ imageUrl, even }) {
     const animate = () => {
       if (inView) {
         const visibility = entry.intersectionRatio;
-        const baseRadius = 550 * visibility;
+        const baseRadius = 450;
         let newRadius = circleRadius;
   
         if (!animationCompleted) {
@@ -152,15 +152,7 @@ function ProfileImage({ imageUrl, even }) {
           </defs>
           <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${maskId})`} />
         </Image>
-        <Frame width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 1200">
-          <defs>
-            <mask id={invertedMaskId}>
-              <rect x="0" y="0" width="100%" height="100%" fill="#F8F8F8" />
-              <ellipse cx="50%" cy="50%" rx={circleRadius * 3/4} ry={circleRadius} fill="black" style={{ filter: `url(#displacementFilter6)` }} />
-            </mask>
-          </defs>
-          <rect x="0" y="0" width="100%" height="100%" fill="var(--black)" mask={`url(#${invertedMaskId})`} />
-        </Frame>
+
       </Container>
     </Scene>
   );

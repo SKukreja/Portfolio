@@ -14,8 +14,11 @@ import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 import use from './hooks/use';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Blur = styled.div`
   ${({ isModalOpen }) =>
@@ -32,7 +35,7 @@ function initializeAnalytics() {
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
-const Layout = ({ children }) => {
+const Layout = ({ isMobile }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation(); 
@@ -64,7 +67,7 @@ const Layout = ({ children }) => {
       <Blur isModalOpen={isModalOpen}>
           <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home isMobile={isMobile} />} />
             <Route path="/project/:id" element={<Project />} />
             <Route path="/work" element={<Work />} />
             <Route path="/about" element={<About />} />
@@ -76,15 +79,13 @@ const Layout = ({ children }) => {
   );
 };
 
-const App = () => {
-  const lenisRef = useRef()  
+const App = () => {  
   const [isMobile, setIsMobile] = useState(false);
+  const lenisRef = useRef()
+  
 
-  const lenis = useLenis()
+  
 
-  useEffect(() => {
-
-  }, [lenis])
  
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
@@ -106,11 +107,11 @@ const App = () => {
   }, [isMobile]);
 
   return (
-    <ReactLenis root ref={lenisRef} autoRaf={true} options={{smoothWheel: true, lerp: 0.075, wheelMultiplier: 0.5, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
+    <ReactLenis root ref={lenisRef} autoRaf={true} options={{wheelMultiplier: 0.5, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
       <MotionConfig reducedMotion="user">
         <ModalProvider>
           <Router>
-            <Layout />
+            <Layout isMobile={isMobile} />
           </Router>
         </ModalProvider>
       </MotionConfig>
