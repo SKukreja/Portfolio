@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import Slider from '../../components/Project/Slider';
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import Footer from '../../components/Common/Footer';
 import { Helmet } from 'react-helmet';
 
@@ -423,7 +422,7 @@ const Project = () => {
     <>{error}</>
   )
   return (
-    <motion.div
+    <m.div
     initial={{ 
       opacity: 0,      
      }} 
@@ -435,7 +434,7 @@ const Project = () => {
      }} 
     transition={{ duration: 1 }}
     >
-    <ProjectContainer as={motion.div} 
+    <ProjectContainer as={ m.div} 
     initial={{ 
       opacity: 0,      
      }} 
@@ -455,9 +454,9 @@ const Project = () => {
       <Browser>
         <Window>
           <Buttons>
-            <Button className='minimize'>{Icons['Minimize']()}</Button>
-            <Button className='maximize'>{Icons['Square']()}</Button>
-            <Button className='close'>{Icons['Close']()}</Button>
+            <Button className='minimize'>{Icons['Minimize']}</Button>
+            <Button className='maximize'>{Icons['Square']}</Button>
+            <Button className='close'>{Icons['Close']}</Button>
           </Buttons>
         </Window>
         <Website style={{backgroundImage: "url(" + import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.cover.data.attributes.url + ")"}}></Website>
@@ -469,7 +468,7 @@ const Project = () => {
             <BuiltWith>
               <StackComponents>
                 {data?.attributes.technologies.data?.map((technology) => (
-                  <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]()} {technology.attributes.name}</ProjectTechnology>
+                  <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
                 ))}
               </StackComponents>
             </BuiltWith>
@@ -518,7 +517,7 @@ const Project = () => {
                   <Topic>
                     {topic.__component === 'article.topic' ? (
                     <TopicText>
-                      <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{topic.content}</ReactMarkdown>
+                      {topic.content}
                     </TopicText>
                     ) : 
                     topic.__component === 'article.sandbox' ? (
@@ -532,13 +531,13 @@ const Project = () => {
         </Article>
         <ProjectLinks className='dark'>
           {data?.attributes.links?.map((action, index) => {
-            return <Action key={index} target='_blank' href={action.url}>{Icons[action.icon]()}{action.name}</Action>;
+            return <Action key={index} target='_blank' href={action.url}>{Icons[action.icon]}{action.name}</Action>;
           })}
         </ProjectLinks>
       </ProjectInfo>
     </ProjectContainer>
     <Footer />
-    </motion.div>
+    </m.div>
   )
 }
 

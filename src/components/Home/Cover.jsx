@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import Footer from '../Common/Footer';
 import ProfileImage from './ProfileImage';
 import Socials from './Socials';
@@ -78,7 +78,7 @@ const Cover = () => {
   );
 
   return (
-    <Container as={motion.div}>
+    <Container as={ m.div}>
       <ProfileSection>
         <ProfileImage imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.picture.data.attributes.url} />
         <InView>

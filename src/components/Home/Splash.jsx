@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { m, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import styled, { css, keyframes } from 'styled-components';
 import { gsap } from 'gsap';
@@ -7,11 +7,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Scene = styled(motion.div)`  
+const Scene = styled(m.div)`  
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-left: -20vw;
+  margin-left: -15vw;
   margin-right: 100px;  
   width: 100vh;
   height: 100vh;
@@ -31,7 +31,7 @@ const Scene = styled(motion.div)`
 //transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
 //transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
 
-const BG = styled.video`
+const BG = styled.img`
   position: absolute;
   top: 0;
   right: 0;
@@ -76,9 +76,9 @@ const Frame = styled.svg`
   }
 `;
 
-function Splash({ isMobile }) {
+function Splash({ gpuLevel, isMobile }) {
   const controls = useAnimation();
-  const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
+  const thresholds = Array.from({ length: 20 }, (_, index) => index * 0.05);
   const [ref, inView, entry] = useInView({
     threshold: thresholds
   });
@@ -95,8 +95,9 @@ function Splash({ isMobile }) {
   const [lastFrameTime, setLastFrameTime] = useState(Date.now());
   const [lastSecond, setLastSecond] = useState(Date.now());
   const [frames, setFrames] = useState(0);
+  const [pusling, setPulsing] = useState(false);
   // Target FPS for throttling the animation
-  const targetFPS = 30; // You can adjust this value based on your needs
+  const [targetFPS, setTargetFPS] = useState(60); // You can adjust this value based on your needs <BG autoPlay muted loop playsInline ref={videoRef} src="woods.mp4" />
   const frameDuration = 1000 / targetFPS;
   const previousBaseRadiusRef = useRef(500 * entry?.intersectionRatio);
   const svgVariants = {
@@ -129,49 +130,7 @@ function Splash({ isMobile }) {
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-  
-    const playAndPauseVideo = () => {
-      video.play();
-      video.pause();
-    };
-  
-    document.documentElement.addEventListener('touchstart', playAndPauseVideo, { once: true });
-  
-    let tl = gsap.timeline({
-      scrollTrigger: {
-        defaults: { duration: 1 },
-        trigger: video,
-        start: isMobile ? "top top" : "left center",
-        end: isMobile ? "bottom bottom" : "right center",
-        scrub: true,
-        horizontal: isMobile ? false : true,
-      }
-    });
-    
-    function clampVideoPlayback(video, atStart) {
-      if (!video) return;
-      // Adjust video.currentTime to either its start or just before its end based on the atStart flag.
-      video.currentTime = atStart ? 0 : Math.max(0, video.duration - 0.1); // Subtract a small time to avoid flickering at the end.
-    }
-
-    const onMetadataLoaded = () => {      
-      tl.fromTo(video, { currentTime: 0 }, { currentTime: video.duration});
-    };
-  
-    video.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
-
-    let src = video.currentSrc || video.src;
-  
-    return () => {
-      document.documentElement.removeEventListener('touchstart', playAndPauseVideo);
-      video.removeEventListener('loadedmetadata', onMetadataLoaded);
-      if (tl) { tl.kill(); }
-      ScrollTrigger.getAll().forEach(st => st.kill());
-    };
-  }, []);
-
-  useEffect(() => {
+    setTargetFPS(gpuLevel == 3 ? 60 : 30);
     controls.start("visible");
   }, [controls]);
 
@@ -194,15 +153,16 @@ function Splash({ isMobile }) {
         setLastFrameTime(now - (elapsed % frameDuration));
         if (inView) 
         {
-          const visibility = entry.intersectionRatio * 3;
-          const baseRadius = isMobile ? 350 : 550;
+          const screenWidth = window.innerWidth;
+          const screenHeight = window.innerHeight;
+          const baseRadius = isMobile ? 350 : screenWidth / 3;
           let newRadius = circleRadius;
           let direction = pulsingDirection;              
 
           if (!animationCompleted)
           {
             // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-            const increment = (baseRadius - newRadius) * 0.03; // 0.1 is the easing factor
+            const increment = (baseRadius - newRadius) * 0.05; // 0.1 is the easing factor
     
             newRadius += increment;
             if (newRadius >= baseRadius - 10) 
@@ -212,21 +172,9 @@ function Splash({ isMobile }) {
               setPulsingDirection(true);
             }
           } 
-          else 
-          {
-            const pulsingRange = 12;
-            const minRadius = Math.max(baseRadius - pulsingRange, 0);
-            const maxRadius = baseRadius + pulsingRange;
-            const targetRadius = direction ? maxRadius : minRadius;
-    
-            newRadius = lerp(newRadius, targetRadius, 0.05);
-    
-            if (Math.abs(newRadius - targetRadius) < 10) 
-            {
-              setPulsingDirection(!direction);
-            }
-          }
-    
+
+          setDisplacementScale(lerp(1, 0.5, newRadius / baseRadius));
+          setBlurStdDeviation(lerp(1, 0.5, newRadius / baseRadius));
           setCircleRadius(newRadius);
           previousBaseRadiusRef.current = baseRadius;
         }
@@ -236,17 +184,17 @@ function Splash({ isMobile }) {
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [inView, animationCompleted, isPulsing, circleRadius, pulsingDirection, entry?.intersectionRatio]);
+  }, [inView, animationCompleted, circleRadius]);
 
   return ( 
     <Scene ref={ref}>
-      <BG muted playsInline ref={videoRef} src="woods.mp4" />
+      <BG src="placeholder.jpeg" />
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="displacementFilter6">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacementScale * 75} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur stdDeviation={blurStdDeviation * 10} />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={20} />
           </filter>
           <filter id="displacementFilter7">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />

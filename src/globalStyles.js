@@ -3,17 +3,6 @@ import { createGlobalStyle } from 'styled-components';
 
 import ChristopherRobinWoff2 from './assets/fonts/ChristopherRobin.woff2'
 
-import SatoshiRegularWoff from './assets/fonts/Satoshi-Regular.woff'
-import SatoshiRegularWoff2 from './assets/fonts/Satoshi-Regular.woff2'
-import SatoshiBoldWoff from './assets/fonts/Satoshi-Bold.woff'
-import SatoshiBoldWoff2 from './assets/fonts/Satoshi-Bold.woff2'
-import SatoshiBlackWoff from './assets/fonts/Satoshi-Black.woff'
-import SatoshiBlackWoff2 from './assets/fonts/Satoshi-Black.woff2';
-
-import HindRegularWoff from './assets/fonts/Hind-Regular.woff'
-import HindRegularWoff2 from './assets/fonts/Hind-Regular.woff2'
-import HindBoldWoff2 from './assets/fonts/Hind-Bold.woff2' 
-
 const GlobalStyle = createGlobalStyle`
   :root {
     --offwhite: #F8F8F8;
@@ -48,43 +37,9 @@ const GlobalStyle = createGlobalStyle`
     @media (max-width: 768px) {
       --title-text: 12vw;
       --body-text: 4vw;
+      --default-spacing: 1.5rem;
     }
   }
-  @font-face {
-    font-family: 'Christopher Robin';
-    src: url(${ChristopherRobinWoff2}) format('woff2');
-    font-weight: 700;
-  }
-  @font-face {
-    font-family: 'Satoshi';
-    src: url(${SatoshiRegularWoff2}) format('woff2'),
-        url(${SatoshiRegularWoff}) format('woff');
-    font-weight: 400;
-  }
-  @font-face {
-    font-family: 'Satoshi';
-    src: url(${SatoshiBoldWoff2}) format('woff2'),
-        url(${SatoshiBoldWoff}) format('woff');
-    font-weight: 600;
-  }
-  @font-face {
-    font-family: 'Satoshi';
-    src: url(${SatoshiBlackWoff2}) format('woff2'),
-        url(${SatoshiBlackWoff}) format('woff');
-    font-weight: 900;
-  }
-  @font-face {
-    font-family: 'Hind';
-    src: url(${HindRegularWoff2}) format('woff2'),
-        url(${HindRegularWoff}) format('woff');
-    font-weight: 400;
-  }
-  @font-face {
-    font-family: 'Hind';
-    src: url(${HindBoldWoff2}) format('woff2');
-    font-weight: 600;
-  }
-
   html.lenis {
     height: auto;
     display: table;
@@ -108,7 +63,7 @@ const GlobalStyle = createGlobalStyle`
 
   /* Firefox */
   * {
-    scrollbar-width: thin;
+    scrollbar-width: none;
     scrollbar-color: var(--black) transparent;
     -webkit-tap-highlight-color: transparent;
   }

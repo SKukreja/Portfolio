@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const WashedAwayText = ({ text }) => {
   const containerRef = useRef(null);
@@ -53,7 +53,7 @@ const WashedAwayText = ({ text }) => {
   return (
     <div ref={containerRef} style={{ position: 'relative', overflow: 'visible' }}>
       {text.split('').map((char, index) => (
-        <motion.span
+        <m.span
           key={index}
           style={{ display: 'inline-block', whiteSpace: 'pre-wrap', willChange: 'transform'}}
           initial={animationProps[index]?.initial}
@@ -61,7 +61,7 @@ const WashedAwayText = ({ text }) => {
           transition={animationProps[index]?.transition}
         >
           {char}
-        </motion.span>
+        </m.span>
       ))}
     </div>
   );

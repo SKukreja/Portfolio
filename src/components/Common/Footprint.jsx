@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 
 
@@ -26,7 +26,7 @@ const Footprint = ({ x, y, isLeft, angle, id, onRemove }) => {
     };
   
     return (
-      <motion.img
+      <m.img
         src={isLeft ? "/left.svg" : "/right.svg"}
         alt="Footprint"
         initial={initialStyle}

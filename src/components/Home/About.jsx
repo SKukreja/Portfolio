@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
+import WashedAwayText from './WashedAwayText';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 50vw;
-  padding-left: 10vw;
   padding-right: 10vw;  
   position: relative;
   background: var(--offwhite);
@@ -113,7 +113,7 @@ const ProfileSection = styled.div`
   }
 `;
 
-const Tree = styled(motion.img)`
+const Tree = styled(m.img)`
   position: absolute;
   top: -90%;
   left: 200%;
@@ -122,14 +122,14 @@ const Tree = styled(motion.img)`
   z-index: 4;
 `;
 
-const TreeContainer = styled(motion.div)`
+const TreeContainer = styled(m.div)`
 pointer-events: none;
 @media (max-width: 768px) {
   display: none;
 }
 `;
 
-const TreeMask = styled(motion.img)`
+const TreeMask = styled(m.img)`
 position: absolute;
 top: -40%;
 left: 0;
@@ -141,7 +141,7 @@ z-index: 2;
 mask-image: linear-gradient(to left, black 70%, transparent 100%);
 `;
 
-const Background = styled(motion.img)`
+const Background = styled(m.img)`
 -webkit-mask-image: linear-gradient(to right, transparent 0%, black 70%, transparent 100%);
 mask-image: linear-gradient(to right, transparent 0%, black 70%, transparent 100%);
 height: 150%;
@@ -205,7 +205,7 @@ const About = () => {
   );
   
   return (
-    <Container as={motion.div}>
+    <Container as={ m.div}>
       <TreeContainer>
         <Background src='bg.png' />
         <Tree src='tree.png' />
@@ -214,9 +214,9 @@ const About = () => {
         <InView>
         {({ inView, ref, entry }) => (
           <Bio ref={ref} className={`${inView ? 'active' : ''}`}>
-            <Intro>About Me</Intro>           
+            <Intro><WashedAwayText text={"About Me"} /></Intro>           
             <Blurb>
-              {data?.attributes.blurb}         
+              <WashedAwayText text={data?.attributes.blurb + ""} />
             </Blurb>
             <TwoColumn>
               <Column>
@@ -253,7 +253,7 @@ const About = () => {
                   <tbody>
                     <tr>
                       <TableColumn>
-                        <Primary>Software Enginering Technology</Primary>
+                        <Primary>Software Engineering Technology</Primary>
                         <Secondary>McMaster University</Secondary>                    
                       </TableColumn>
                       <Time>2018 - 2023</Time>

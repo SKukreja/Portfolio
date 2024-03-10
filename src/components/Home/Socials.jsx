@@ -1,10 +1,10 @@
 import React, { useRef } from 'react'
-import { cubicBezier, motion, useScroll, useTransform } from 'framer-motion'
+import { cubicBezier,m, useScroll, useTransform } from 'framer-motion'
 import styled, { keyframes } from 'styled-components'
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
-const Container = styled(motion.div)`
+const Container = styled(m.div)`
     margin-top: 4rem;
     display: flex;
     flex-direction: column;
@@ -37,13 +37,13 @@ const Socials = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
     );
 
     return (
-        <Container as={motion.div}>
+        <Container as={ m.div}>
         {data?.attributes.links.map((link, index) => (
         <SocialLink 
             key={link.id}
             href={link.url} target="_blank"
         >
-            {Icons["Arrow Right"]()} {link.name}
+            {Icons["Arrow Right"]} {link.name}
         </SocialLink>          
         ))}
         </Container>

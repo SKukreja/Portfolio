@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import { Icons } from '../../components/Common/Icons';
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Helmet } from 'react-helmet';
 import Footer from '../../components/Common/Footer';
 
@@ -37,7 +36,7 @@ const Bio = styled.div`
   }
 `;
 
-const ProfileImage = styled(motion.img)`
+const ProfileImage = styled(m.img)`
   width: 40vmin;
   height: 40vmin;
   filter: drop-shadow(5px 5px 10px var(--black));
@@ -360,7 +359,7 @@ const About = () => {
     <>{error}</>
   )
   return (
-    <Container as={motion.div} 
+    <Container as={ m.div} 
     initial={{ 
       opacity: 0,      
      }} 
@@ -397,7 +396,7 @@ const About = () => {
         <AboutContainer ref={ref} className={`${inView ? 'active' : ''}`}>
           <Current>
             <CurrentSection>
-              <CurrentIcon>{Icons['Work']()}</CurrentIcon>
+              <CurrentIcon>{Icons['Work']}</CurrentIcon>
               <Description>I currently work at</Description>
               <LogoLink href="https://www.kpmb.com">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 45.4">
@@ -406,7 +405,7 @@ const About = () => {
               </LogoLink>
             </CurrentSection>
             <CurrentSection>
-              <CurrentIcon>{Icons['Education']()}</CurrentIcon>
+              <CurrentIcon>{Icons['Education']}</CurrentIcon>
               <Description>I'm enrolled part-time at</Description>
               <LogoLink href="https://www.eng.mcmaster.ca/sept/programs/degree-options/btech-software-engineering-technology/program-structure/">
               <img src="https://nursing.mcmaster.ca/images/default-source/default-album/ft_logo_mcmasterd99d0d45b7f266cc881aff0000960f99.png?sfvrsn=4" />
@@ -414,7 +413,7 @@ const About = () => {
             </CurrentSection>
           </Current>
           <Blurb>
-            <ReactMarkdown linkTarget="_blank" escapeHtml={false}>{data?.attributes.blurb}</ReactMarkdown>           
+            {data?.attributes.blurb}          
           </Blurb>
         </AboutContainer>
       )}
@@ -452,18 +451,18 @@ const About = () => {
                   {section.__component === 'timeline.image-beside-text' ? (
                     <SideBySide>
                       <LeftImage src={import.meta.env.VITE_APP_UPLOAD_URL + section.image.data?.attributes.url} />
-                      <RightText><ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></RightText>
+                      <RightText>{section.text}</RightText>
                     </SideBySide>
                   ) : 
                   section.__component === 'timeline.image-below-text' ? (
                     <ImageBelowText>
-                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]}{section.text}</CenterText>
                       <BelowImage src={import.meta.env.VITE_APP_UPLOAD_URL + section.image.data?.attributes.url} />                    
                     </ImageBelowText>
                   ) : 
                   section.__component === 'timeline.text-above-three-images' ? (
                     <ImageBelowText>
-                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]}{section.text}</CenterText>
                       <ThreeImages>
                       {section.images.data?.map((image, index) => (
                         <BelowImage key={image.id} className='three' src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
@@ -473,7 +472,7 @@ const About = () => {
                   ) : 
                   section.__component === 'timeline.text-above-5-images' ? (
                     <ImageBelowText>
-                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
+                      <CenterText>{section.type=="Personal" ? "" : Icons[section.type]}{section.text}</CenterText>
                       <FiveImages>
                       {section.images.data?.map((image, index) => (
                         <FiveImage key={image.id} className={index == 0 ? ' portrait' : ' landscape' + index} src={import.meta.env.VITE_APP_UPLOAD_URL + image.attributes.url} />
@@ -482,7 +481,7 @@ const About = () => {
                     </ImageBelowText>
                   ) : 
                   section.__component === 'timeline.event' ? (
-                    <CenterText>{section.type=="Personal" ? "" : Icons[section.type]()}<ReactMarkdown linkTarget="_blank" escapeHtml={false}>{section.text}</ReactMarkdown></CenterText>
+                    <CenterText>{section.type=="Personal" ? "" : Icons[section.type]}{section.text}</CenterText>
                   ) : ("")}
                 </TimelineSection>
               )}

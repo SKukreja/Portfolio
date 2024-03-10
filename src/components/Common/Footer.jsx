@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { motion, stagger } from "framer-motion";
+import { m, stagger } from "framer-motion";
 import { useLocation } from 'react-router-dom';
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 
 const desktopContainerWidth = 'var(--desktop-container-width)';
 
-const FooterContainer = styled(motion.div)`
+const FooterContainer = styled(m.div)`
   width: ${desktopContainerWidth};
   height: calc(50vh - 8rem);
   margin-left: auto;
@@ -16,8 +16,6 @@ const FooterContainer = styled(motion.div)`
   overflow: visible;
   position: relative;
   padding: 4rem 0;
-  display: ${({ onHome }) => onHome ? 'none' : 'flex'};
-  opacity: ${({ onHome }) => onHome ? '0' : '1'};
   transition: opacity 1s ease 2s;
   flex-direction: column;
   align-items: center;
@@ -33,7 +31,7 @@ const Copyright = styled.span`
   font-family: 'Satoshi';
 `;
 
-const Socials = styled(motion.div)`
+const Socials = styled(m.div)`
   display: flex;
   @media (max-width: 768px) {
     width: 100%;
@@ -41,7 +39,7 @@ const Socials = styled(motion.div)`
   }
 `;
 
-const SocialLink = styled(motion.a)`
+const SocialLink = styled(m.a)`
   color: white;  
   font-size: 1.5rem;
   background: var(--accent-colour);
@@ -142,7 +140,7 @@ const Footer = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }} 
-          delay={stagger(0.3)} href={link.url} target="_blank">{Icons[link.icon]()}</SocialLink>          
+          delay={stagger(0.3)} href={link.url} target="_blank">{Icons[link.icon]}</SocialLink>          
         ))}
         </Socials>
       </TopSection>

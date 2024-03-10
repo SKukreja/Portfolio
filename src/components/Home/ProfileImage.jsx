@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { m, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 import { gsap } from 'gsap';
@@ -8,7 +8,7 @@ import { set } from 'react-ga';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Scene = styled(motion.div)`  
+const Scene = styled(m.div)`  
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -43,7 +43,7 @@ const Frame = styled.svg`
   height: auto;
 `;
 
-const Container = styled(motion.div)`
+const Container = styled(m.div)`
   position: relative;
   width: 100%;
   height: 100%;
@@ -146,11 +146,11 @@ function ProfileImage({ imageUrl, even }) {
       <Container ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
         <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 1200">
           <defs>
-            <mask id={maskId}>
+            <mask id={ maskId}>
               <ellipse cx="50%" cy="50%" rx={circleRadius * 3/4} ry={circleRadius} fill="var(--offwhite)" style={{ filter: `url(#displacementFilter6)` }} />
             </mask>
           </defs>
-          <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${maskId})`} />
+          <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${ maskId})`} />
         </Image>
 
       </Container>

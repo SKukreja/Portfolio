@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { m, useMotionValue, useTransform } from "framer-motion";
 import emailjs from '@emailjs/browser';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Footer from '../../components/Common/Footer';
@@ -122,20 +122,20 @@ const Checkmark = () => {
 
   return (
     <CheckmarkContainer>
-      <motion.div
+      <m.div
         initial={{ x: 0 }}
         animate={{ x: 100 }}
         style={{ x: progress }}
         transition={{ duration: 1 }}
       />
-      <motion.svg
+      <m.svg
         xmlns="http://www.w3.org/2000/svg"
         width="50"
         height="50"
         viewBox="0 0 258 258"
       >
         {/* Check mark  */}
-        <motion.path
+        <m.path
           transform="translate(60 85)"
           d="M3 50L45 92L134 3"
           fill="transparent"
@@ -144,7 +144,7 @@ const Checkmark = () => {
           style={{ pathLength: checkmarkPathLength }}
         />
         {/* Circle */}
-        <motion.path
+        <m.path
           d="M 130 6 C 198.483 6 254 61.517 254 130 C 254 198.483 198.483 254 130 254 C 61.517 254 6 198.483 6 130 C 6 61.517 61.517 6 130 6 Z"
           fill="transparent"
           strokeWidth="8"
@@ -153,7 +153,7 @@ const Checkmark = () => {
             pathLength: circleLength
           }}
         />
-      </motion.svg>
+      </m.svg>
       <SuccessMessage>Your message has been sent successfully!</SuccessMessage>
     </CheckmarkContainer>
   );
@@ -189,7 +189,7 @@ const Contact = () => {
 
   return (
     <>
-    <Container as={motion.div} 
+    <Container as={ m.div} 
     initial={{ 
       opacity: 0,      
      }} 

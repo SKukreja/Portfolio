@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { m, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 import { gsap } from 'gsap';
@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Scene = styled(motion.div)`  
+const Scene = styled(m.div)`  
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -104,7 +104,7 @@ function Project() {
       // Calculate movement and apply to image
       const moveX = -(clientX - window.innerWidth / 2) / 70;
       const moveY = -(clientY - window.innerHeight / 2) / 70;
-      imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      imageRef.current.style.transform = `translate(${ moveX}px, ${ moveY}px)`;
     };
 
     // Function to handle gyroscopic movement
@@ -113,7 +113,7 @@ function Project() {
       // Calculate movement and apply to image
       const moveX = gamma / 70;
       const moveY = beta / 70;
-      imageRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      imageRef.current.style.transform = `translate(${ moveX}px, ${ moveY}px)`;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -127,7 +127,7 @@ function Project() {
 
   return (
     <Scene>
-      <motion.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
+      <m.div ref={ref} initial="hidden" animate={controls} style={{ position: "relative" }} variants={svgVariants}>
         <Image ref={imageRef}  width="1200" height="900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
             <defs>
               <filter id="displacementFilter6">
@@ -151,7 +151,7 @@ function Project() {
           </defs>
           <rect x="0" y="0" width="100%" height="100%" fill=" #F8F8F8" mask="url(#invertedCircleMask)" />
         </Frame>
-      </motion.div>
+      </m.div>
     </Scene>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const AnimatedText = React.memo(({ text, startImmediately }) => {
@@ -41,7 +41,7 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
       {words.map((word, wordIndex) => (
         <span key={wordIndex} style={{ display: 'inline-block', marginRight: '0.25em' }}>
           {word.map(({ char, delay }, index) => (
-            <motion.span
+            <m.span
               key={index}
               variants={charVariants}
               initial="hidden"
@@ -50,7 +50,7 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
               style={{ display: 'inline-block', whiteSpace: 'pre' }}
             >
               {char}
-            </motion.span>
+            </m.span>
           ))}
         </span>
       ))}

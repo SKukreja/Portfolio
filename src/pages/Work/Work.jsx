@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { InView, useInView } from 'react-intersection-observer';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import Footer from '../../components/Common/Footer';
-import { set } from 'react-ga';
 
-const Featured = styled(motion.div)`
+const Featured = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,7 +135,7 @@ const ProjectImage = styled.div`
   }
 `;
 
-const Project = styled(motion.div)`
+const Project = styled(m.div)`
     display: flex;
     filter: grayscale(1);
     transition: all 1s ease;
@@ -255,7 +254,7 @@ const ProjectHeader = styled.div`
   flex-direction: column;
 `;
 
-const Header = styled(motion.h1)`
+const Header = styled(m.h1)`
   font-family: 'Hind';
   font-size: 6rem;
   text-transform: uppercase;
@@ -328,7 +327,7 @@ const ProjectInfo = (props) => {
       <ProjectSummary className='summary'>{props.project.attributes.summary}</ProjectSummary>
       <ProjectActions>
       {props.project.attributes.links?.map((link) => (
-        <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]()}
+        <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]}
           <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
         </ProjectLink>
       ))}        

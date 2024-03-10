@@ -5,15 +5,13 @@ import FeaturedWorks from '../../components/Home/FeaturedWorks'
 import About from '../../components/Home/About'
 import Cover from '../../components/Home/Cover'
 import Experience from '../../components/Home/Experience'
-import { cubicBezier, motion, useScroll, useTransform } from 'framer-motion'
-import useSmoothScroll from '../../hooks/useSmoothScroll'
+import { cubicBezier,m, useScroll, useTransform } from 'framer-motion'
 import { Helmet } from 'react-helmet'
 import styled, { keyframes } from 'styled-components'
-import gsap from 'gsap'
 import FootprintTracker from '../../components/Common/FootprintTracker'
 
 
-const Content = styled(motion.div)`
+const Content = styled(m.div)`
   display: flex;
   height: fit-content;
   background: var(--offwhite);
@@ -30,7 +28,7 @@ const Content = styled(motion.div)`
   }
 `;
 
-const Container = styled(motion.div)`
+const Container = styled(m.div)`
   position: relative;
   background: var(--black);
   height: 100vh;
@@ -65,7 +63,7 @@ const BoxShadow = styled.div`
   }
 `;
 
-// Helper function to debounce a function call
+// Helper function to debounce a function call 
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -78,7 +76,7 @@ function debounce(func, wait) {
   };
 }
 
-const Home = ({ isMobile }) => {
+const Home = ({ gpuLevel, isMobile }) => {
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -93,10 +91,9 @@ const Home = ({ isMobile }) => {
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash isMobile={isMobile} />
-          <FeaturedWorks />
-          <About />
-          <Experience />
+          <Splash gpuLevel={gpuLevel} isMobile={isMobile} />
+          <FeaturedWorks gpuLevel={gpuLevel} />
+  
           <Cover />
         </Content>
     </Container>

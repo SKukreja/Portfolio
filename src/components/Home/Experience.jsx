@@ -1,22 +1,8 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import use from '../../hooks/use';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
-import { motion } from 'framer-motion'
-import Footer from '../../components/Common/Footer';
-import ProfileImage from './ProfileImage';
-import WashedAwayText from './WashedAwayText';
-
-const typewriter = keyframes`
-  from { width: 0 }
-  to { width: 100% }
-`; 
-
-const blink = keyframes`
-  from, to { border-color: white; }
-  50% { border-color: white; }
-`;
+import { m } from 'framer-motion';
 
 const Container = styled.div`
   display: flex;
@@ -118,7 +104,7 @@ const ProfileSection = styled.div`
   position: relative;
 `;
 
-const Tree = styled(motion.img)`
+const Tree = styled(m.img)`
   position: absolute;
   top: -90%;
   left: 200%;
@@ -127,11 +113,11 @@ const Tree = styled(motion.img)`
   z-index: 4;
 `;
 
-const TreeContainer = styled(motion.div)`
+const TreeContainer = styled(m.div)`
 pointer-events: none;
 `;
 
-const TreeMask = styled(motion.img)`
+const TreeMask = styled(m.img)`
 position: absolute;
 top: -40%;
 left: 0;
@@ -143,7 +129,7 @@ z-index: 2;
 mask-image: linear-gradient(to left, black 70%, transparent 100%);
 `;
 
-const Background = styled(motion.img)`
+const Background = styled(m.img)`
 -webkit-mask-image: linear-gradient(to right, transparent 0%, black 70%, transparent 100%);
 mask-image: linear-gradient(to right, transparent 0%, black 70%, transparent 100%);
 height: 150%;
@@ -200,7 +186,7 @@ const Experience = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
   );
   
   return (
-    <Container as={motion.div}>
+    <Container as={ m.div}>
       <ProfileSection>
         <InView>
         {({ inView, ref, entry }) => (

@@ -56,8 +56,8 @@ const Nav = styled.nav`
     align-items: center;
     padding-top: 0rem;
     padding-bottom: 0rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: var(--default-spacing);
+    padding-right: var(--default-spacing);
   }
 `;
 
@@ -160,7 +160,12 @@ const LogoContainer = styled(Link)`
   }
 `;
 
-const Overlay = styled.div`
+const Overlay = styled.div.attrs(({ isVisible }) => ({
+  style: {
+    visibility: isVisible ? 'visible' : 'hidden',
+    opacity: isVisible ? 1 : 0,
+  }
+}))`
   position: fixed;
   top: 0;
   left: 0;
@@ -168,9 +173,6 @@ const Overlay = styled.div`
   bottom: 0;
   height: 100vh;
   width: 100%;
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-
   flex-direction: column;
   background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
   z-index: 10;
@@ -189,7 +191,10 @@ const Overlay = styled.div`
   }
 `;
 
-const OverlayLink = styled(Link)`
+const OverlayLink = styled(Link).withConfig({
+  shouldForwardProp: (prop, defaultValidatorFn) => 
+    !['isVisible', 'index'].includes(prop) && defaultValidatorFn(prop),
+})`
   color: var(--black);
   text-decoration: none;
   letter-spacing: 1px;
@@ -204,11 +209,12 @@ const OverlayLink = styled(Link)`
     color: #FF6281;
     text-shadow: 0 0 2px #FF6281;
   }
-  animation: ${({ isVisible, index }) =>
+  animation: ${({ isVisible, index }) => 
     isVisible
       ? css`${slideInFromRight} 0.4s ease-out ${(index + 1) * 0.05}s forwards`
       : 'none'};
 `;
+
 
 
 const OverlayMenu = styled.nav`
@@ -380,7 +386,7 @@ function Navbar({ socialData }) {
       </Center>
       <Right>
         {socials?.attributes.links.map((link, index) => (
-          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} onHome={onHomePage} target="_blank">{Icons[link.icon]()}</SocialLink>          
+          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} target="_blank">{Icons[link.icon]}</SocialLink>          
         ))}
       </Right>
       <Overlay isVisible={isModalOpen}>

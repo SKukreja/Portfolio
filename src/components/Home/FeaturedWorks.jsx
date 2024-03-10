@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
-import { motion, useAnimation } from 'framer-motion';
+import { m, useAnimation } from 'framer-motion';
 import ProjectImage from './ProjectImage';
 import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
 
-const Featured = styled(motion.div)`
+const Featured = styled(m.div)`
   width: 200vw;
   display: flex;
+  justify-content: space-evenly;
   position: relative;
   align-items: center;
   overflow: visible;
   margin-left: 40vw;
   @media (max-width: 768px) {
     margin-top:30vh;
+    justify-content: flex-start;
     margin-left: 0;
   }
 `;
@@ -33,7 +35,7 @@ const Header = styled.h1`
   height: auto;
   top: 7.5rem;
   margin: 0;
-  left: -10rem;  
+  left: 0;  
   text-align: center;
   @media (max-width: 768px) {    
     left: var(--default-spacing);  
@@ -68,7 +70,7 @@ const ProjectName = styled(Link)`
     margin-bottom: -0.75rem;
   }
   &:hover {
-    color: white;
+    color: red;
   }
   @media (max-width: 768px) {
     font-size: 4vw;
@@ -79,7 +81,7 @@ const ProjectName = styled(Link)`
   }
 `;
 
-const Projects = styled(motion.div)`
+const Projects = styled(m.div)`
   display: flex;
   margin-top: 10rem;
   height: calc(100% - 10rem);
@@ -87,27 +89,28 @@ const Projects = styled(motion.div)`
   @media (max-width: 768px) {
     margin-top: 16rem;
     flex-direction: column;
+    
   }
 `;
 
 const ProjectContent = styled.div`
   display: flex;
-  width: 80%;
+  width: 100%;
   height: fit-content;
   flex-direction: column;
   z-index: 2;
   position: absolute;
-  margin-left: 20rem;
+
   &.odd {
     bottom: 50%;
     &::before {
-      bottom: 15%;
+      bottom: 5%;
     }
   }
   &.even {
-    top: 40%;
+    top: 50%;
     &::before {
-      top: -10%;
+      top: -20%;
     }
   }
   &::before {
@@ -149,7 +152,7 @@ const Project = styled.div`
       margin-top: 10rem;
     }
     &.even {
-      margin-top: -10rem;
+      margin-top: -15rem;
     }
     @media (max-width: 768px) {
       width: 100vw;
@@ -167,7 +170,7 @@ const Project = styled.div`
     }
 `;
 
-const ProjectSummary = styled(motion.div)`
+const ProjectSummary = styled(m.div)`
   font-family: var(--body-font);
   letter-spacing: 0.5px;  
   position: relative;  
@@ -250,7 +253,7 @@ const LabelContainer = styled.span`
   padding-right: 0.5rem;
 `;
 
-const Image = styled(motion.svg)`  
+const Image = styled(m.svg)`  
   width: 100%;
   height: 100%;
 `
@@ -283,7 +286,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
         <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
         <ProjectName to={"/project/" + project.attributes.slug}><AnimatedText startImmediately={false} text={project.attributes.title} /></ProjectName>
         {project.attributes.links?.map((link) => (
-          <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]()}
+          <ProjectLink key={link.id} to={link.url}>{Icons[link.icon]}
             <ButtonLabel className='btn-label'><LabelContainer>{link.name}</LabelContainer></ButtonLabel>
           </ProjectLink>
         ))}        
@@ -296,7 +299,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
   );
 }
 
-const ProjectItem = ({ project, number, scrollYProgress}) => {
+const ProjectItem = ({ gpuLevel, project, number, scrollYProgress}) => {
   const ref = useRef(null);
   const [viewRef, inView] = useInView({
     threshold: 0.25,
@@ -310,7 +313,7 @@ const ProjectItem = ({ project, number, scrollYProgress}) => {
       ) : (
         ''
       )}
-      <ProjectImage scrollYProgress={scrollYProgress} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage scrollYProgress={scrollYProgress} gpuLevel={gpuLevel} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <ProjectInfo isInView={inView} className="even" number={number} project={project} />
       ) : (
@@ -320,7 +323,7 @@ const ProjectItem = ({ project, number, scrollYProgress}) => {
   );
 };
 
-const FeaturedWorks = ({ scrollYProgress }) => {
+const FeaturedWorks = ({ gpuLevel, scrollYProgress }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
@@ -336,7 +339,7 @@ const FeaturedWorks = ({ scrollYProgress }) => {
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} project={project} number={number} scrollYProgress={scrollYProgress} />
+        <ProjectItem key={project.id} project={project} gpuLevel={gpuLevel} number={number} scrollYProgress={scrollYProgress} />
       ))}
       </Projects>
     </Featured>

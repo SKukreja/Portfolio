@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence, MotionConfig } from "framer-motion";
+import { LazyMotion, AnimatePresence, MotionConfig, domAnimation } from "framer-motion";
 import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
 import Home from './pages/Home/Home';
@@ -17,8 +17,10 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
+import { getGPUTier } from 'detect-gpu';
 
 gsap.registerPlugin(ScrollTrigger);
+gsap.ticker.lagSmoothing(0)
 
 const Blur = styled.div`
   ${({ isModalOpen }) =>
@@ -38,10 +40,17 @@ function initializeAnalytics() {
 const Layout = ({ isMobile }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
-  const location = useLocation(); 
+  const location = useLocation();
+  const [gpuLevel, setGpuLevel] = useState(0);
+
+  async function benchmark() {
+    const gpuTier = await getGPUTier();
+    setGpuLevel(gpuTier.isMobile ? 1 : gpuTier.tier);
+  }
 
   useEffect(() => {
     initializeAnalytics();
+    benchmark();
   }, []);
 
   useEffect(() => {
@@ -67,11 +76,11 @@ const Layout = ({ isMobile }) => {
       <Blur isModalOpen={isModalOpen}>
           <AnimatePresence mode='wait'>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home isMobile={isMobile} />} />
-            <Route path="/project/:id" element={<Project />} />
-            <Route path="/work" element={<Work />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/" element={<Home gpuLevel={gpuLevel} isMobile={isMobile} />} />
+            <Route path="/project/:id" element={<Project gpuLevel={gpuLevel} />} />
+            <Route path="/work" element={<Work gpuLevel={gpuLevel} />} />
+            <Route path="/about" element={<About gpuLevel={gpuLevel} />} />
+            <Route path="/contact" element={<Contact gpuLevel={gpuLevel} />} />
           </Routes>
         </AnimatePresence>
       </Blur>
@@ -82,11 +91,19 @@ const Layout = ({ isMobile }) => {
 const App = () => {  
   const [isMobile, setIsMobile] = useState(false);
   const lenisRef = useRef()
-  
 
+  useEffect(() => {
+    function update(time) {
+      lenisRef.current?.lenis?.raf(time * 1000)
+    }
   
+    gsap.ticker.add(update)
+  
+    return () => {
+      gsap.ticker.remove(update)
+    }
+  })
 
- 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
 
@@ -107,14 +124,16 @@ const App = () => {
   }, [isMobile]);
 
   return (
-    <ReactLenis root ref={lenisRef} autoRaf={true} options={{wheelMultiplier: 0.5, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
-      <MotionConfig reducedMotion="user">
-        <ModalProvider>
-          <Router>
-            <Layout isMobile={isMobile} />
-          </Router>
-        </ModalProvider>
-      </MotionConfig>
+    <ReactLenis root ref={lenisRef} autoRaf={true} options={{wheelMultiplier: 1.5, lerp: 0.05, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
+     <LazyMotion features={domAnimation}>
+        <MotionConfig reducedMotion="user">
+          <ModalProvider>
+            <Router>
+              <Layout isMobile={isMobile} />
+            </Router>
+          </ModalProvider>
+        </MotionConfig>
+      </LazyMotion>
     </ReactLenis>
   );
 }
