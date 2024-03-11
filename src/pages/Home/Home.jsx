@@ -6,7 +6,7 @@ import About from '../../components/Home/About'
 import Cover from '../../components/Home/Cover'
 import Experience from '../../components/Home/Experience'
 import { cubicBezier,m, useScroll, useTransform } from 'framer-motion'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import styled, { keyframes } from 'styled-components'
 import FootprintTracker from '../../components/Common/FootprintTracker'
 
@@ -64,7 +64,7 @@ const BoxShadow = styled.div`
   }
 `;
 
-const Home = ({ gpuLevel, isMobile }) => {
+const Home = ({ isMobile }) => {
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -79,8 +79,8 @@ const Home = ({ gpuLevel, isMobile }) => {
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash gpuLevel={gpuLevel} isMobile={isMobile} />
-          <FeaturedWorks gpuLevel={gpuLevel} isMobile={isMobile} />
+          <Splash isMobile={isMobile} />
+          <FeaturedWorks isMobile={isMobile} />
   
           <Cover />
         </Content>

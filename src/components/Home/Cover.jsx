@@ -80,7 +80,7 @@ const Cover = () => {
   return (
     <Container as={ m.div}>
       <ProfileSection>
-        <ProfileImage imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.picture.data.attributes.url} />
+
         <InView>
         {({ inView, ref, entry }) => (
           <Bio ref={ref} className={`${inView ? 'active' : ''}`}>            

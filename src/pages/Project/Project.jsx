@@ -7,7 +7,7 @@ import { Icons } from '../../components/Common/Icons';
 import Slider from '../../components/Project/Slider';
 import { m } from 'framer-motion'
 import Footer from '../../components/Common/Footer';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const ProjectContainer = styled.div`
   display: flex;

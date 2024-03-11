@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import { Icons } from '../../components/Common/Icons';
 import { m } from 'framer-motion'
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import Footer from '../../components/Common/Footer';
 
 const typewriter = keyframes`

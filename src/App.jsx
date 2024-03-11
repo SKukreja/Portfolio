@@ -11,13 +11,12 @@ import Project from './pages/Project/Project';
 import ReactGA from 'react-ga';
 import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import use from './hooks/use';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
-import { getGPUTier } from 'detect-gpu';
 
 gsap.registerPlugin(ScrollTrigger);
 gsap.ticker.lagSmoothing(0)
@@ -41,16 +40,9 @@ const Layout = ({ isMobile }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation();
-  const [gpuLevel, setGpuLevel] = useState(0);
-
-  async function benchmark() {
-    const gpuTier = await getGPUTier();
-    setGpuLevel(gpuTier.isMobile ? 1 : gpuTier.tier);
-  }
 
   useEffect(() => {
     initializeAnalytics();
-    benchmark();
   }, []);
 
   useEffect(() => {
@@ -67,23 +59,25 @@ const Layout = ({ isMobile }) => {
 
   return (
     <div className="app">
-      <GlobalStyle />
-      <Navbar socialData={data} />
-      <Helmet>      
-        <title>Sumit Kukreja</title>                
-        <link rel="icon" type="image/png" href="/favicon.ico" />         
-      </Helmet>
-      <Blur isModalOpen={isModalOpen}>
-          <AnimatePresence mode='wait'>
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home gpuLevel={gpuLevel} isMobile={isMobile} />} />
-            <Route path="/project/:id" element={<Project gpuLevel={gpuLevel} />} />
-            <Route path="/work" element={<Work gpuLevel={gpuLevel} />} />
-            <Route path="/about" element={<About gpuLevel={gpuLevel} />} />
-            <Route path="/contact" element={<Contact gpuLevel={gpuLevel} />} />
-          </Routes>
-        </AnimatePresence>
-      </Blur>
+      <HelmetProvider>
+        <GlobalStyle />
+        <Navbar socialData={data} />
+        <Helmet>      
+          <title>Sumit Kukreja</title>                
+          <link rel="icon" type="image/png" href="/favicon.ico" />         
+        </Helmet>
+        <Blur isModalOpen={isModalOpen}>
+            <AnimatePresence mode='wait'>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Home isMobile={isMobile} />} />
+              <Route path="/project/:id" element={<Project />} />
+              <Route path="/work" element={<Work />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+          </AnimatePresence>
+        </Blur>
+      </HelmetProvider>
     </div>
   );
 };
@@ -95,7 +89,6 @@ const App = () => {
 
   const lenis = useLenis(({ scroll }) => {
     ScrollTrigger.update();
-    console.log("Scrolling")
   })
 
   const options = { 
@@ -104,14 +97,12 @@ const App = () => {
     direction: isMobile ? "vertical" : "horizontal", 
     gestureDirection: isMobile ? "vertical" : "horizontal",
     smooth: true,
-    mouseMultiplier: 1,
+    mouseMultiplier: 0.5,
     smoothTouch: true,
     touchMultiplier: 0.9,
-    syncTouch: true,
-    syncTouchLerp: 0.04,
     infinite: false,
     wheelMultiplier: 0.9,    
-    lerp: 0.04, 
+    lerp: 0.05, 
     orientation: isMobile ? "vertical" : "horizontal", 
     gestureOrientataion: isMobile ? "vertical" : "horizontal"
   }

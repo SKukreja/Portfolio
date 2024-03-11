@@ -61,7 +61,7 @@ const Container = styled(m.div)`
 let uniqueIdCounter = 0;
 
 
-function ProjectImage({ gpuLevel, isMobile, number, imageUrl, even }) {
+function ProjectImage({ isMobile, number, imageUrl, even }) {
   const ref = useRef(null); // Ref for the scene container
   const [imageLoaded, setImageLoaded] = useState(false);
   const uniqueId = `project-image-${useRef(++uniqueIdCounter).current}`;
@@ -69,7 +69,6 @@ function ProjectImage({ gpuLevel, isMobile, number, imageUrl, even }) {
   // State for the dynamic properties of the SVG filters
   const [stdDeviation, setStdDeviation] = useState(0);
   const [displacement, setDisplacement] = useState(0);
-  // State for the dynamic radius of the mask
   const [circleRadius, setCircleRadius] = useState(0);
 
   useEffect(() => {
@@ -80,7 +79,6 @@ function ProjectImage({ gpuLevel, isMobile, number, imageUrl, even }) {
       end: isMobile ? "bottom center" : "right center", 
       horizontal: !isMobile, 
       onUpdate: (self) => {
-        console.log(self.progress)
         // Calculate the new radius based on the scroll progress
         const progress = self.progress;
         const maxRadius = 400; // Max radius as per your original logic

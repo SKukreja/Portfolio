@@ -7,6 +7,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const maskId = `circleMask-splash-circle`;
+
 const Scene = styled(m.div)`  
   background-size: cover;
   background-position: center;
@@ -44,7 +46,12 @@ const BG = styled.img`
   aspect-ratio: 16/9;
   z-index: 1;
   pointer-events: none;
-  mask: url(#circleMask6);
+  mask: url(#${maskId});
+  @media (max-width: 768px) {
+    width: calc(100%);
+    height: calc(100%);
+    object-fit: cover;    
+  }
 `;
 
 const Spin = keyframes`
@@ -76,34 +83,18 @@ const Frame = styled.svg`
   }
 `;
 
-function Splash({ gpuLevel, isMobile }) {
+function Splash({ isMobile }) {
   const controls = useAnimation();
   const thresholds = Array.from({ length: 20 }, (_, index) => index * 0.05);
   const [ref, inView, entry] = useInView({
     threshold: thresholds
   });
-  const videoRef = useRef(null); // Ref for the image container
-  const [displacementScale, setDisplacementScale] = useState(1);
-  const [blurStdDeviation, setBlurStdDeviation] = useState(1);
-  const introStartRadius = 0; // Starting radius for the intro animation
-  const [circleRadius, setCircleRadius] = useState(introStartRadius);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [stdDeviation, setStdDeviation] = useState(0);
+  const [displacement, setDisplacement] = useState(0);
+  const [circleRadius, setCircleRadius] = useState(0);
   const [circleCenterY, setCircleCenterY] = useState('450');
   const [circleCenterX, setCircleCenterX] = useState('800');
-  const [animationCompleted, setAnimationCompleted] = useState(false);
-  const [isPulsing, setIsPulsing] = useState(true);
-  const [pulsingDirection, setPulsingDirection] = useState(true);
-  const [lastFrameTime, setLastFrameTime] = useState(Date.now());
-  const [lastSecond, setLastSecond] = useState(Date.now());
-  const [frames, setFrames] = useState(0);
-  const [pusling, setPulsing] = useState(false);
-  // Target FPS for throttling the animation
-  const [targetFPS, setTargetFPS] = useState(60); // You can adjust this value based on your needs <BG autoPlay muted loop playsInline ref={videoRef} src="woods.mp4" />
-  const frameDuration = 1000 / targetFPS;
-  const previousBaseRadiusRef = useRef(500 * entry?.intersectionRatio);
-  const svgVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1 } }
-  };
 
   const easeInOut = (t) => {
     return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -112,6 +103,11 @@ function Splash({ gpuLevel, isMobile }) {
   const lerp = (start, end, alpha) => {
     const easedAlpha = easeInOut(alpha);
     return start * (1 - easedAlpha) + end * easedAlpha;
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    ScrollTrigger.refresh();
   };
 
   useEffect(() => {
@@ -127,14 +123,44 @@ function Splash({ gpuLevel, isMobile }) {
     };
   
     updateCirclePosition();
+
+    window.addEventListener('resize', updateCirclePosition);
+
+    // Cleanup function to remove the event listener
+    return () => window.removeEventListener('resize', updateCirclePosition);
   }, []);
 
   useEffect(() => {
-    setTargetFPS(gpuLevel == 3 ? 60 : 30);
     controls.start("visible");
   }, [controls]);
 
-  // Combined Intro and Pulsing Animation
+  useEffect(() => {
+    if (!imageLoaded) return;
+    ScrollTrigger.create({
+      trigger: ref.current,
+      start: isMobile ? "top 50%" : "left center", // When the left of the trigger hits the right of the viewport
+      end: isMobile ? "bottom -200%" : "right left", 
+      horizontal: !isMobile, 
+      onUpdate: (self) => {
+        // Calculate the new radius based on the scroll progress
+        const progress = self.progress;
+        const maxRadius = 600; // Max radius as per your original logic
+        // Apply a cubic ease-out curve to the progress
+        const easeOutProgress = Math.pow(1 - progress, 4);
+        
+        const newRadius = easeOutProgress * maxRadius;
+        setCircleRadius(newRadius);
+
+        // Dynamically adjust stdDeviation and displacement based on scroll progress or other conditions
+        const targetDeviation = (1 - newRadius / maxRadius) * 5;
+        const targetDisplacement = (1 - newRadius / maxRadius) * 100;
+        setStdDeviation(targetDeviation);
+        setDisplacement(targetDisplacement);
+      },
+    });
+  }, [imageLoaded]);
+
+  /* Combined Intro and Pulsing Animation
   useEffect(() => {
     let animationFrameId;
 
@@ -185,26 +211,25 @@ function Splash({ gpuLevel, isMobile }) {
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
   }, [inView, animationCompleted, circleRadius]);
+  */
 
   return ( 
     <Scene ref={ref}>
-      <BG src="placeholder.jpeg" />
+      <BG onLoad={handleImageLoad} src="placeholder.jpeg" />
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <filter id="displacementFilter6">
+          <filter id={"mask-" + maskId}>
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
             <feDisplacementMap in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur stdDeviation={5} />
+            <feGaussianBlur stdDeviation={10 - stdDeviation} />
           </filter>
-          <filter id="displacementFilter7">
-            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacementScale * 15} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur stdDeviation={blurStdDeviation * 5} />
+          <filter id={"displacementFilter-" + maskId}>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacement} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={stdDeviation} />
           </filter>
-          <mask id="circleMask6">
-            <circle cx={circleCenterX} cy={circleCenterY} r={circleRadius} fill="white" style={{ filter: 'url(#displacementFilter6)' }} />
+          <mask id={maskId}>
+            <circle cx={circleCenterX} cy={circleCenterY} r={circleRadius} fill="#FFFFFF" style={{ filter: `url(#mask-${maskId})` }} />
           </mask>
-
         </defs>
       </svg>
     </Scene>
