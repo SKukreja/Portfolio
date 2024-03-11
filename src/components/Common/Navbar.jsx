@@ -89,7 +89,10 @@ const Noise = styled.div`
 
 const SocialLink = styled.a`
   font-size: 1.2rem;
+  width: 1.5rem;
   margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto;
   color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   &:hover {

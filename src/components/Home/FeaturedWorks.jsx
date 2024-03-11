@@ -299,7 +299,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
   );
 }
 
-const ProjectItem = ({ gpuLevel, project, number, scrollYProgress}) => {
+const ProjectItem = ({ gpuLevel, isMobile, project, number, scrollYProgress}) => {
   const ref = useRef(null);
   const [viewRef, inView] = useInView({
     threshold: 0.25,
@@ -313,7 +313,7 @@ const ProjectItem = ({ gpuLevel, project, number, scrollYProgress}) => {
       ) : (
         ''
       )}
-      <ProjectImage scrollYProgress={scrollYProgress} gpuLevel={gpuLevel} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage scrollYProgress={scrollYProgress} isMobile={isMobile} gpuLevel={gpuLevel} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <ProjectInfo isInView={inView} className="even" number={number} project={project} />
       ) : (
@@ -323,23 +323,18 @@ const ProjectItem = ({ gpuLevel, project, number, scrollYProgress}) => {
   );
 };
 
-const FeaturedWorks = ({ gpuLevel, scrollYProgress }) => {
+const FeaturedWorks = ({ gpuLevel, isMobile, scrollYProgress }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
   
   return (
-    <Featured
-      initial={{ y: 100, opacity: 0}}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7 }}
-      id="featured"
-    >
+    <Featured>
       <Header>Featured Work</Header>
       <Projects>
       {/* Loop through featured projects */}
       {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} project={project} gpuLevel={gpuLevel} number={number} scrollYProgress={scrollYProgress} />
+        <ProjectItem key={project.id} isMobile={isMobile} project={project} gpuLevel={gpuLevel} number={number} scrollYProgress={scrollYProgress} />
       ))}
       </Projects>
     </Featured>

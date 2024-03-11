@@ -117,6 +117,7 @@ const Button = styled(Link)`
   }
   & svg {
     margin-right: 1rem;
+    width: 2rem;
     transition: margin 0.5s ease;
   }
   & p {

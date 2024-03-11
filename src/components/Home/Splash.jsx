@@ -194,7 +194,7 @@ function Splash({ gpuLevel, isMobile }) {
           <filter id="displacementFilter6">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
             <feDisplacementMap in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur stdDeviation={20} />
+            <feGaussianBlur stdDeviation={5} />
           </filter>
           <filter id="displacementFilter7">
             <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />

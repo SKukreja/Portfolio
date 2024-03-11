@@ -35,6 +35,7 @@ const Container = styled(m.div)`
   height: 100svh;
   overflow-y: hidden;
   @media (max-width: 1024px) {
+    height: auto;
     overflow-y: auto;
     overflow-x: hidden;
   } 
@@ -63,19 +64,6 @@ const BoxShadow = styled.div`
   }
 `;
 
-// Helper function to debounce a function call 
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
 const Home = ({ gpuLevel, isMobile }) => {
   return (
     <Container
@@ -92,7 +80,7 @@ const Home = ({ gpuLevel, isMobile }) => {
           <BoxShadow />
           <Landing />
           <Splash gpuLevel={gpuLevel} isMobile={isMobile} />
-          <FeaturedWorks gpuLevel={gpuLevel} />
+          <FeaturedWorks gpuLevel={gpuLevel} isMobile={isMobile} />
   
           <Cover />
         </Content>

@@ -91,6 +91,30 @@ const Layout = ({ isMobile }) => {
 const App = () => {  
   const [isMobile, setIsMobile] = useState(false);
   const lenisRef = useRef()
+  const [lenisKey, setLenisKey] = useState(0);
+
+  const lenis = useLenis(({ scroll }) => {
+    ScrollTrigger.update();
+    console.log("Scrolling")
+  })
+
+  const options = { 
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+    direction: isMobile ? "vertical" : "horizontal", 
+    gestureDirection: isMobile ? "vertical" : "horizontal",
+    smooth: true,
+    mouseMultiplier: 1,
+    smoothTouch: true,
+    touchMultiplier: 0.9,
+    syncTouch: true,
+    syncTouchLerp: 0.04,
+    infinite: false,
+    wheelMultiplier: 0.9,    
+    lerp: 0.04, 
+    orientation: isMobile ? "vertical" : "horizontal", 
+    gestureOrientataion: isMobile ? "vertical" : "horizontal"
+  }
 
   useEffect(() => {
     function update(time) {
@@ -111,6 +135,7 @@ const App = () => {
     function handleResize(e) {
       // Update state based on the media query result
       setIsMobile(e.matches);
+      ScrollTrigger.refresh();
     }
 
     // Register event listener
@@ -124,14 +149,14 @@ const App = () => {
   }, [isMobile]);
 
   return (
-    <ReactLenis root ref={lenisRef} autoRaf={true} options={{wheelMultiplier: 1.5, lerp: 0.05, touchMultiplier: 0.1, orientation: isMobile ? "vertical" : "horizontal", gestureOrientataion: isMobile ? "vertical" : "horizontal"}}>
+    <ReactLenis root ref={lenisRef} autoRaf={false} options={options}>
      <LazyMotion features={domAnimation}>
         <MotionConfig reducedMotion="user">
           <ModalProvider>
             <Router>
               <Layout isMobile={isMobile} />
             </Router>
-          </ModalProvider>
+          </ModalProvider> 
         </MotionConfig>
       </LazyMotion>
     </ReactLenis>

@@ -23,10 +23,6 @@ const Scene = styled(m.div)`
   align-items: center;
   z-index: 1;
   overflow: visible;
-  transform: ${(props) => Number(props.isInView) > 0 ? `translateX(calc(${Number(props.number) - 1} * -2rem))` : `translateX(0)))`};
-  @media (max-width: 768px) {
-    transform: ${(props) => Number(props.isInView) > 0 ? `translateY(calc(${Number(props.number) - 1} * 0rem))` : `translateY(0)))`};
-  }
 `;
 
 const Image = styled.svg`
@@ -65,115 +61,68 @@ const Container = styled(m.div)`
 let uniqueIdCounter = 0;
 
 
-function ProjectImage({ gpuLevel, number, imageUrl, even, scrollYProgress }) {
-  const controls = useAnimation();
+function ProjectImage({ gpuLevel, isMobile, number, imageUrl, even }) {
+  const ref = useRef(null); // Ref for the scene container
   const [imageLoaded, setImageLoaded] = useState(false);
-  const thresholds = Array.from({ length: 10 }, (_, index) => index * 0.1);
-  const [ref, inView, entry] = useInView({
-    threshold: thresholds
-  });
-  const imageRef = useRef(null); // Ref for the image container
-  const [lastFrameTime, setLastFrameTime] = useState(Date.now());
-  const [lastSecond, setLastSecond] = useState(Date.now());
-  const [frames, setFrames] = useState(0);
-  const [targetFPS, setTargetFPS] = useState(60); // You can adjust this value based on your needs
-  const [targetRadius, setTargetRadius] = useState(0);
-  const frameDuration = 1000 / targetFPS;
-  const introStartRadius = 0; // Starting radius for the intro animation
+  const uniqueId = `project-image-${useRef(++uniqueIdCounter).current}`;
+  const maskId = `circleMask-${uniqueId}`;
+  // State for the dynamic properties of the SVG filters
   const [stdDeviation, setStdDeviation] = useState(0);
   const [displacement, setDisplacement] = useState(0);
-  const [circleRadius, setCircleRadius] = useState(introStartRadius);  
-  const svgVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1 } }
-  };
-
-  const easeInOut = (t) => {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  };
-
-  const lerp = (start, end, alpha) => {
-    const easedAlpha = easeInOut(alpha);
-    return start * (1 - easedAlpha) + end * easedAlpha;
-  };
-
-  // Generate a unique ID for this instance of the component
-  const uniqueId = useRef(`project-image-${uniqueIdCounter++}`).current;
-  const maskId = `circleMask-${uniqueId}`;
+  // State for the dynamic radius of the mask
+  const [circleRadius, setCircleRadius] = useState(0);
 
   useEffect(() => {
-    controls.start("visible");
-  }, [controls, imageLoaded]);
-
-  const handleImageLoad = () => {
-    setTargetFPS(gpuLevel == 3 ? 60 : 30);
-    setImageLoaded(true); // Set image as loaded
-  };
-
-  // Combined Intro and Pulsing Animation
-  useEffect(() => {
-    let animationFrameId;
-  
-    const animate = () => {
-      const now = Date.now();
-      const elapsed = now - lastFrameTime;
-      // Console log the frame rate
-      setFrames(frames + 1);      
-      if (now - lastSecond >= 1000) {        
-        setLastSecond(now);
-        setFrames(0); // Reset frame count for the next second
-      }
-
-      if (elapsed > frameDuration) 
-      {
-        setLastFrameTime(now - (elapsed % frameDuration));
-        if (inView && imageLoaded && entry.intersectionRatio > 0) {          
-          setTargetRadius(600 * entry.intersectionRatio);
-        }
-        else {
-          setTargetRadius(0);
-        }
-
-        let newRadius = circleRadius;
-  
-        // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-        const increment = Math.abs((targetRadius - newRadius) * 0.02 * (6/gpuLevel)); // 0.1 is the easing factor
+    if (!imageLoaded) return;
+    ScrollTrigger.create({
+      trigger: ref.current,
+      start: isMobile ? "top bottom" : "left right", // When the left of the trigger hits the right of the viewport
+      end: isMobile ? "bottom center" : "right center", 
+      horizontal: !isMobile, 
+      onUpdate: (self) => {
+        console.log(self.progress)
+        // Calculate the new radius based on the scroll progress
+        const progress = self.progress;
+        const maxRadius = 400; // Max radius as per your original logic
+        // Apply a cubic ease-out curve to the progress
+        const easeOutProgress = 1 - Math.pow(1 - progress, 3);
         
-        if (newRadius <= targetRadius) {
-          newRadius += increment;
-        }
-        else if (newRadius >= targetRadius) {
-          newRadius -= increment;
-        }
+        const newRadius = easeOutProgress * maxRadius;
+        setCircleRadius(newRadius);
 
-        const targetDeviation = gpuLevel != 1 ? entry?.intersectionRatio > 0 ? (1 - circleRadius/(600 * entry?.intersectionRatio)) * 5 : 0 : 0;
-        const targetDisplacement = gpuLevel != 1 ? entry?.intersectionRatio > 0 ? (1 - circleRadius/(600 * entry?.intersectionRatio)) * 25 : 0 : 0;
+        // Dynamically adjust stdDeviation and displacement based on scroll progress or other conditions
+        const targetDeviation = (1 - newRadius / maxRadius) * 5;
+        const targetDisplacement = (1 - newRadius / maxRadius) * 100;
         setStdDeviation(targetDeviation);
         setDisplacement(targetDisplacement);
-        setCircleRadius(newRadius);
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
+      },
+    });
+  }, [imageLoaded]);
 
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [inView, lastFrameTime]);
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    ScrollTrigger.refresh();
+  };
 
   return (
-    <Scene className={even ? 'even' : 'odd'} number={number} scrollYProgress={scrollYProgress} isInView={inView}>
-      <Container className={even ? 'even' : 'odd'} ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
-        <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
+    <Scene ref={ref} className={even ? 'even' : 'odd'} number={number}>
+      <Container className={even ? 'even' : 'odd'}>
+      <Image width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
           <defs>
+            <filter id={"mask-" + maskId}>
+              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
+              <feGaussianBlur stdDeviation={10 - stdDeviation} />
+            </filter>
             <filter id={"displacementFilter-" + maskId}>
-
               <feDisplacementMap in="SourceGraphic" in2="noise" scale={displacement} xChannelSelector="R" yChannelSelector="G" />
               <feGaussianBlur stdDeviation={stdDeviation} />
             </filter>
-            <mask id={ maskId}>
-              <ellipse cx="50%" cy="50%" rx={circleRadius} ry={circleRadius * 3/4} fill="#F8F8F8" style={{ filter: `url(#displacementFilter6)` }} />
+            <mask id={maskId}>
+              <ellipse cx="50%" cy="50%" rx={circleRadius} ry={circleRadius * 3 / 4} fill="#FFFFFF" style={{ filter: `url(#mask-${maskId})` }} />
             </mask>
           </defs>
-          <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${ maskId})`} filter={`url(#displacementFilter-${ maskId}`} onLoad={handleImageLoad} />
+          <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${maskId})`} filter={`url(#displacementFilter-${maskId})`} onLoad={handleImageLoad} />
         </Image>
       </Container>
     </Scene>

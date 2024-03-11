@@ -28,6 +28,7 @@ const SocialLink = styled.a`
   & svg {
     margin-right: 1rem;
     margin-bottom: 0.1rem;
+    width: 1.5rem;
   }  
 `;
 
