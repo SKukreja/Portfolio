@@ -50,6 +50,7 @@ const SceneText = styled(m.div)`
   padding-bottom: 6rem;
   z-index: 1;
   display: flex;
+  letter-spacing: 1px;
   white-space: normal; 
   overflow-wrap: break-word; 
   justify-content: center;
@@ -106,14 +107,13 @@ const Button = styled(Link)`
   margin: var(--default-spacing);
   font-family: var(--body-font);
   font-size: var(--body-text);
-  font-weight: 600;  
+  letter-spacing: 1px;
+  font-weight: bold;  
   color: var(--black);
   opacity: 1;
   transition: all 0.2s ease;
   &:hover {
-    opacity: 0.5;
-    &:hover svg {
-    }
+    color: var(--interact-hover-color);
   }
   & svg {
     margin-right: 1rem;

@@ -47,9 +47,8 @@ const Nav = styled.nav`
 
   @media (max-width: 768px) {
     top: 0;
-    left: 0;
-    height: 6vh; 
-    height: 6lvh; 
+    left: 0;     
+    height: 3rem; 
     width: 100vw; 
     flex-direction: row;
     justify-content: space-between; 
@@ -121,33 +120,6 @@ const Right = styled.div`
   width: 100%;  
   @media (max-width: 768px) {
     display: none;
-  }
-`;
-
-const Menu = styled.nav`
-  font-family: 'Satoshi';
-  font-weight: 600;
-  text-transform: uppercase;
-  transition: background 0.5s ease;
-  background: ${({ isNavSolid, isMobile }) => !isNavSolid ? isMobile ? 'transparent' : 'transparent' : 'var(--black)'};
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const NavLink = styled(Link)`
-  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--black)' : 'var(--black)') : 'var(--offwhite)'};
-  text-decoration: none;
-  letter-spacing: 1px;
-  font-size: var(--body-text);
-  font-family: var(--body-font);
-  user-select: none;
-  will-change: color;
-  transition: color 0.5s ease;
-  pointer-events: auto;
-  padding: 1rem;
-  &:hover {
-    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--offwhite)' : 'var(--offwhite)') : 'var(--accent-colour)'};  
   }
 `;
 
@@ -369,7 +341,6 @@ function Navbar({ socialData }) {
   return (
     <>
       <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
-      <Noise />
       <Left>
         <LogoContainer to="/">
           <Branding className="logo" src="/logo.svg" isDark={isModalOpen} />

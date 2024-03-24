@@ -1,161 +1,118 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { m, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { set } from 'react-ga';
+import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const Scene = styled(m.div)`  
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+const Scene = styled.div`  
   width: 50%;
-  aspect-ratio: 3 / 4;
-  position: relative;
+  aspect-ratio: 3 / 4;  
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  z-index: 7;  
-  overflow: visible;
+  position: relative;  
+  z-index: 3;
+  backface-visibility: hidden;  
+  & .svg-image {
+    translate: none; 
+    rotate: none; 
+    scale: none;     
+    transform-origin: 0px 0px;
+    filter: grayscale(100%) brightness(1.1) contrast(1.3);
+  }
+  @media (max-width: 768px) {    
+    width: 75%;
+    height: 30%;
+  }
 `;
 
-const Image = styled.svg`
-  width: 100%;
-  position: absolute;
-  height: auto;
-  left: 50%;
-  top: 50%;
-  filter: grayscale(1) contrast(1.3) brightness(1.1);
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-`;
-
-const Frame = styled.svg`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: auto;
-`;
-
-const Container = styled(m.div)`
+const Container = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  @media (max-width: 768px) {
+    width: 50%;
+    height: 50%;    
+    right: 0;
+    & svg {
+      shape-rendering: optimizeSpeed;
+      position: absolute;
+      bottom: 0;
+      will-change: contents;
+      -webkit-transform: translate3d(0,0,0);
+      -moz-transform: translate3d(0,0,0);
+      -ms-transform: translate3d(0,0,0);
+      -o-transform: translate3d(0,0,0);
+      transform: translate3d(0,0,0);
+    }
+  }
 `;
 
-let uniqueIdCounter = 0;
-
-
 function ProfileImage({ imageUrl, even }) {
-  const controls = useAnimation();
-  const thresholds = Array.from({ length: 101 }, (_, index) => index * 0.01);
-  const [ref, inView, entry] = useInView({
-    threshold: 0.5
-  });
-  const imageRef = useRef(null); // Ref for the image container
-  const [displacementScale, setDisplacementScale] = useState(75);
-  const [blurStdDeviation, setBlurStdDeviation] = useState(10);
-  const introStartRadius = 0; // Starting radius for the intro animation
-  const [circleRadius, setCircleRadius] = useState(introStartRadius);
-  const [isPulsing, setIsPulsing] = useState(true);
-  const [pulsingDirection, setPulsingDirection] = useState(true);
-  const [animationCompleted, setAnimationCompleted] = useState(false);  
-  const svgVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1 } }
-  };
-
-  const easeInOut = (t) => {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  };
-
-  const lerp = (start, end, alpha) => {
-    const easedAlpha = easeInOut(alpha);
-    return start * (1 - easedAlpha) + end * easedAlpha;
-  };
-
-  // Generate a unique ID for this instance of the component
-  const uniqueId = useRef(`profile-image-${uniqueIdCounter++}`).current;
-  const maskId = `circleMask-${uniqueId}`;
-  const invertedMaskId = `invertedCircleMask-${uniqueId}`;
-
-  useEffect(() => {
-    controls.start("visible");
-  }, [controls]);
-
-  useEffect(() => {
-    let animationFrameId;
+  const ref = useRef(null);
+  const ellipseRef = useRef(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
-    const animate = () => {
-      if (inView) {
-        const visibility = entry.intersectionRatio;
-        const baseRadius = 450;
-        let newRadius = circleRadius;
   
-        if (!animationCompleted) {
-          // Apply easing: The closer newRadius is to baseRadius, the smaller the increment
-          const increment = (baseRadius - newRadius) * 0.05; // 0.1 is the easing factor
-  
-          newRadius += increment;
-  
-          if (Math.abs(newRadius - baseRadius) < 1) { // Adjust the threshold as needed
-            newRadius = baseRadius;
-            setAnimationCompleted(true);
-          }
-        }
-        else {
-          const pulsingRange = 10; // Fixed pulsing range
-
-          // Adjust the pulsing range based on scroll progress
-          const minRadiusBound = baseRadius >= pulsingRange ? baseRadius - pulsingRange : pulsingRange;
-          const maxRadiusBound = minRadiusBound + 2 * pulsingRange;
-
-          
-          // Pulsing logic
-          if (newRadius >= maxRadiusBound) {
-            newRadius = lerp(newRadius, minRadiusBound, 0.1);
-            setPulsingDirection(!direction);
-          }
-          else if (newRadius <= minRadiusBound) {
-            newRadius = lerp(newRadius, maxRadiusBound, 0.1);
-            setPulsingDirection(!direction);
-          }
-          else {
-            newRadius = direction == 1 ? lerp(newRadius, newRadius + 0.05, 0.1) : lerp(newRadius, newRadius - 0.05, 0.1);
-          }
-        }
-  
-        setCircleRadius(newRadius);
-      }
-      animationFrameId = requestAnimationFrame(animate);
+    
+  useGSAP(() => {
+    if(!ellipseRef.current) return;
+    const maskIntensity = { radius: 0 };
+    const ellipseQuickSetter = gsap.quickSetter(ellipseRef.current, "attr");
+    const handleIntersect = (entries, observer) => {
+      entries.forEach(entry => {
+        const targetRadius = entry.isIntersecting && entry.intersectionRatio >= 0 ? 400 : 0;
+        gsap.to(maskIntensity, {
+          radius: targetRadius,
+          ease: "expoScale(0.5,7,none)",
+          duration: 4,
+          delay: 0.1,
+          onUpdate: () => {
+            // Update the mask
+            ellipseQuickSetter({
+              rx: Math.floor(maskIntensity.radius) * 0.75,
+              ry: Math.floor(maskIntensity.radius)
+            });
+          },
+        });
+      });
     };
-  
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [inView, animationCompleted, circleRadius, entry?.intersectionRatio]);
-  
+
+    const observerOptions = { threshold: [0] };
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, [imageLoaded, ellipseRef.current]);
+
+  const handleImageLoad = () => setImageLoaded(true);
+
+  const [isFirefox, setIsFirefox] = useState(false);
+
+  const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
+
+  useEffect(() => {    
+    setIsFirefox(isFirefoxAndroid);
+  }, []);
 
   return (
-    <Scene>
-      <Container ref={ref} initial="hidden" animate={controls} variants={svgVariants}>
-        <Image ref={imageRef} width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 1200">
+    <Scene ref={ref}>
+      <Container>
+        <svg className="profile-image" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 900 1200">
           <defs>
-            <mask id={ maskId}>
-              <ellipse cx="50%" cy="50%" rx={circleRadius * 3/4} ry={circleRadius} fill="var(--offwhite)" style={{ filter: `url(#displacementFilter6)` }} />
+            <filter id={"mask-circle-profile"}>
+              <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3} result="noise" />
+              <feDisplacementMap className="filter" in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
+              <feGaussianBlur className="filter" stdDeviation={ isFirefoxAndroid ? 5 : 7 } />
+            </filter>
+            <mask id={"mask-circle-mask-profile"}>
+              <ellipse ref={ellipseRef} cx="50%" cy="50%" id={"circle-mask-profile"} rx="0" ry="0" fill="#FFFFFF" style={{ filter: `url(#mask-circle-profile)`, WebkitFilter: `url(#mask-circle-profile)`}} />
             </mask>
           </defs>
-          <image xlinkHref={imageUrl} width="100%" height="100%" mask={`url(#${ maskId})`} />
-        </Image>
-
+          <image xlinkHref={imageUrl} className={'svg-image'} width="100%" height="100%" style={{mask: `url(#mask-circle-mask-profile)`, WebkitMask: `url(#mask-circle-mask-profile)`}} onLoad={handleImageLoad} />
+        </svg>
       </Container>
     </Scene>
   );
 }
-
 export default ProfileImage;

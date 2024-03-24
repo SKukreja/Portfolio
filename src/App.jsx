@@ -18,8 +18,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
 
+gsap.ticker.lagSmoothing(0);
+
 gsap.registerPlugin(ScrollTrigger);
-gsap.ticker.lagSmoothing(0)
 
 const Blur = styled.div`
   ${({ isModalOpen }) =>
@@ -84,29 +85,44 @@ const Layout = ({ isMobile }) => {
 
 const App = () => {  
   const [isMobile, setIsMobile] = useState(false);
-  const lenisRef = useRef()
-  const [lenisKey, setLenisKey] = useState(0);
+  const lenisRef = useRef()  
 
-  const lenis = useLenis(({ scroll }) => {
-    ScrollTrigger.update();
-  })
 
-  const options = { 
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
-    direction: isMobile ? "vertical" : "horizontal", 
-    gestureDirection: isMobile ? "vertical" : "horizontal",
+
+  const options = {
+    lerp: 0.1,
+    duration: 1.5,
+    smoothWheel: true,
+    smoothTouch: false, //smooth scroll for touch devices
+    syncTouch: true,
+    syncTouchLerp: 0.04,
+    touchInertiaMultiplier: 10,
     smooth: true,
-    mouseMultiplier: 0.5,
-    smoothTouch: true,
-    touchMultiplier: 0.9,
-    infinite: false,
-    wheelMultiplier: 0.9,    
-    lerp: 0.05, 
     orientation: isMobile ? "vertical" : "horizontal", 
     gestureOrientataion: isMobile ? "vertical" : "horizontal"
   }
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+
+    // Handler to set state based on the media query
+    function handleResize(e) {
+      // Update state based on the media query result
+      setIsMobile(e.matches);     
+    }
+
+    // Register event listener
+    mediaQuery.addEventListener('change', handleResize);
+
+    // Initial check
+    handleResize(mediaQuery);
+
+    // Cleanup function to remove the event listener   
+    return () => {
+      mediaQuery.removeEventListener('change', handleResize);
+    }
+  }, [isMobile])
+  
   useEffect(() => {
     function update(time) {
       lenisRef.current?.lenis?.raf(time * 1000)
@@ -118,26 +134,6 @@ const App = () => {
       gsap.ticker.remove(update)
     }
   })
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-
-    // Handler to set state based on the media query
-    function handleResize(e) {
-      // Update state based on the media query result
-      setIsMobile(e.matches);
-      ScrollTrigger.refresh();
-    }
-
-    // Register event listener
-    mediaQuery.addEventListener('change', handleResize);
-
-    // Initial check
-    handleResize(mediaQuery);
-
-    // Cleanup function to remove the event listener
-    return () => mediaQuery.removeEventListener('change', handleResize);
-  }, [isMobile]);
 
   return (
     <ReactLenis root ref={lenisRef} autoRaf={false} options={options}>

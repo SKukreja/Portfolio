@@ -1,23 +1,29 @@
 // globalStyles.js
 import { createGlobalStyle } from 'styled-components';
 
-import ChristopherRobinWoff2 from './assets/fonts/ChristopherRobin.woff2'
+import ParchmentWoff2 from './assets/fonts/ParchmentPrint.woff2'
+import ParchmentItalicWoff2 from './assets/fonts/ParchmentPrintItalic.woff2'
+import WizardHandWoff2 from './assets/fonts/WizardHand.woff2'
+
 
 const GlobalStyle = createGlobalStyle`
   :root {
+    --vh: 1%;
     --offwhite: #F8F8F8;
     --accent-colour: #4F54D5;
     --secondary-colour: #AD5893;
     --black: #121518;
     --body-text: clamp(1rem,1.3vw,2rem);
-    --title-text: clamp(1.5rem,10vw,6rem);
+    --title-text: clamp(1.5rem,10vw,8rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
+    --interact-hover-color: #9D282E;
     --default-spacing: 2rem;
     --content-margin-top: 25vh;
     --content-margin-top: 25svh;
-    --body-font: 'adobe-garamond-pro', sans-serif;
+    --body-font: 'Parchment', sans-serif;
     --body-weight: 400;
+    --display-font: 'WizardHand', sans-serif;
     @media (max-width: 1920px) {      
       --article-spacing: 4rem;
       --desktop-container-width: 70vw;
@@ -36,10 +42,38 @@ const GlobalStyle = createGlobalStyle`
     }
     @media (max-width: 768px) {
       --title-text: 12vw;
-      --body-text: 4vw;
+      --body-text: 3.5vw;
       --default-spacing: 1.5rem;
     }
   }
+
+  @font-face {
+    font-family: 'Parchment';
+    src: url(${ParchmentWoff2}) format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Parchment';
+    src: url(${ParchmentWoff2}) format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Parchment';
+    src: url(${ParchmentItalicWoff2}) format('woff2');
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  @font-face {
+    font-family: 'WizardHand';
+    src: url(${WizardHandWoff2}) format('woff2');
+    font-weight: 600;
+  }
+
   html.lenis {
     height: auto;
     display: table;
@@ -86,15 +120,20 @@ const GlobalStyle = createGlobalStyle`
 
   .app { 
     margin: 0 auto;
-    box-sizing: border-box;    
-  }
+    box-sizing: border-box;
+    overflow-y: hidden;
+    height: calc(var(--vh, 1vh) * 100);
+    @media (max-width: 768px) {
+      height: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }  
+
   html, body {
     margin: 0;
     padding: 0;    
     box-sizing: border-box;
-    max-height: 100vh;
-    max-height: 100svh;
-    overflow-y: hidden;
   }
   body {
     background: var(--offwhite);

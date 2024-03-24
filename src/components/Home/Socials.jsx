@@ -23,7 +23,7 @@ const SocialLink = styled.a`
   display: flex;
   align-items: center;
   &:hover {
-    color: var(--primary);
+    color: var(--interact-hover-color);
   }
   & svg {
     margin-right: 1rem;

@@ -11,28 +11,23 @@ import styled, { keyframes } from 'styled-components'
 import FootprintTracker from '../../components/Common/FootprintTracker'
 
 
-const Content = styled(m.div)`
+const Content = styled.div`
   display: flex;
-  height: fit-content;
   background: var(--offwhite);
   position: relative;
-  will-change: transform;
   overflow-y: hidden;
   @media (max-width: 1024px) {
     padding-top: calc(var(--default-spacing) * 2);
     flex-direction: column;
     width: 100vw;
-    height: auto;
     overflow-y: auto;
     overflow-x: hidden;    
   }
 `;
 
-const Container = styled(m.div)`
+const Container = styled.div`
   position: relative;
   background: var(--black);
-  height: 100vh;
-  height: 100svh;
   overflow-y: hidden;
   @media (max-width: 1024px) {
     height: auto;
@@ -51,6 +46,17 @@ const Noise = styled.div`
   position: absolute;
   inset: 0;
   z-index: 1000;
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.12;
+    z-index: 1000;
+    mix-blend-mode: multiply;
+    background: url("paper.jpg");
+  }
 `;
 
 const BoxShadow = styled.div`
@@ -61,10 +67,12 @@ const BoxShadow = styled.div`
   pointer-events: none;
   @media (max-width: 1024px) {
     width: 100%;
+    box-shadow: 2px 3px 10px black, 0 0 100px #8f5922 inset;
   }
 `;
 
 const Home = ({ isMobile }) => {
+  const container = useRef(null);
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -75,13 +83,12 @@ const Home = ({ isMobile }) => {
         <Helmet>
           <title>Sumit Kukreja</title>
         </Helmet>        
-        <Content id="content-container">
+        <Content id="content-container" ref={container}>
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash isMobile={isMobile} />
+          <Splash />
           <FeaturedWorks isMobile={isMobile} />
-  
           <Cover />
         </Content>
     </Container>
