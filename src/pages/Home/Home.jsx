@@ -89,6 +89,7 @@ const Home = ({ isMobile }) => {
           <Landing />
           <Splash />
           <FeaturedWorks isMobile={isMobile} />
+          <About />
           <Cover />
         </Content>
     </Container>

@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef } from 'react';
 import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
-const AnimatedText = React.memo(({ text, startImmediately }) => {
+const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => {
   const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -23,7 +23,7 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
       opacity: 1,
       transition: {
         delay,
-        duration: 1,
+        duration: 2,
         type: 'spring',
         stiffness: 120,
       },
@@ -32,6 +32,10 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
       opacity: 1,
       color: "var(--interact-hover-color)", 
       scale: 1.1, 
+      transition: {        
+        duration: 0.5,
+        type: 'linear',        
+      },
     }),
   };
 
@@ -45,8 +49,13 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
 
   return (
     <div ref={ref} 
-    onMouseEnter={() => setIsHovered(true)} // Set hover state on enter
-    onMouseLeave={() => setIsHovered(false)}>
+      onMouseEnter={() => {
+        if (isLink) setIsHovered(true)
+      }}
+      onMouseLeave={() => {
+        if (isLink) setIsHovered(false)
+      }}
+    >
       {words.map((word, wordIndex) => (
         <span key={wordIndex} style={{ display: 'inline-block', marginRight: '0.25em' }}>
           {word.map(({ char, delay }, index) => (
@@ -54,8 +63,8 @@ const AnimatedText = React.memo(({ text, startImmediately }) => {
               key={index}
               variants={charVariants}
               initial="hidden"
-              animate={isHovered ? 'hover' : inView || startImmediately ? 'visible' : 'hidden'}
-              whileHover="hover"
+              animate={isHovered && isLink ? 'hover' : inView || startImmediately ? 'visible' : 'hidden'}
+              whileHover={isLink ? 'hover' : ''}
               custom={{ delay }}
               style={{ display: 'inline-block', whiteSpace: 'pre', willChange: 'color, transform, opacity' }}
             >

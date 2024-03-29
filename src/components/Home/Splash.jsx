@@ -3,53 +3,35 @@ import styled from 'styled-components';
 import { gsap } from 'gsap';
 import { useGSAP } from "@gsap/react";
 
-const Scene = styled.div`  
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 4 / 3;  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;  
-  align-items: center;
+const Scene = styled.div`
+  width: calc(var(--vh, 1vh) * 130);
+  height: calc(var(--vh, 1vh) * 130);
+  margin-top: calc(var(--vh, 1vh) * -15);
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
-  margin-left: calc(var(--default-spacing) * 2);
   z-index: 1;
   backface-visibility: hidden;
   & .svg-image {
-    translate: none; 
-    rotate: none; 
-    scale: none;     
-    transform-origin: 0px 0px;
   }
 
   @media (max-width: 768px) {
-    margin-top: -50%;
+    width: 130vw;
+    height: 130vw;
+    margin-top: -115vw;
+    margin-left: -15vw;    
   }
 `;
 
 const Container = styled.div`
-  position: absolute;
-  width: calc(var(--vh, 1vh) * 120);
-  height: calc(var(--vh, 1vh) * 120);
-  top: -5%;
-  bottom: 0%;  
+  width: calc(var(--vh, 1vh) * 130);
+  height: calc(var(--vh, 1vh) * 130); 
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
   @media (max-width: 768px) {
-    width: 150vw;
-    height: 150vw;
-    top: -40%;
-    left: -40%;
-    right: 0;
-    & svg {
-      shape-rendering: optimizeSpeed;
-      position: absolute;
-      bottom: 0;
-      will-change: contents;
-      -webkit-transform: translate3d(0,0,0);
-      -moz-transform: translate3d(0,0,0);
-      -ms-transform: translate3d(0,0,0);
-      -o-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-    }
+    width: 130vw;
+    height: 130vw;
   }
 `;
 
@@ -66,7 +48,7 @@ function Splash({}) {
     const ellipseQuickSetter = gsap.quickSetter(ellipseRef.current, "attr");
     const handleIntersect = (entries, observer) => {
       entries.forEach(entry => {
-        const targetRadius = entry.isIntersecting && entry.intersectionRatio >= 0 ? 600 : 0;
+        const targetRadius = entry.isIntersecting && entry.intersectionRatio >= 0 ? 570 : 0;
         gsap.to(maskIntensity, {
           radius: targetRadius,
           ease: "expoScale(0.5,7,none)",
@@ -103,7 +85,7 @@ function Splash({}) {
   return (
     <Scene ref={ref}>
       <Container>
-        <svg className="splash-image" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 1200">
+        <svg width="100%" height="100%" className="splash-image" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 1200">
           <defs>
             <filter id={"mask-circle-splash"}>
               <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3} result="noise" />

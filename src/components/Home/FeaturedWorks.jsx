@@ -9,16 +9,16 @@ import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
 
 const Featured = styled(m.div)`
-  width: 200vw;
+  height: calc(var(--vh, 1vh) * 100);
   display: flex;
   justify-content: space-evenly;
   position: relative;
   align-items: center;
   overflow: visible;
-  margin-left: 40vw;
   @media (max-width: 768px) {
     width: 100vw;
-    margin-top:30vh;
+    height: auto;
+    margin-top: calc(var(--default-spacing) * 2);
     justify-content: flex-start;
     margin-left: 0;
   }
@@ -40,8 +40,10 @@ const Header = styled.h1`
   left: 0;  
   text-align: center;
   @media (max-width: 768px) {    
-    left: var(--default-spacing);  
+    
     top: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
   &::before {
     content: "";
@@ -58,7 +60,6 @@ const Header = styled.h1`
 `;
 
 const ProjectName = styled(Link)`
-
   font-family: var(--body-font);  
   font-size: calc(var(--body-text));
   color: var(--black);  
@@ -72,11 +73,11 @@ const ProjectName = styled(Link)`
     content: "";
     position: absolute;
     opacity: 1;
-    height: 120%;
-    width: 200%;
-    top: 12%;
+    height: 100%;
+    width: 90%;
+    top: 20%;
     pointer-events: none;
-    left: -50%;
+    left: -40%;
     right: -10%;
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%);
@@ -91,6 +92,13 @@ const ProjectName = styled(Link)`
   }
   @media (max-width: 768px) {
     font-size: 4vw;
+    &::before {      
+      height: 120%;
+      width: 200%;
+      top: 12%;      
+      left: -50%;
+      right: -10%;
+    }
     & > svg {
       font-size: 6vw;
       margin-bottom: -1.5vw;
@@ -118,7 +126,7 @@ const ProjectContent = styled.div`
   position: absolute;
   
   &.odd {
-    bottom: 50%;
+    bottom: 35%;
     &::before {
       bottom: 5%;
     }
@@ -133,9 +141,9 @@ const ProjectContent = styled.div`
     content: "";
     position: absolute;
     opacity: 1;
-    height: 100%;
-    width: 120%;
-    left: -40%;    
+    height: 120%;
+    width: 140%;
+    left: -50%;   
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
@@ -144,6 +152,11 @@ const ProjectContent = styled.div`
     width: calc(100% - 2 * var(--default-spacing));
     margin: 0;
     padding: var(--default-spacing);
+    &::before {      
+      height: 100%;
+      width: 120%;
+      left: -40%;    
+    }
     &.odd, &.even {
       top: 0%;
       bottom: 0%;
@@ -217,7 +230,7 @@ const ProjectActions = styled.div`
   margin: 2rem -0.5rem;
 `;
 
-const ProjectLink = styled(m.Link)`      
+const ProjectLink = styled(m(Link))`      
   z-index: 2;  
   letter-spacing: 1px;
   color: var(--black);    
@@ -229,6 +242,7 @@ const ProjectLink = styled(m.Link)`
   position: relative;  
   margin-top: var(--default-spacing);
   display: flex;
+  cursor: pointer;
   align-items: center;
   &:hover {
     color: var(--interact-hover-color);
@@ -246,7 +260,7 @@ const ProjectHeader = styled.div`
 `;
 
 const Spacer = styled.div`
-  background: yellow;
+
 `;
 
 const padNum = (num, targetLength) => {
@@ -280,7 +294,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
     <ProjectContent ref={projectRef} className={className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
-        <ProjectName to={"/project/" + project.attributes.slug}><AnimatedText startImmediately={false} text={project.attributes.title} /></ProjectName>
+        <ProjectName to={"/project/" + project.attributes.slug}><AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} /></ProjectName>
       </ProjectHeader>
       <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>{project.attributes.summary}</ProjectSummary>      
       <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"/project/" + project.attributes.slug}>Read More</ProjectLink>

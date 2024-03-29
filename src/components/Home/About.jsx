@@ -4,13 +4,13 @@ import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
 import { m } from 'framer-motion'
 import WashedAwayText from './WashedAwayText';
+import AnimatedText from './AnimatedText';
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  width: 50vw;
-  padding-right: 10vw;  
+  width: 100vw;
+  height: 100%;
   position: relative;
   background: var(--offwhite);
   color: var(--black);
@@ -19,6 +19,7 @@ const Container = styled.div`
     padding-right: var(--default-spacing);
     width: calc(100% - var(--default-spacing) * 2);
     padding-bottom: calc(var(--default-spacing) * 2);
+    flex-direction: column;
   }
 `;
 
@@ -43,21 +44,17 @@ const Bio = styled.div`
 `;
 
 const Intro = styled.h1`  
-  font-family: var(--body-font);
-  font-size: var(--title-text);  
-  display: flex;
-  align-items: center;
+  font-family: var(--display-font);
+  font-size: var(--title-text);
+  color: var(--black);
   white-space: nowrap;
-  position: absolute;  
-  z-index: 3;
-  height: auto;
-  top: 0;
-  margin: 0;  
-  width: 100%;
-  padding-bottom: 2rem;
-  text-align: left;
+  letter-spacing: 4px;  
+  z-index: 4;
+  margin-top: 0;
+  height: auto;  
   @media (max-width: 768px) {    
-    position: relative;
+    margin-left: auto;
+    margin-right: auto;    
   }
 `;
 
@@ -102,14 +99,18 @@ const Blurb = styled.div`
 
 const ProfileSection = styled.div`
   display: flex;
-  flex-direction: column;  
-  width: 100%;
+  flex-direction: column; 
+  padding-left: 5vw;
+  padding-right: 5vw;
+  width: 50%;
   flex-wrap: nowrap;
   position: relative;
-  padding-top: 7.5rem;
   @media (max-width: 768px) {
     padding-top: 0;
     margin-top: -10rem;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
   }
 `;
 
@@ -154,18 +155,23 @@ z-index: 1;
 
 const TwoColumn = styled.div`
   display: flex;
-  gap: 6rem;
-  margin-top: 5vh;
-  width: 100%;
+  flex-direction: column;
+  margin-top: 7.5vh;
+  width: 50%;
+  padding-left: 5vw;
+  padding-right: 5vw;
   z-index: 3;
   @media (max-width: 768px) {
+    width: 100%;
     flex-direction: column;
     gap: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 `;
 
 const Column = styled.div`
-  width: 50%;
+  width: 100%;
   text-align: left;
   font-family: var(--body-font);
   font-size: var(--body-text);
@@ -178,6 +184,7 @@ const Time = styled.td`
   width: 30%;
   vertical-align: top;
   text-align: right;
+  font-family: var(--body-font);  
   font-weight: var(--body-weight);
 `;
 
@@ -197,6 +204,20 @@ const Secondary = styled.div`
 
 const Table = styled.table`
   width: 100%;
+  & tr {
+    border-bottom: 2px solid var(--black);    
+  }
+`;
+
+const Diamond = styled.div`
+  font-size: 3rem;
+  margin-bottom: calc(var(--default-spacing) * 2);
+  @media (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: 2rem;
+  }
 `;
 
 const About = () => {
@@ -206,19 +227,20 @@ const About = () => {
   
   return (
     <Container as={ m.div}>
-      <TreeContainer>
-        <Background src='bg.png' />
-        <Tree src='tree.png' />
-      </TreeContainer>
       <ProfileSection>
         <InView>
         {({ inView, ref, entry }) => (
           <Bio ref={ref} className={`${inView ? 'active' : ''}`}>
-            <Intro><WashedAwayText text={"About Me"} /></Intro>           
+            <Intro>{"About Me"}</Intro>
+            <Diamond>♦</Diamond>      
             <Blurb>
-              <WashedAwayText text={data?.attributes.blurb + ""} />
+             {data?.attributes.blurb + ""}
             </Blurb>
-            <TwoColumn>
+          </Bio>
+        )}
+        </InView>   
+      </ProfileSection>
+      <TwoColumn>
               <Column>
                 <ColumnHeader>Work</ColumnHeader>
                 <Table>
@@ -268,11 +290,7 @@ const About = () => {
                   </tbody>
                 </Table>
               </Column>
-            </TwoColumn>     
-          </Bio>
-        )}
-        </InView>
-      </ProfileSection>
+            </TwoColumn>  
     </Container>
   )
 }

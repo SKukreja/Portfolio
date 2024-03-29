@@ -14,12 +14,12 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 100vw;
-  margin-left: 35vw;
+  width: 30vw;
+  margin-left: 5vw;
   padding-left: 5vw;
   padding-right: 5vw;
-  padding-top: var(--default-spacing);
-  z-index: 11;
+  margin-top: calc(var(--default-spacing) * -1);
+  z-index: 999;
   position: relative;
   background: var(--black);
   color: var(--offwhite);
@@ -62,6 +62,8 @@ const ProfileSection = styled.div`
   width: 100%;    
   flex-wrap: nowrap;
   position: relative;
+  justify-content: center;
+  height: calc(var(--vh) * 100);
 `;
 
 const Cover = () => {

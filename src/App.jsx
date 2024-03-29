@@ -90,7 +90,7 @@ const App = () => {
 
 
   const options = {
-    lerp: 0.1,
+    lerp: 0.04,
     duration: 1.5,
     smoothWheel: true,
     smoothTouch: false, //smooth scroll for touch devices
