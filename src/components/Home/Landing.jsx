@@ -19,10 +19,12 @@ const Scene = styled(m.div)`
   display: flex;
   align-items: center;
   z-index: 2;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;    
     margin-left: 0;
     align-items: flex-start;
+  }
+  @media (max-width: 768px) {
     margin-top: var(--default-spacing);
   }
 `;
@@ -67,10 +69,10 @@ const SceneText = styled(m.div)`
     background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%);
     z-index: -1;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     padding: var(--default-spacing);
     width: calc(100% - var(--default-spacing) * 2);
-    margin-top: var(--default-spacing);
+    margin-top: 3rem;
     margin-left: auto;
     margin-right: auto;
     justify-content: flex-start;
@@ -86,17 +88,14 @@ const ActionButtons = styled(m.div)`
   width: 100%;
   justify-content: flex-start;
   @media (max-width: 1024px) {
-    margin-top: 30vh;
-    margin-top: 30svh;
-    flex-direction: column;
-    align-items: flex-start;
+    margin-top: var(--default-spacing);    
+    align-items: flex-start;    
     width: 100%;
-  }
-  @media (max-width: 900px) {
+  }  
+  @media (max-width: 768px) {
     margin-top: 25vh;
     margin-top: 25svh;
-  }
-  @media (max-width: 768px) {    
+    flex-direction: column;
     margin-top: var(--default-spacing);
   }
 `;
@@ -112,6 +111,19 @@ const Button = styled(Link)`
   color: var(--black);
   opacity: 1;
   transition: all 0.2s ease;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -23%;
+    opacity: 1;
+    height: 100%;
+    width: 150%;
+    left: -40%;
+    opacity: 0.9;
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%);
+    z-index: -1;
+  }
   &:hover {
     color: var(--interact-hover-color);
   }
@@ -124,8 +136,9 @@ const Button = styled(Link)`
     display: flex;
     align-items: center;  
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin: 0;
+    margin-right: var(--default-spacing);
   }
 `;
 

@@ -24,7 +24,7 @@ const Browser = styled.div`
   position: relative;
   aspect-ratio: 16/9;
   margin-bottom: var(--article-spacing);
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: calc(100% - 3rem);
   }
 `;
@@ -34,7 +34,7 @@ const Window = styled.div`
   border-top: 50px solid #FF6281;
   box-shadow: 0px 0px 15px 3px #050829;
   aspect-ratio: 16/9;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     border: 3px solid #FF6281;
     border-top: 25px solid #FF6281;
   }
@@ -67,7 +67,7 @@ const ProjectTitle = styled.h1`
   @media (max-width: 1024px) {
     font-size: 3rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 2rem;
   }
   @media (max-width: 600px) {
@@ -83,7 +83,7 @@ const Buttons = styled.div`
   top: 5px;
   right: 0;
   height: 40px;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     top: 3px;
     height: 20px;
   }
@@ -98,7 +98,7 @@ const Button = styled.div`
   margin-left: 5px;
   justify-content: center;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin-left: 3px;
     width: 20px;
     height: 20px;
@@ -126,7 +126,7 @@ const ProjectTechnology = styled.div`
     font-size: 2rem;
     padding-right: 1rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 50%;
     font-size: 1rem;
   }
@@ -166,7 +166,7 @@ const Section = styled.div`
       width: 100%;
     }
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex-direction: column;
     width: 100%;
   }
@@ -182,7 +182,7 @@ const TextSection = styled.div`
   &.intro {
     width: 100%;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex-direction: column;
   }
 `;
@@ -196,7 +196,7 @@ const InvertedTitle = styled.h1`
   @media (max-width: 1600px) {
     font-size: 3.5rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 3rem;
   }
 `;
@@ -218,10 +218,10 @@ const Figure = styled.div`
   &.active {
     opacity: 1;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: ;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin-top: -5rem;
     width: 100vw;
   }
@@ -241,7 +241,7 @@ const Headers = styled.div`
   font-weight: 600;
   color: #FF6281;
   transition: opacity 0.5s ease;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     font-size: 1.2rem;
     padding: 1.5rem;
@@ -253,7 +253,7 @@ const Topic = styled.div`
   font-family: 'Satoshi';
   display: flex;
   width: 66%;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: calc(100% - 3rem);
     font-size: 1.2rem;
     padding: 1.5rem;
@@ -267,7 +267,7 @@ const BuiltWith = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 66%;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     padding: 1.5rem;
   }
@@ -293,7 +293,7 @@ const ProjectLinks = styled.div`
   &.active {
     opacity: 1;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     align-content: flex-end;
   }
@@ -323,7 +323,7 @@ const Action = styled.a`
     background: var(--offwhite);
     color: var(--black);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     font-size: 2rem;
     margin: 1rem 5%;

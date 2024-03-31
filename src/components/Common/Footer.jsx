@@ -20,7 +20,7 @@ const FooterContainer = styled(m.div)`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     border-top: 3px solid var(--accent-colour);
     padding: 2rem 0;
     width: 90%;
@@ -33,7 +33,7 @@ const Copyright = styled.span`
 
 const Socials = styled(m.div)`
   display: flex;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     justify-content: space-between;
   }
@@ -58,7 +58,7 @@ const SocialLink = styled(m.a)`
     background: var(--offwhite);
     color: var(--black);    
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     padding: 1.25rem;
     margin: 0;
     width: calc(90vw/4 - 3rem);
@@ -82,7 +82,7 @@ const TopSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
   }
 `;

@@ -47,7 +47,7 @@ const Intro = styled.h1`
   width: 100%;
   padding-bottom: 2rem;
   text-align: left;
-  @media (max-width: 768px) {    
+  @media (max-width: 1024px) {    
     
   }
 `;
@@ -75,7 +75,7 @@ const Blurb = styled.div`
   z-index: 2;
   overflow: visible;
   font-weight: var(--body-weight);    
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1rem;
     width: 85%;
   }

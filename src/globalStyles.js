@@ -11,10 +11,10 @@ const GlobalStyle = createGlobalStyle`
     --vh: 1%;
     --offwhite: #F8F8F8;
     --accent-colour: #4F54D5;
-    --secondary-colour: #AD5893;
+    --secondary-colour: #9D282E;
     --black: #121518;
-    --body-text: clamp(1rem,1.3vw,2rem);
-    --title-text: clamp(1.5rem,10vw,8rem);
+    --body-text: clamp(1rem,1.1vw,1.3rem);
+    --title-text: clamp(6rem,5vw,10rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
     --interact-hover-color: #9D282E;
@@ -27,6 +27,7 @@ const GlobalStyle = createGlobalStyle`
     @media (max-width: 1920px) {      
       --article-spacing: 4rem;
       --desktop-container-width: 70vw;
+      --default-spacing: 1.5rem;
     }
     @media (max-width: 1600px) {      
       --article-spacing: 4rem;
@@ -35,15 +36,18 @@ const GlobalStyle = createGlobalStyle`
     @media (max-width: 1440px) {      
       --article-spacing: 4rem;
       --desktop-container-width: 90vw;
+      --default-spacing: 1rem;
     }
-    @media (max-width: 900px) {
-      --body-text: 1.5vw;
-      --desktop-container-width: 95vw;
-    }
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
+      --default-spacing: 4rem;
+      --body-text: 3vw;
+      --title-text: 15vw;   
+    }    
+    @media (max-width: 767px) {
       --title-text: 12vw;
       --body-text: 3.5vw;
       --default-spacing: 1.5rem;
+      --desktop-container-width: 95vw;
     }
   }
 
@@ -118,12 +122,17 @@ const GlobalStyle = createGlobalStyle`
     border: 0px solid transparent;
   }
 
+  *::selection {
+    background: var(--interact-hover-color);
+    color: var(--offwhite);
+  }
+
   .app { 
     margin: 0 auto;
     box-sizing: border-box;
     overflow-y: hidden;
     height: calc(var(--vh, 1vh) * 100);
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       height: auto;
       overflow-y: auto;
       overflow-x: hidden;
@@ -134,6 +143,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;    
     box-sizing: border-box;
+    
   }
   body {
     background: var(--offwhite);

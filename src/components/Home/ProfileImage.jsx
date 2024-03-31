@@ -4,48 +4,30 @@ import { gsap } from 'gsap';
 import { useGSAP } from "@gsap/react";
 
 const Scene = styled.div`  
-  width: 50%;
-  aspect-ratio: 3 / 4;  
+  width: 100%;
+  height: 40%;  
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   position: relative;  
   z-index: 3;
+  overflow: hidden;
   backface-visibility: hidden;  
   & .svg-image {
     translate: none; 
     rotate: none; 
     scale: none;     
     transform-origin: 0px 0px;
-    filter: grayscale(100%) brightness(1.1) contrast(1.3);
-  }
-  @media (max-width: 768px) {    
-    width: 75%;
-    height: 30%;
+    filter: grayscale(50%) brightness(1.1) contrast(1.2);
   }
 `;
 
 const Container = styled.div`
   position: relative;
-  width: 100%;
   height: 100%;
-  @media (max-width: 768px) {
-    width: 50%;
-    height: 50%;    
-    right: 0;
-    & svg {
-      shape-rendering: optimizeSpeed;
-      position: absolute;
-      bottom: 0;
-      will-change: contents;
-      -webkit-transform: translate3d(0,0,0);
-      -moz-transform: translate3d(0,0,0);
-      -ms-transform: translate3d(0,0,0);
-      -o-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-    }
-  }
+  aspect-ratio: 3/4;
+
 `;
 
 function ProfileImage({ imageUrl, even }) {
@@ -65,7 +47,7 @@ function ProfileImage({ imageUrl, even }) {
         gsap.to(maskIntensity, {
           radius: targetRadius,
           ease: "expoScale(0.5,7,none)",
-          duration: 4,
+          duration: 3,
           delay: 0.1,
           onUpdate: () => {
             // Update the mask
@@ -89,7 +71,7 @@ function ProfileImage({ imageUrl, even }) {
 
   const [isFirefox, setIsFirefox] = useState(false);
 
-  const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
+  const isFirefoxAndroid = navigator.userAgent.includes('Firefox');
 
   useEffect(() => {    
     setIsFirefox(isFirefoxAndroid);
@@ -103,7 +85,7 @@ function ProfileImage({ imageUrl, even }) {
             <filter id={"mask-circle-profile"}>
               <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3} result="noise" />
               <feDisplacementMap className="filter" in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
-              <feGaussianBlur className="filter" stdDeviation={ isFirefoxAndroid ? 5 : 7 } />
+              <feGaussianBlur className="filter" stdDeviation={ isFirefox ? 2 : 7 } />
             </filter>
             <mask id={"mask-circle-mask-profile"}>
               <ellipse ref={ellipseRef} cx="50%" cy="50%" id={"circle-mask-profile"} rx="0" ry="0" fill="#FFFFFF" style={{ filter: `url(#mask-circle-profile)`, WebkitFilter: `url(#mask-circle-profile)`}} />

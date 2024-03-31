@@ -47,7 +47,7 @@ const ProjectName = styled(Link)`
       margin-bottom: -0.6rem;
     }
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 4vw;
     & > svg {
       font-size: 6vw;
@@ -99,7 +99,7 @@ const ProjectContent = styled.div`
       text-align: center;
     }
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     height: 100%;
   }
 `;
@@ -130,7 +130,7 @@ const ProjectImage = styled.div`
     margin-bottom: 0;
     filter: blur(15px) saturation(180%);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
 
   }
 `;
@@ -152,7 +152,7 @@ const Project = styled(m.div)`
     @media (max-width: 1440px) {
       filter: grayscale(0);
     }
-    @media (max-width: 768px) {      
+    @media (max-width: 1024px) {      
       height: 60vh;
       height: 60svh;
       flex-direction: column;      
@@ -213,7 +213,7 @@ const ProjectNumber = styled.h1`
   @media (max-width: 1600px) {
     font-size: 6rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 4rem;
   }
 `;
@@ -244,7 +244,7 @@ const ProjectLink = styled(Link)`
     max-width: 300px;
     opacity: 1;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1.5rem;
   }
 `;
@@ -263,7 +263,7 @@ const Header = styled(m.h1)`
   width: 100%;
   text-align: center;
   margin-bottom: 4rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 2rem;
     letter-spacing: 0.03rem;
   }

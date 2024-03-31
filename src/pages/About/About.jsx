@@ -54,7 +54,7 @@ const Intro = styled.h1`
   animation: 
     ${typewriter} 2s steps(20, end),
     ${blink} .75s step-end 3;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1.5rem;
   }
 `;
@@ -68,7 +68,7 @@ const SkillsContainer = styled.div`
   &.active {
     filter: grayscale(0);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin-bottom: 4rem;
     width: 100%;
   }
@@ -90,7 +90,7 @@ font-family: 'Hind';
   width: 100%;
   text-align: center;
   margin-bottom: 4rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1rem;
     letter-spacing: 0.03rem;
   }
@@ -112,7 +112,7 @@ const CurrentSection = styled.div`
   & p {    
     margin-top: 0;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     padding: 1rem;
     width: 50%;
   }
@@ -130,7 +130,7 @@ const Blurb = styled.div`
   text-align: left;
   width: 50vw;
   margin-bottom: 5rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1rem;
     width: 85%;
   }
@@ -167,7 +167,7 @@ const Line = styled.div`
   height: 300px;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #c2bbf0);
   margin: 2rem auto;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     height: 150px;
   }
 `;
@@ -187,7 +187,7 @@ const YearText = styled.h2`
   font-size: 3rem;
   margin-top: 2rem;
   margin-bottom: 2rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin-top: 0;
   }
 `;
@@ -246,7 +246,7 @@ const CenterText = styled.div`
   & a:hover {
     color: white;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 1rem;
     width: 85%;
     & svg {
@@ -262,7 +262,7 @@ const BelowImage = styled.img`
   &.three {
     width: 25vmin;    
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     border-radius: 15px;
     max-width: 90%;
     padding: 0.5rem;
@@ -280,7 +280,7 @@ const FiveImages = styled.div`
   grid-column-gap: 2rem;
   grid-row-gap: 2rem;
   padding: 1rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     grid-column-gap: 1rem;
     grid-row-gap: 1rem;
   }
@@ -313,7 +313,7 @@ const FiveImage = styled.img`
     justify-self: left;
     grid-area: 2 / 3 / 3 / 4;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     border-radius: 15px;
     height: calc(20vmin - 1rem);
     &.portrait {

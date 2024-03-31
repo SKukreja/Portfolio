@@ -17,11 +17,13 @@ const Content = styled.div`
   position: relative;
   overflow-y: hidden;
   @media (max-width: 1024px) {
-    padding-top: calc(var(--default-spacing) * 2);
     flex-direction: column;
     width: 100vw;
     overflow-y: auto;
     overflow-x: hidden;    
+  }
+  @media (max-width: 768px) {
+    padding-top: calc(var(--default-spacing) * 2);
   }
 `;
 
@@ -45,7 +47,7 @@ const Noise = styled.div`
   pointer-events: none;
   position: absolute;
   inset: 0;
-  z-index: 1000;
+  z-index: 1001;
   &::after {
     content: "";
     position: absolute;
@@ -53,21 +55,24 @@ const Noise = styled.div`
     height: 100%;
     pointer-events: none;
     opacity: 0.12;
-    z-index: 1000;
+    z-index: 999;
     mix-blend-mode: multiply;
     background: url("paper.jpg");
   }
 `;
 
 const BoxShadow = styled.div`
-  box-shadow: 2px 3px 20px black, 0 0 250px #8f5922 inset;
+  box-shadow: 2px 3px 20px var(--black), 0 0 250px #8f5922 inset;
   position: absolute;
+  width: 100%;
+  height: calc(var(--vh) * 100);
   inset: 0;
-  z-index: 6;
+  z-index: 10;
   pointer-events: none;
   @media (max-width: 1024px) {
+    height: auto;
     width: 100%;
-    box-shadow: 2px 3px 10px black, 0 0 100px #8f5922 inset;
+    box-shadow: 2px 3px 10px var(--black), 0 0 100px #8f5922 inset;
   }
 `;
 

@@ -11,7 +11,7 @@ const SliderWrapper = styled.div`
     margin-left: auto;
     margin-right: auto;
     overflow: visible;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         height: 80vmin;
     }
 `;
@@ -58,7 +58,7 @@ const Slide = styled.div`
         width: 100%;
         height: auto;
     }
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         &.active {            
             width: 100%;
         }

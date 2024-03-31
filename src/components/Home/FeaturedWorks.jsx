@@ -15,16 +15,19 @@ const Featured = styled(m.div)`
   position: relative;
   align-items: center;
   overflow: visible;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100vw;
     height: auto;
-    margin-top: calc(var(--default-spacing) * 2);
+    margin-top: calc(var(--default-spacing) * 4);
     justify-content: flex-start;
     margin-left: 0;
   }
+  @media (max-width: 768px) {
+    margin-top: calc(var(--default-spacing) * 2);
+  }
 `;
 
-const Header = styled.h1`
+const Header = styled(m.h1)`
   font-family: var(--display-font);
   font-size: var(--title-text);
   color: var(--black);
@@ -37,13 +40,12 @@ const Header = styled.h1`
   height: auto;
   top: 7.5rem;
   margin: 0;
-  left: 0;  
+  left: -1rem;  
   text-align: center;
-  @media (max-width: 768px) {    
-    
+  @media (max-width: 1024px) {    
     top: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-53%);
   }
   &::before {
     content: "";
@@ -72,15 +74,15 @@ const ProjectName = styled(Link)`
   &::before {
     content: "";
     position: absolute;
-    opacity: 1;
-    height: 100%;
-    width: 90%;
+    opacity: 0.9;
+    height: 110%;
+    width: 50%;
     top: 20%;
     pointer-events: none;
-    left: -40%;
-    right: -10%;
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%), radial-gradient(var(--offwhite) 0%,transparent 63%);
+    left: -20%;
+    right: -10%;    
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 46%), radial-gradient(var(--offwhite) 0%,transparent 33%);
     z-index: -1;
   }
   & > svg {
@@ -90,13 +92,13 @@ const ProjectName = styled(Link)`
   &:hover {
     color: var(--interact-hover-color);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 4vw;
     &::before {      
-      height: 120%;
-      width: 200%;
-      top: 12%;      
-      left: -50%;
+      height: 130%;
+      width: 190%;
+      top: -20%;      
+      left: -100%;
       right: -10%;
     }
     & > svg {
@@ -110,8 +112,8 @@ const Projects = styled(m.div)`
   display: flex;
   height: 100%;
   overflow: visible;
-  @media (max-width: 768px) {
-    margin-top: 24rem;
+  @media (max-width: 1024px) {
+    margin-top: 85vw;
     flex-direction: column;
     
   }
@@ -143,25 +145,26 @@ const ProjectContent = styled.div`
     opacity: 1;
     height: 120%;
     width: 140%;
-    left: -50%;   
+    left: -50%;
+    opacity: 0.9;
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: calc(100% - 2 * var(--default-spacing));
     margin: 0;
     padding: var(--default-spacing);
     &::before {      
       height: 100%;
-      width: 120%;
+      width: 150%;
       left: -40%;    
     }
     &.odd, &.even {
       top: 0%;
       bottom: 0%;
       &::before {        
-        top: 5%;
+        top: 10%;
         bottom: 0%;
       }
     }
@@ -175,17 +178,17 @@ const Project = styled.div`
     margin-left: 5vw;
     margin-right: 5vw;
     flex-direction: column;
-    width: 33vw;
+    width: 30vw;
     height: 100%;
     align-items: center;
     justify-content: space-between;
     &.odd, &.odd .project-image {
-      margin-top: 5rem;
+      margin-top: 3rem;
     }
     &.even, &.even .project-image {
-      margin-top: -15rem;
+      margin-top: -17rem;
     }
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       width: 100vw;
       margin-left: 0;
       flex-direction: column;
@@ -202,6 +205,7 @@ const ProjectSummary = styled(m.div)`
   letter-spacing: 0.5px;  
   position: relative;  
   letter-spacing: 1px;
+  text-align: justify;
   font-size: var(--body-text);
   font-weight: var(--body-weight);
   z-index: 2;
@@ -221,7 +225,7 @@ const ProjectNumber = styled.h1`
   @media (max-width: 1600px) {
     font-size: 6rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     font-size: 4rem;
   }
 `;
@@ -244,12 +248,14 @@ const ProjectLink = styled(m(Link))`
   display: flex;
   cursor: pointer;
   align-items: center;
+  transition: all 0.5s ease;
+  transition-delay: 0.1s;
   &:hover {
     color: var(--interact-hover-color);
-    background: var(--offwhite);
     text-decoration: none;
+    transform: scale(1.03);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
 
   }
 `;
@@ -312,7 +318,7 @@ const ProjectItem = ({ isMobile, project, number}) => {
 
   const [isFirefox, setIsFirefox] = useState(false);
 
-  const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
+  const isFirefoxAndroid = navigator.userAgent.includes('Firefox');
 
   useEffect(() => {    
     setIsFirefox(isFirefoxAndroid);
@@ -332,7 +338,7 @@ const ProjectItem = ({ isMobile, project, number}) => {
           <filter id={"mask-circle-project-image-" + number}>
             <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3 + Math.sin(90 * number)} result="noise" />
             <feDisplacementMap className="filter" in="SourceGraphic" in2="noise" scale={75 + 10 * Math.sin(90 * number)} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur className="filter" stdDeviation={ isFirefoxAndroid ? 5 : 7 } />
+            <feGaussianBlur className="filter" stdDeviation={ isFirefox ? 2 : 7 } />
           </filter>
         </defs>
       </svg>
@@ -353,17 +359,38 @@ const FeaturedWorks = ({ isMobile }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
+
+  const headerVariants = {
+    hidden: { color: "var(--interact-hover-color)", opacity: 0 },
+    visible: () => ({
+      color: "var(--black)",
+      opacity: 1,
+      transition: {
+        duration: 3,
+        type: 'linear',        
+      },
+    }),
+  };
   
   return (
-    <Featured>
-      <Header>Featured Work</Header>
-      <Projects>
-      {/* Loop through featured projects */}
-      {data?.attributes.featured.works.data.map((project, number) => (
-        <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
-      ))}
-      </Projects>
-    </Featured>
+    <InView triggerOnce>
+      {({ inView, ref, entry }) => (
+        <Featured ref={ref}>
+          <Header
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            variants={headerVariants}
+          >Featured Work</Header>
+
+          <Projects>
+          {/* Loop through featured projects */}
+          {data?.attributes.featured.works.data.map((project, number) => (
+            <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
+          ))}
+          </Projects>
+        </Featured>
+      )}
+    </InView>
   )
 }
 

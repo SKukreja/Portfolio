@@ -23,7 +23,7 @@ const Nav = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh; 
+  height: 100vh;
   width: 80px;
   padding-top: 1rem;
   box-sizing: border-box;
@@ -32,8 +32,21 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   transition: background 0.5s ease;
-  background: ${({ isNavSolid }) => isNavSolid ? 'var(--black)' : 'transparent'};
-  z-index: 40;
+  background: var(--black);
+  z-index: 1002;    
+  &::after {
+    content: "";
+    background: url("Noise.png");
+    background-repeat: repeat;
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1002;
+    position: absolute;
+    inset: 0;
+  }
+  
   opacity: 1;
 
   & .logo {
@@ -45,18 +58,22 @@ const Nav = styled.nav`
     transform: scale(1.1);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     top: 0;
     left: 0;     
-    height: 3rem; 
+    height: var(--default-spacing); 
     width: 100vw; 
     flex-direction: row;
     justify-content: space-between; 
     align-items: center;
-    padding-top: 0rem;
-    padding-bottom: 0rem;
+    padding-top: calc(var(--default-spacing)/2);
+    padding-bottom: calc(var(--default-spacing)/2);
     padding-left: var(--default-spacing);
     padding-right: var(--default-spacing);
+  }
+  @media (max-width: 768px) {
+    padding-top: calc(var(--default-spacing));
+    padding-bottom: calc(var(--default-spacing));
   }
 `;
 
@@ -68,7 +85,7 @@ const Center = styled.div`
   margin-left: auto;
   margin-right: auto;
   display: flex;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin-left: 0;
     margin-right: 0;
   }
@@ -95,7 +112,7 @@ const SocialLink = styled.a`
   color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   &:hover {
-    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--accent-colour)'};
+    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--interact-hover-color)'};
   }
 `;
 
@@ -108,7 +125,7 @@ const Branding = styled.img`
   opacity: 1;
   z-index: 50;  
   position: absolute; 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 40px;
   }
 `;
@@ -118,7 +135,7 @@ const Right = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;  
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
@@ -130,7 +147,7 @@ const LogoContainer = styled(Link)`
   height: 50px;
   justify-content: center;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     justify-content: flex-start;
   }
 `;
@@ -202,7 +219,7 @@ const OverlayMenu = styled.nav`
   font-weight: 500;
 
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: flex;
   }
 `;
@@ -227,7 +244,7 @@ const HamburgerButton = styled.button`
     transition: transform 0.3s ease, background 0.5s ease;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: block;
   }
 

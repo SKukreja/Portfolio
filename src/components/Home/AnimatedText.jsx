@@ -23,7 +23,7 @@ const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => 
       opacity: 1,
       transition: {
         delay,
-        duration: 2,
+        duration: 3,
         type: 'spring',
         stiffness: 120,
       },

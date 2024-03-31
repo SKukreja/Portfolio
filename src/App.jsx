@@ -103,7 +103,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const mediaQuery = window.matchMedia('(max-width: 1024px)');
 
     // Handler to set state based on the media query
     function handleResize(e) {

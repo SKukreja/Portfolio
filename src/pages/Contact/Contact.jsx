@@ -13,7 +13,7 @@ const Container = styled.div`
   margin-bottom: calc(var(--default-spacing) * 2);
   display: flex;
   flex-direction: row-reverse;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex-direction: column-reverse;
   }
 `;
@@ -23,7 +23,7 @@ const ContactVideo = styled.video`
   border: 5px solid var(--accent-colour);
   border-radius: 15px;
   z-index: 1;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 100%;
     border-radius: 0;
     border: none;
@@ -33,7 +33,7 @@ const ContactVideo = styled.video`
 const ContactForm = styled.div`
   padding-right: var(--default-spacing);
   width: 50%;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
@@ -45,7 +45,7 @@ const ContactFormHeader = styled.h1`
   font-size: 4rem;
   color: var(--accent-colour);
   margin-top: calc(-0.5 * var(--default-spacing));
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     text-align: center;
   }
 `;
@@ -87,7 +87,7 @@ const ContactFormBody = styled.form`
   & .recaptcha {
     margin-bottom: 1rem;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: calc(100% - -var(--default-spacing) - 10px);
     margin-left: auto;
     margin-right: auto;
@@ -98,7 +98,7 @@ const ContactFormBody = styled.form`
 const CheckmarkContainer = styled.div`
   display: flex;
   align-items: center;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: calc(100% - -var(--default-spacing) - 10px);
     justify-content: center;
     margin-bottom: var(--default-spacing);

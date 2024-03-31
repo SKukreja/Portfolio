@@ -15,11 +15,14 @@ const Scene = styled.div`
   & .svg-image {
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 130vw;
     height: 130vw;
-    margin-top: -115vw;
+    margin-top: -85vw;
     margin-left: -15vw;    
+  }
+  @media (max-width: 768px) {
+    margin-top: -115vw;
   }
 `;
 
@@ -29,7 +32,7 @@ const Container = styled.div`
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     width: 130vw;
     height: 130vw;
   }
@@ -76,7 +79,7 @@ function Splash({}) {
 
   const [isFirefox, setIsFirefox] = useState(false);
 
-  const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
+  const isFirefoxAndroid = navigator.userAgent.includes('Firefox');
 
   useEffect(() => {    
     setIsFirefox(isFirefoxAndroid);
@@ -90,7 +93,7 @@ function Splash({}) {
             <filter id={"mask-circle-splash"}>
               <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3} result="noise" />
               <feDisplacementMap className="filter" in="SourceGraphic" in2="noise" scale={75} xChannelSelector="R" yChannelSelector="G" />
-              <feGaussianBlur className="filter" stdDeviation={ isFirefoxAndroid ? 5 : 7 } />
+              <feGaussianBlur className="filter" stdDeviation={ isFirefox ? 2 : 7 } />
             </filter>
             <mask id={"mask-circle-mask"}>
               <ellipse ref={ellipseRef} cx="50%" cy="50%" id={"circle-mask"} rx="0" ry="0" fill="#FFFFFF" style={{ filter: `url(#mask-circle-splash)`, WebkitFilter: `url(#mask-circle-splash)`}} />

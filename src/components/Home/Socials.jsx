@@ -11,7 +11,7 @@ const Container = styled(m.div)`
     text-align: left;
 `;
   
-const SocialLink = styled.a`
+const SocialLink = styled(m.a)`
   font-family: var(--body-font);
   font-size: var(--body-text);
   font-weight: var(--body-weight);
@@ -32,17 +32,35 @@ const SocialLink = styled.a`
   }  
 `;
 
-const Socials = ({treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
+const Socials = ({inView, treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
     const { data, loading, error } = use(
         `/social?populate=deep`
     );
 
+    const socialVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: ( {index} ) => ({      
+          opacity: 1,
+          x: 0,
+          transition: {      
+            delay: 0.5 + (0.2 * index),  
+            duration: 2,
+            type: 'spring',
+            stiffness: 40,
+          },
+        }),
+    }
+
     return (
-        <Container as={ m.div}>
+        <Container as={m.div}>
         {data?.attributes.links.map((link, index) => (
         <SocialLink 
             key={link.id}
             href={link.url} target="_blank"
+            variants={socialVariants}
+            initial={'hidden'}
+            animate={inView ? 'visible' : 'hidden'} 
+            custom={{ index }}          
         >
             {Icons["Arrow Right"]} {link.name}
         </SocialLink>          

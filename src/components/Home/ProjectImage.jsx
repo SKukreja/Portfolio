@@ -31,7 +31,7 @@ const Container = styled.div`
   position: absolute;
   width: 150%;
   height: 150%;
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     &.even svg, &.odd svg {
       shape-rendering: optimizeSpeed;
       position: absolute;
@@ -70,7 +70,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
         gsap.to(maskIntensity, {
           radius: targetRadius,
           ease: "expoScale(0.5,7,none)",
-          duration: 4,
+          duration: 3,
           delay: 0.1,
           onUpdate: () => {
             // Update the mask
