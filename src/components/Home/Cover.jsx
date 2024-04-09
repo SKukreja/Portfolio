@@ -34,14 +34,14 @@ const Container = styled.div`
     inset: 0;
   }
   @media (max-width: 1024px) {
-    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - calc(var(--default-spacing) * 2))' : 'calc(100svh - calc(var(--default-spacing) * 2))'};
+    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - var(--default-spacing) * 2 + 1px)' : 'calc(100svh - var(--default-spacing) * 2 + 1px)'};
     margin-left: 0;
     padding: 0;    
     padding-top: var(--default-spacing);
     width: 100%;
   }
   @media (max-width: 768px) {
-    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - calc(var(--default-spacing) * 3))' : 'calc(100svh - calc(var(--default-spacing) * 3))'};
+    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - var(--default-spacing) * 3 + 1px)' : 'calc(100svh - var(--default-spacing) * 3 + 1px)'};
   }
 `;
 

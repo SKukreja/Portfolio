@@ -5,51 +5,42 @@ import GlobalStyle from './globalStyles';
 import Navbar from './components/Common/Navbar';
 import Home from './pages/Home/Home';
 import Work from './pages/Work/Work';
-import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Project from './pages/Project/Project';
 import ReactGA from 'react-ga';
+import { Curtains, useCurtains } from 'react-curtains';
 import { ModalProvider } from './components/Common/ModalContext';
 import styled from 'styled-components';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import use from './hooks/use';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
 
-gsap.ticker.lagSmoothing(0);
-
-gsap.registerPlugin(ScrollTrigger);
-
 const Blur = styled.div`
-  ${({ isModalOpen }) =>
-    isModalOpen
+  ${({ $isModalOpen }) =>
+    $isModalOpen
       ? `
     filter: blur(10px);
     transition: filter 0.3s ease-in-out;    
   `
       : ''};
 `;
-
-function initializeAnalytics() {
-  ReactGA.initialize(import.meta.env.GTAG_ID);
-  ReactGA.pageview(window.location.pathname + window.location.search);
-}
-
-const Layout = ({ isMobile }) => {
+ 
+const Layout = ({ $isMobile }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation();
+  const [curtainsRef, setCurtainsRef] = useState(null)
 
-  useEffect(() => {
-    initializeAnalytics();
-  }, []);
+  useCurtains((curtains) => {
+    setCurtainsRef(curtains)
+  });
 
-  useEffect(() => {
-    ReactGA.initialize(import.meta.env.GTAG_ID);
-    ReactGA.pageview(location.pathname + location.search);
-  }, [location]);
+  useLenis(({ scroll }) => {
+    if (!curtainsRef) return
+    if ($isMobile) curtainsRef.updateScrollValues(0, scroll)
+    else curtainsRef.updateScrollValues(scroll, 0)
+  });
 
   useEffect(() => {
     const loadingScreen = document.getElementById('loading-screen');
@@ -67,13 +58,12 @@ const Layout = ({ isMobile }) => {
           <title>Sumit Kukreja</title>                
           <link rel="icon" type="image/png" href="/favicon.ico" />         
         </Helmet>
-        <Blur isModalOpen={isModalOpen}>
+        <Blur $isModalOpen={isModalOpen}>
             <AnimatePresence mode='wait'>
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Home isMobile={isMobile} />} />
+              <Route path="/" element={<Home $isMobile={$isMobile} />} />
               <Route path="/project/:id" element={<Project />} />
               <Route path="/work" element={<Work />} />
-              <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </AnimatePresence>
@@ -90,17 +80,14 @@ const App = () => {
 
 
   const options = {
+
     lerp: 0.04,
-    duration: 1.5,
     smoothWheel: true,
-    smoothTouch: false, //smooth scroll for touch devices
-    syncTouch: true,
-    syncTouchLerp: 0.04,
-    touchInertiaMultiplier: 10,
-    smooth: true,
+    smoothTouch: false, //smooth scroll for touch devices            
     orientation: isMobile ? "vertical" : "horizontal", 
     gestureOrientataion: isMobile ? "vertical" : "horizontal"
   }
+
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)');
@@ -122,31 +109,26 @@ const App = () => {
       mediaQuery.removeEventListener('change', handleResize);
     }
   }, [isMobile])
-  
-  useEffect(() => {
-    function update(time) {
-      lenisRef.current?.lenis?.raf(time * 1000)
-    }
-  
-    gsap.ticker.add(update)
-  
-    return () => {
-      gsap.ticker.remove(update)
-    }
-  })
 
   return (
-    <ReactLenis root ref={lenisRef} autoRaf={false} options={options}>
-     <LazyMotion features={domAnimation}>
-        <MotionConfig reducedMotion="user">
-          <ModalProvider>
-            <Router>
-              <Layout isMobile={isMobile} />
-            </Router>
-          </ModalProvider> 
-        </MotionConfig>
-      </LazyMotion>
-    </ReactLenis>
+    <Curtains
+      className="curtains-canvas"
+      pixelRatio={Math.min(1.5, window.devicePixelRatio)}
+      antialias={false}
+      watchScroll={false}
+    >
+      <ReactLenis root ref={lenisRef} options={options}>
+        <LazyMotion features={domAnimation}>
+          <MotionConfig reducedMotion="user">
+            <ModalProvider>
+              <Router>
+                <Layout $isMobile={isMobile} />
+              </Router>
+            </ModalProvider> 
+          </MotionConfig>
+        </LazyMotion>
+      </ReactLenis>
+    </Curtains>
   );
 }
 

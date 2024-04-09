@@ -17,6 +17,7 @@ const Container = styled.div`
   @media (max-width: 1024px) {
     padding-left: var(--default-spacing);
     padding-right: var(--default-spacing);
+    margin-top: 66vw;
     width: calc(100% - var(--default-spacing) * 2);
     height: auto;
     padding-bottom: calc(var(--default-spacing) * 2);
@@ -234,7 +235,7 @@ const Column = styled.div`
   }
 `;
 
-const Time = styled.td`
+const Time = styled.span`
   width: 30%;
   vertical-align: top;
   text-align: right;
@@ -242,10 +243,12 @@ const Time = styled.td`
   font-weight: var(--body-weight);
 `;
 
-const TableColumn = styled.td`
+const TableColumn = styled.div`
   width: 70%;
   vertical-align: top; 
   position: relative;
+  display: flex;
+  flex-direction: column;
   &::before {
     content: "";
     position: absolute;
@@ -261,35 +264,35 @@ const TableColumn = styled.td`
   }
 `;
 
-const Primary = styled.div`
+const Primary = styled.span`
   font-weight: bold;  
 `;
 
-const Secondary = styled.div`
+const Secondary = styled.span`
   font-weight: var(--body-weight); 
 `;
 
-const Table = styled.table`
+const Table = styled.div`
   width: 100%;
-  & tbody tr {        
-    position: relative;
-  }
-  & tbody td {
-    padding-top: var(--default-spacing);
-    padding-bottom: 0;
-    &::before {
-      content: "";
-      position: absolute;
-      opacity: 1;
-      height: 250%;
-      width: 70%;
-      left: -10%;
-      top: -10%;
-      opacity: 0.3;
-      background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
-      background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
-      z-index: -1;
-    }
+`;
+
+const TableRow = styled(m.div)`
+  position: relative;
+  display: flex;
+  padding-top: var(--default-spacing);
+  padding-bottom: 0;
+  &::before {
+    content: "";
+    position: absolute;
+    opacity: 1;
+    height: 250%;
+    width: 70%;
+    left: -10%;
+    top: -10%;
+    opacity: 0.3;
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
+    z-index: -1;
   }
 `;
 
@@ -311,7 +314,7 @@ const Diamond = styled.div`
   }
 `;
 
-const Border = styled.div`
+const Border = styled(m.span)`
   content: '';
   position: absolute;
   bottom: 0;
@@ -322,7 +325,7 @@ const Border = styled.div`
   transform-origin: left;
 `;
 
-const BigBorder = styled(m.div)`
+const BigBorder = styled(m.span)`
 content: '';
 position: absolute;
 bottom: 0;
@@ -474,8 +477,7 @@ const About = () => {
             />
           </ColumnHeader>
           <Table>
-            <tbody>
-              <m.tr 
+              <TableRow 
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -487,8 +489,8 @@ const About = () => {
                 </TableColumn>
                 <Time>2018 - 2023</Time>
                 <Border />
-              </m.tr>
-              <m.tr
+              </TableRow>
+              <TableRow
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -500,8 +502,8 @@ const About = () => {
                 </TableColumn>
                 <Time>2017 - 2018</Time>
                 <Border />
-              </m.tr>
-              <m.tr
+              </TableRow>
+              <TableRow
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -513,8 +515,8 @@ const About = () => {
                 </TableColumn>
                 <Time>2016 - 2017</Time>
                 <Border />
-              </m.tr>
-              <m.tr
+              </TableRow>
+              <TableRow
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -526,8 +528,8 @@ const About = () => {
                 </TableColumn>
                 <Time>2014 - 2016</Time>
                 <Border />
-              </m.tr>
-              <m.tr
+              </TableRow>
+              <TableRow
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -539,8 +541,7 @@ const About = () => {
                 </TableColumn>
                 <Time>2014 - 2014</Time>
                 <Border />
-              </m.tr>
-            </tbody>
+              </TableRow>            
           </Table>
         </Column>
         <Column>
@@ -556,8 +557,7 @@ const About = () => {
             animate={inView ? 'visible' : 'hidden'}   
           /></ColumnHeader>
           <Table>
-            <tbody>
-              <m.tr 
+              <TableRow 
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -569,8 +569,8 @@ const About = () => {
                 </TableColumn>
                 <Time>2018 - 2023</Time>
                 <Border />
-              </m.tr>
-              <m.tr 
+              </TableRow>
+              <TableRow 
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
@@ -582,8 +582,7 @@ const About = () => {
                 </TableColumn>
                 <Time>2012 - 2015</Time>
                 <Border />
-              </m.tr>
-            </tbody>
+              </TableRow>
           </Table>
         </Column>
       </TwoColumn>  

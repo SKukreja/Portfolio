@@ -50,7 +50,7 @@ const Nav = styled.nav`
   opacity: 1;
 
   & .logo {
-    filter:  ${({ isNavSolid, isMobile }) => isNavSolid && !isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+    filter:  ${({ $isNavSolid, $isMobile }) => $isNavSolid && !$isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
     transition: transform 0.5s ease, filter 0.5s ease;
   }
 
@@ -109,10 +109,10 @@ const SocialLink = styled.a`
   margin-bottom: 1rem;
   margin-left: auto;
   margin-right: auto;
-  color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'black' : 'black') : (isMobile ? 'var(--black)' : 'var(--offwhite)')};
+  color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'black' : 'black') : ($isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   &:hover {
-    color: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'white' : 'white') : 'var(--interact-hover-color)'};
+    color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'white' : 'white') : 'var(--interact-hover-color)'};
   }
 `;
 
@@ -152,10 +152,10 @@ const LogoContainer = styled(Link)`
   }
 `;
 
-const Overlay = styled.div.attrs(({ isVisible }) => ({
+const Overlay = styled.div.attrs(({ $isVisible }) => ({
   style: {
-    visibility: isVisible ? 'visible' : 'hidden',
-    opacity: isVisible ? 1 : 0,
+    visibility: $isVisible ? 'visible' : 'hidden',
+    opacity: $isVisible ? 1 : 0,
   }
 }))`
   position: fixed;
@@ -163,7 +163,7 @@ const Overlay = styled.div.attrs(({ isVisible }) => ({
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100vh;
+  height: calc(var(--vh) * 100);
   width: 100%;
   flex-direction: column;
   background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
@@ -183,10 +183,7 @@ const Overlay = styled.div.attrs(({ isVisible }) => ({
   }
 `;
 
-const OverlayLink = styled(Link).withConfig({
-  shouldForwardProp: (prop, defaultValidatorFn) => 
-    !['isVisible', 'index'].includes(prop) && defaultValidatorFn(prop),
-})`
+const OverlayLink = styled(Link)`
   color: var(--black);
   text-decoration: none;
   letter-spacing: 1px;
@@ -201,8 +198,8 @@ const OverlayLink = styled(Link).withConfig({
     color: #FF6281;
     text-shadow: 0 0 2px #FF6281;
   }
-  animation: ${({ isVisible, index }) => 
-    isVisible
+  animation: ${({ $isVisible, index }) => 
+    $isVisible
       ? css`${slideInFromRight} 0.4s ease-out ${(index + 1) * 0.05}s forwards`
       : 'none'};
 `;
@@ -239,7 +236,7 @@ const HamburgerButton = styled.button`
     display: block;
     width: 22px;
     height: 2px;    
-    background: ${({ isNavSolid, isMobile }) => !isNavSolid ? (isMobile ? 'var(--black)' : 'var(--black)') :  (isMobile ? 'var(--black)' : 'var(--offwhite)')};  
+    background: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'var(--black)' : 'var(--black)') :  ($isMobile ? 'var(--black)' : 'var(--offwhite)')};  
     margin: 5px 0;
     transition: transform 0.3s ease, background 0.5s ease;
   }
@@ -357,18 +354,18 @@ function Navbar({ socialData }) {
 
   return (
     <>
-      <Nav scrollPos={scrollPos} isNavSolid={isSolid} isMobile={isModalOpen}>
+      <Nav $scrollPos={scrollPos} $isNavSolid={isSolid} $isMobile={isModalOpen}>
       <Left>
         <LogoContainer to="/">
-          <Branding className="logo" src="/logo.svg" isDark={isModalOpen} />
+          <Branding className="logo" src="/logo.svg" $isDark={isModalOpen} />
         </LogoContainer>
       </Left>
       <Center>
         <HamburgerButton
           onClick={toggleOverlay}
           className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
-          isNavSolid={isSolid}
-          isMobile={isModalOpen}
+          $isNavSolid={isSolid}
+          $isMobile={isModalOpen}
         >
           <span></span>
           <span></span>
@@ -377,10 +374,10 @@ function Navbar({ socialData }) {
       </Center>
       <Right>
         {socials?.attributes.links.map((link, index) => (
-          <SocialLink key={link.id} href={link.url} isNavSolid={isSolid} target="_blank">{Icons[link.icon]}</SocialLink>          
+          <SocialLink key={link.id} href={link.url} $isNavSolid={isSolid} target="_blank">{Icons[link.icon]}</SocialLink>          
         ))}
       </Right>
-      <Overlay isVisible={isModalOpen}>
+      <Overlay $isVisible={isModalOpen}>
       <Noise />
       <BoxShadow />
         <OverlayMenu>
@@ -389,7 +386,7 @@ function Navbar({ socialData }) {
               key={link.id}
               onClick={handleClick}
               to={link.url}
-              isVisible={isModalOpen}
+              $isVisible={isModalOpen}
               index={index}
             >
               {link.text}

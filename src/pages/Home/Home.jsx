@@ -4,11 +4,8 @@ import Splash from '../../components/Home/Splash'
 import FeaturedWorks from '../../components/Home/FeaturedWorks'
 import About from '../../components/Home/About'
 import Cover from '../../components/Home/Cover'
-import Experience from '../../components/Home/Experience'
-import { cubicBezier,m, useScroll, useTransform } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
-import styled, { keyframes } from 'styled-components'
-import FootprintTracker from '../../components/Common/FootprintTracker'
+import styled from 'styled-components'
 
 
 const Content = styled.div`
@@ -76,7 +73,7 @@ const BoxShadow = styled.div`
   }
 `;
 
-const Home = ({ isMobile }) => {
+const Home = ({ $isMobile }) => {
   const container = useRef(null);
   return (
     <Container
@@ -92,8 +89,7 @@ const Home = ({ isMobile }) => {
           <Noise />
           <BoxShadow />
           <Landing />
-          <Splash />
-          <FeaturedWorks isMobile={isMobile} />
+          <FeaturedWorks $isMobile={$isMobile} />
           <About />
           <Cover />
         </Content>

@@ -157,7 +157,7 @@ function Landing() {
   return (
     <Scene>
       <SceneText>
-        <Intro><AnimatedText startImmediately={true} text="Hi, my name is" /></Intro>
+        <Intro><AnimatedText text="Hi, my name is" /></Intro>
         <NameContainer>
         <NameSvg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 -2 732.91 138.98">
           <m.path initial={{ strokeDasharray: 1000, strokeDashoffset: 1000, fill: "rgba(18, 21, 24, 0)" }} animate={{ strokeDashoffset: 0, fill: "rgba(18, 21, 24, 1)" }} transition={{ duration: 4, ease: "easeInOut", delay: 1 }} className="name-path" d="M432.04,134.98c-4.09-1.17-8.29-2.03-12.24-3.55-12.82-4.93-22.19-14.11-28.62-25.87-6.01-11-10.83-22.64-16.17-34.01-.68-1.46-1.28-2.95-2.05-4.73-3.72,3.77-5.61,7.52-5.4,12.64.37,9.31.1,18.65.11,27.97.01,9.36.32,9.89,8.61,14.23h-32.15c8.75-1.67,7.97-8.41,7.95-14.94-.07-28.81-.16-57.62.06-86.43.05-6.89-.5-12.73-8.57-14.89h32.02c-9.09,2.11-7.92,9.4-7.93,16.12,0,13.94,0,27.89,1,42.23,3.1-4.35,6.21-8.69,9.29-13.04,8.06-11.39,16.13-22.78,24.16-34.2,4.25-6.05,4.18-6.46-1.51-11.1h22.47c-11.25,2.46-15.59,12.32-21.51,20.48-5.96,8.2-11.84,16.45-17.54,24.82-.92,1.35-1.49,3.8-.91,5.19,7.67,18.23,15.81,36.27,28.52,51.67,8.45,10.23,18.17,19.03,31.8,21.89,2.39.5,4.87.62,7.82,2.13-2.74,1.14-5.48,2.28-8.23,3.42h-11Z" style={{ strokeWidth: "1px", stroke: "#121518" }} />
@@ -176,7 +176,7 @@ function Landing() {
           <m.path initial={{ strokeDasharray: 1000, strokeDashoffset: 1000, fill: "rgba(18, 21, 24, 0)" }} animate={{ strokeDashoffset: 0, fill: "rgba(18, 21, 24, 1)" }} transition={{ duration: 4, ease: "easeInOut", delay: 1 }} className="name-path" d="M244.68,18.89c4.22-.06,7.26,2.86,7.17,6.9-.07,3.45-3.53,6.59-7.33,6.65-3.43.05-6.88-3.44-6.99-7.08-.11-3.68,2.92-6.41,7.14-6.47Z" style={{ strokeWidth: "1px", stroke: "#121518" }} />
         </NameSvg>
         </NameContainer>
-        <Intro><AnimatedText startImmediately={true} text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
+        <Intro><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
         <ActionButtons initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 2 }}>
           <Button to="/work"><p>{Icons["Arrow Right"]} View my work</p></Button>
           <Button to="/about"><p>{Icons["Arrow Right"]} More about me</p></Button>

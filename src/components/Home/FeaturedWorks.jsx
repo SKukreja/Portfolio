@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { m, useAnimation } from 'framer-motion';
 import ProjectImage from './ProjectImage';
 import { InView, useInView } from 'react-intersection-observer';
+import { Plane, ShaderPass, FXAAPass, useCurtainsEvent } from "react-curtains";
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
@@ -55,8 +56,6 @@ const Header = styled(m.h1)`
     width: 150%;
     left: -25%;
     right: -10%;
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 65%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 60%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 50%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 65%), radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%);
     z-index: -1;
   }
 `;
@@ -70,7 +69,7 @@ const ProjectName = styled(Link)`
   text-transform: uppercase;
   font-weight: 900;
   letter-spacing: 2px;
-  margin: 2rem 0;
+  margin: 2rem 0;  
   &::before {
     content: "";
     position: absolute;
@@ -81,8 +80,6 @@ const ProjectName = styled(Link)`
     pointer-events: none;
     left: -20%;
     right: -10%;    
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 46%), radial-gradient(var(--offwhite) 0%,transparent 33%);
     z-index: -1;
   }
   & > svg {
@@ -94,17 +91,9 @@ const ProjectName = styled(Link)`
   }
   @media (max-width: 1024px) {
     font-size: 4vw;
-    &::before {      
-      height: 130%;
-      width: 190%;
-      top: -20%;      
-      left: -100%;
-      right: -10%;
-    }
-    & > svg {
-      font-size: 6vw;
-      margin-bottom: -1.5vw;
-    }
+  }
+  @media (max-width: 768px) {
+
   }
 `;
 
@@ -114,8 +103,7 @@ const Projects = styled(m.div)`
   overflow: visible;
   @media (max-width: 1024px) {
     margin-top: 85vw;
-    flex-direction: column;
-    
+    flex-direction: column; 
   }
 `;
 
@@ -128,46 +116,17 @@ const ProjectContent = styled.div`
   position: absolute;
   
   &.odd {
-    bottom: 35%;
-    &::before {
-      bottom: 5%;
-    }
+    bottom: 33%;    
   }
   &.even {
-    top: 50%;
-    &::before {
-      top: -20%;
-    }
-  }
-  &::before {
-    content: "";
-    position: absolute;
-    opacity: 1;
-    height: 120%;
-    width: 140%;
-    left: -50%;
-    opacity: 0.9;
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
-    z-index: -1;
+    top: 33%;    
   }
   @media (max-width: 1024px) {
     width: calc(100% - 2 * var(--default-spacing));
     margin: 0;
+    position: relative;
+    margin-top: -15vw;
     padding: var(--default-spacing);
-    &::before {      
-      height: 100%;
-      width: 150%;
-      left: -40%;    
-    }
-    &.odd, &.even {
-      top: 0%;
-      bottom: 0%;
-      &::before {        
-        top: 10%;
-        bottom: 0%;
-      }
-    }
   }
 `;
 
@@ -182,20 +141,20 @@ const Project = styled.div`
     height: 100%;
     align-items: center;
     justify-content: space-between;
-    &.odd, &.odd .project-image {
-      margin-top: 3rem;
-    }
-    &.even, &.even .project-image {
-      margin-top: -17rem;
-    }
     @media (max-width: 1024px) {
       width: 100vw;
+      height: auto;
       margin-left: 0;
       flex-direction: column;
-      &.odd, &.odd .project-image, &.even, &.even .project-image {
-        margin-top: calc(var(--default-spacing) * 2);
-        margin-bottom: calc(var(--default-spacing));       
+      &.odd, &.odd .project-image {
+        margin-top: calc(var(--default-spacing));        
+        margin-bottom: calc(var(--default-spacing) * 2); 
         flex-direction: column-reverse;
+      }
+      &.even, &.even .project-image {
+        margin-top: calc(var(--default-spacing));        
+        margin-bottom: calc(var(--default-spacing) * 2);
+        flex-direction: column;
       }
     }
 `;
@@ -269,6 +228,52 @@ const Spacer = styled.div`
 
 `;
 
+const firstPassFs = `
+  precision mediump float;
+
+  varying vec3 vVertexPosition;
+  varying vec2 vTextureCoord;
+
+  uniform sampler2D uRenderTexture;
+  uniform sampler2D displacementTexture;
+
+  uniform float uDisplacement;
+
+  void main( void ) {
+    vec2 textureCoords = vTextureCoord;
+    vec4 displacement = texture2D(displacementTexture, textureCoords);
+
+    // displace along Y axis
+    textureCoords.y += (sin(displacement.r) / 5.0) * uDisplacement;
+    
+    gl_FragColor = texture2D(uRenderTexture, textureCoords);
+  }
+`;
+
+const secondPassFs = `
+  #ifdef GL_ES
+  precision mediump float;
+  #endif
+
+  varying vec3 vVertexPosition;
+  varying vec2 vTextureCoord;
+
+  uniform sampler2D uRenderTexture;
+
+  uniform float uScrollEffect;
+
+  void main() {
+    vec2 textureCoords = vTextureCoord;
+    vec2 texCenter = vec2(0.5, 0.5);
+
+    // distort around scene center
+    textureCoords += vec2(texCenter - textureCoords).xy * sin(distance(texCenter, textureCoords)) * uScrollEffect / 175.0;
+
+    gl_FragColor = texture2D(uRenderTexture, textureCoords);
+  }
+`;
+
+
 const padNum = (num, targetLength) => {
   return num.toString().padStart(targetLength, "0");
 }
@@ -333,15 +338,6 @@ const ProjectItem = ({ isMobile, project, number}) => {
       ) : (
         ''
       )}
-      <svg>
-        <defs>
-          <filter id={"mask-circle-project-image-" + number}>
-            <feTurbulence className="filter" type="fractalNoise" baseFrequency="0.01" numOctaves={3 + Math.sin(90 * number)} result="noise" />
-            <feDisplacementMap className="filter" in="SourceGraphic" in2="noise" scale={75 + 10 * Math.sin(90 * number)} xChannelSelector="R" yChannelSelector="G" />
-            <feGaussianBlur className="filter" stdDeviation={ isFirefox ? 2 : 7 } />
-          </filter>
-        </defs>
-      </svg>
       <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
       {number % 2 != 0 ? (
         <>
@@ -359,6 +355,8 @@ const FeaturedWorks = ({ isMobile }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
+  const [planes, setPlanes] = useState([]);
+  const planesDeformations = useRef(0);
 
   const headerVariants = {
     hidden: { color: "var(--interact-hover-color)", opacity: 0 },
@@ -370,6 +368,92 @@ const FeaturedWorks = ({ isMobile }) => {
         type: 'linear',        
       },
     }),
+  };
+
+  useCurtainsEvent(
+    "onRender",
+    (curtains) => {
+      // update our planes deformation
+      // increase/decrease the effect
+      planesDeformations.current = curtains.lerp(
+        planesDeformations.current,
+        0,
+        0.075
+      );
+
+      // update planes deformations
+      planes.forEach((plane) => {
+        plane.uniforms.planeDeformation.value = planesDeformations.current;
+      });
+    },
+    [planes]
+  );
+
+  useCurtainsEvent("onScroll", (curtains) => {
+    // get scroll deltas to apply the effect on scroll
+    const delta = curtains.getScrollDeltas();
+
+    // invert value for the effect
+    delta.y = -delta.y;
+
+    // threshold
+    if (delta.y > 60) {
+      delta.y = 60;
+    } else if (delta.y < -60) {
+      delta.y = -60;
+    }
+
+    if (Math.abs(delta.y) > Math.abs(planesDeformations.current)) {
+      planesDeformations.current = curtains.lerp(
+        planesDeformations.current,
+        delta.y,
+        0.5
+      );
+    }
+  });
+
+  // post processing
+  const firstPassUniforms = {
+    timer: {
+      name: "uTimer",
+      type: "1f",
+      value: 0
+    },
+    displacement: {
+      name: "uDisplacement",
+      type: "1f",
+      value: 0
+    }
+  };
+
+  const secondPassUniforms = {
+    scrollEffect: {
+      name: "uScrollEffect",
+      type: "1f",
+      value: 0
+    }
+  };
+
+  const onFirstPassReady = (shaderPass) => {
+    shaderPass.loader.loadImage(
+      "https://www.curtainsjs.com/examples/medias/displacement.jpg",
+      {
+        sampler: "displacementTexture"
+      }
+    );
+  };
+
+  const onFirstPassRender = (shaderPass) => {
+    // update the uniforms
+    shaderPass.uniforms.timer.value++;
+    shaderPass.uniforms.displacement.value = planesDeformations.current / 60;
+  };
+
+  const onSecondPassRender = (shaderPass) => {
+    // update the uniforms
+    shaderPass.uniforms.scrollEffect.value = Math.abs(
+      planesDeformations.current
+    );
   };
   
   return (
@@ -387,6 +471,20 @@ const FeaturedWorks = ({ isMobile }) => {
           {data?.attributes.featured.works.data.map((project, number) => (
             <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
           ))}
+          <ShaderPass
+            fragmentShader={firstPassFs}
+            uniforms={firstPassUniforms}
+            onReady={onFirstPassReady}
+            onRender={onFirstPassRender}
+          />
+
+          <ShaderPass
+            fragmentShader={secondPassFs}
+            uniforms={secondPassUniforms}
+            onRender={onSecondPassRender}
+          />
+
+          <FXAAPass />
           </Projects>
         </Featured>
       )}

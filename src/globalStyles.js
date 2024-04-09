@@ -78,6 +78,16 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 600;
   }
 
+  .curtains-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
   html.lenis {
     height: auto;
     display: table;
@@ -138,6 +148,15 @@ const GlobalStyle = createGlobalStyle`
       overflow-x: hidden;
     }
   }  
+
+  .canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+  }
 
   html, body {
     margin: 0;
