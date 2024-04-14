@@ -48,16 +48,6 @@ const Header = styled(m.h1)`
     left: 50%;
     transform: translateX(-53%);
   }
-  &::before {
-    content: "";
-    position: absolute;
-    opacity: 1;
-    height: 100%;
-    width: 150%;
-    left: -25%;
-    right: -10%;
-    z-index: -1;
-  }
 `;
 
 const ProjectName = styled(Link)`
@@ -70,18 +60,6 @@ const ProjectName = styled(Link)`
   font-weight: 900;
   letter-spacing: 2px;
   margin: 2rem 0;  
-  &::before {
-    content: "";
-    position: absolute;
-    opacity: 0.9;
-    height: 110%;
-    width: 50%;
-    top: 20%;
-    pointer-events: none;
-    left: -20%;
-    right: -10%;    
-    z-index: -1;
-  }
   & > svg {
     font-size: 3vw;
     margin-bottom: -0.75rem;
@@ -244,7 +222,7 @@ const firstPassFs = `
     vec4 displacement = texture2D(displacementTexture, textureCoords);
 
     // displace along Y axis
-    textureCoords.y += (sin(displacement.r) / 5.0) * uDisplacement;
+    // textureCoords.x += (sin(displacement.r) / 5.0) * uDisplacement;
     
     gl_FragColor = texture2D(uRenderTexture, textureCoords);
   }
@@ -267,7 +245,7 @@ const secondPassFs = `
     vec2 texCenter = vec2(0.5, 0.5);
 
     // distort around scene center
-    textureCoords += vec2(texCenter - textureCoords).xy * sin(distance(texCenter, textureCoords)) * uScrollEffect / 175.0;
+    //textureCoords += vec2(texCenter - textureCoords).xy * sin(distance(texCenter, textureCoords)) * uScrollEffect / 175.0;
 
     gl_FragColor = texture2D(uRenderTexture, textureCoords);
   }
@@ -394,16 +372,29 @@ const FeaturedWorks = ({ isMobile }) => {
     const delta = curtains.getScrollDeltas();
 
     // invert value for the effect
+    delta.x = -delta.x;
     delta.y = -delta.y;
 
     // threshold
-    if (delta.y > 60) {
-      delta.y = 60;
-    } else if (delta.y < -60) {
-      delta.y = -60;
+    if (delta.x > 10) {
+      delta.x = 10;
+    } else if (delta.x < -10) {
+      delta.x = -10;
+    }
+    if (delta.y > 10) {
+      delta.y = 10;
+    } else if (delta.y < -10) {
+      delta.y = -10;
     }
 
-    if (Math.abs(delta.y) > Math.abs(planesDeformations.current)) {
+    if (Math.abs(delta.x) > Math.abs(planesDeformations.current)) {
+      planesDeformations.current = curtains.lerp(
+        planesDeformations.current,
+        delta.x,
+        0.5
+      );
+    }
+    else if (Math.abs(delta.y) > Math.abs(planesDeformations.current)) {
       planesDeformations.current = curtains.lerp(
         planesDeformations.current,
         delta.y,

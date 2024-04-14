@@ -111,19 +111,6 @@ const Button = styled(Link)`
   color: var(--black);
   opacity: 1;
   transition: all 0.2s ease;
-  &::before {
-    content: "";
-    position: absolute;
-    top: -23%;
-    opacity: 1;
-    height: 100%;
-    width: 150%;
-    left: -40%;
-    opacity: 0.9;
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%);
-    z-index: -1;
-  }
   &:hover {
     color: var(--interact-hover-color);
   }
