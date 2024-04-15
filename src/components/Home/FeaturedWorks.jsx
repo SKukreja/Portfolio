@@ -462,18 +462,6 @@ const FeaturedWorks = ({ isMobile }) => {
           {data?.attributes.featured.works.data.map((project, number) => (
             <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
           ))}
-          <ShaderPass
-            fragmentShader={firstPassFs}
-            uniforms={firstPassUniforms}
-            onReady={onFirstPassReady}
-            onRender={onFirstPassRender}
-          />
-
-          <ShaderPass
-            fragmentShader={secondPassFs}
-            uniforms={secondPassUniforms}
-            onRender={onSecondPassRender}
-          />
 
           <FXAAPass />
           </Projects>

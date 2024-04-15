@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Plane } from "react-curtains";
+import { set } from 'lodash';
 
 const Scene = styled.div`  
   position: absolute;
@@ -91,8 +92,10 @@ const fragmentShader = `
   
   uniform sampler2D planeTexture;
   uniform sampler2D noiseTexture;
+  uniform float uPlaneVisibility;
   uniform vec2 uResolution;
   uniform float uTime;
+  uniform float uEven;
 
   float sqrLen(vec2 vec)
   {
@@ -101,14 +104,6 @@ const fragmentShader = `
 
   vec2 random2( vec2 p ) {
       return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
-  }
-
-  vec2 pixelToNormalizedSpace(vec2 pixel)
-  {
-    vec2 res;
-    res.x = pixel.x / uResolution.x - 0.5; // Centering x-coordinate
-    res.y = pixel.y / uResolution.y - 0.5; // Centering y-coordinate
-    return res;
   }
 
   float noise( in vec3 x )
@@ -147,7 +142,7 @@ const fragmentShader = `
 
   float circle(vec2 diff, float radius)
   {
-      return (length(diff) - radius) * 4./3.;
+      return (length(diff) - radius);
   }
 
   float line(vec2 diff, vec2 dir, float thickness)
@@ -192,30 +187,36 @@ const fragmentShader = `
   }
   
   void main() {
-    float time 	= uTime / 60.0;
-    vec2 fragPos 		= vNoiseCoord;
-	  vec3 pos 		= vec3(fragPos, time * 0.00001 * SPEED);
+    float time = uTime/500.;
+
+    vec2 fragPos = vNoiseCoord;
+	  vec3 pos = vec3(fragPos, time * 0.0001 * SPEED);
     
     //noise sampling
-    vec3 scaledPos 	= 8.0 * pos;
+    vec3 scaledPos 	= 4.0 * pos;
     float noiseVal 	= 0.0;
-    float ampl 		= 1.0;
+    float ampl 		= 2.0;
     float maxValue 	= 0.0;
     
     for(float i = 0.0; i < 8.0; ++i)
     {
-        noiseVal 	+= noise(scaledPos) * ampl;
-        scaledPos 	*= 2.0;
-        maxValue 	+= ampl;
-        ampl 		*= 0.5;
+        noiseVal += noise(scaledPos) * ampl;
+        scaledPos *= 2.0;
+        maxValue += ampl;
+        ampl *= 0.5;
     }
     noiseVal /= maxValue;
-    vec2 startPoint = vec2(0.5, 0);
+    vec2 center = vec2(0.5, 0.4);
+    if (uEven == 1.0) {
+      center = vec2(0.5, 0.6);
+    }        
 
-    float expansion = sqrLen(fragPos - startPoint);
-    expansion 		= 1.0 - expansion;
-    expansion 		+= time * time * SPEED  * 0.0001 - 0.6;    
-    expansion 		= min(expansion, MAX_DIST);
+    float maxRadius = min(uResolution.x, uResolution.y) * 0.95;  // Adjust this to set how close the mask can get to edges
+    float currentRadius = 0.5 * time;
+
+    float expansion = sqrLen(fragPos - center);
+    expansion = 1.0 - expansion;
+    expansion += currentRadius;
     
 
     float res = FX3(-signedDist2D(fragPos), noiseVal, expansion, time);
@@ -242,21 +243,46 @@ const Noise = styled.img`
 
 function ProjectImage({ number, imageUrl, even }) {
   const ref = useRef(null);
+  const isVisible = useRef(false);
 
-  const setResolution = (plane) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          isVisible.current = entry.isIntersecting;
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [ref]);
+
+  const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
-    console.log(planeBox.width, planeBox.height)
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
   }
 
   const onAfterResize = (plane) => {
-    setResolution(plane)
+    setPlaneResolution(plane)
   }
 
 
   const uniforms = {
-    planeDeformation: {
-      name: "uPlaneDeformation",
+    planeVisibility: {
+      name: "uPlaneVisibility",
       type: "1f",
       value: 0
     },
@@ -269,11 +295,21 @@ function ProjectImage({ number, imageUrl, even }) {
       name: "uResolution",
       type: "2f",
       value: [0, 0]
+    },
+    even: {
+      name: "uEven",
+      type: "1f",
+      value: even ? 1 : 0
     }
   };
 
-  const onRender = (plane) => {    
-    plane.uniforms.time.value++;
+  const onRender = (plane) => {
+    if (!isVisible.current && plane.uniforms.time.value > 0) {
+      plane.uniforms.time.value -= 1;
+    }
+    else if (isVisible.current && plane.uniforms.time.value < 500) {
+      plane.uniforms.time.value += 1;
+    }
   };
 
   return (
@@ -288,8 +324,8 @@ function ProjectImage({ number, imageUrl, even }) {
           uniforms={uniforms}
           // plane events
           onRender={onRender}
-          onReady={setResolution}
           onAfterResize={onAfterResize}
+          onReady={setPlaneResolution}
         >
           <Picture src={imageUrl} data-sampler="planeTexture" alt="" />
           <Noise src={'inknoise.png'} data-sampler="noiseTexture" alt="" />
