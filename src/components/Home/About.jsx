@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import use from '../../hooks/use';
-import styled, { keyframes } from 'styled-components';
-import { InView, useInView } from 'react-intersection-observer';
-import { m } from 'framer-motion'
-import WashedAwayText from './WashedAwayText';
-import AnimatedText from './AnimatedText';
+import styled from 'styled-components';
+import { Icons } from '../Common/Icons';
+import { m } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const Container = styled.div`
   display: flex;
@@ -181,7 +180,8 @@ background-size: cover;
 background-position: -15% center;
 position: absolute;
 inset: 0;
-filter: blur(2px) saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
+filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
+will-change: opacity, filter;
 opacity: 0.35;
 mix-blend-mode: darken;
 z-index: 1;
@@ -189,6 +189,7 @@ z-index: 1;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
   background-position: -90% 0%;
+  display: none;
 }
 `;
 
@@ -296,10 +297,11 @@ const TableRow = styled(m.div)`
   }
 `;
 
-const Diamond = styled.div`
+const DiamondIcon = styled.div`
   font-size: 3rem;
   font-family: var(--display-font);
   color: var(--black);
+  width: 1rem;
   user-select: none;
   pointer-events: none;
   margin-bottom: calc(var(--default-spacing) * 2);
@@ -406,10 +408,10 @@ const About = () => {
   };
 
   const bgVariants = {
-    hidden: { opacity: 0, filter: 'blur(0) saturate(0) brightness(0) contrast(0) grayscale(0)' },
+    hidden: { opacity: 0, filter: 'saturate(0) brightness(0) contrast(0) grayscale(0)' },
     visible: () => ({      
       opacity: 0.3,
-      filter: 'blur(2px) saturate(0.5) brightness(0.9) contrast(1.2) grayscale(0.5)' ,
+      filter: 'saturate(0.5) brightness(0.9) contrast(1.2) grayscale(0.5)' ,
       transition: {      
         delay: 0.1,  
         duration: 2,        
@@ -436,7 +438,7 @@ const About = () => {
   
   return (
     <Container ref={ref} as={m.div}>
-      <Background ref={bgRef} style={{backgroundImage: 'url(bg.png)'}}
+      <Background ref={bgRef} style={{backgroundImage: 'url(bg-min.jpg)'}}
         variants={bgVariants}
         initial="hidden"
         animate={bgInView ? 'visible' : 'hidden'}
@@ -449,12 +451,12 @@ const About = () => {
               animate={inView ? "visible" : "hidden"}
               variants={headerVariants}
             >About Me</Intro>
-            <Diamond>♦</Diamond>      
+            <DiamondIcon>{Icons["Diamond"]}</DiamondIcon>
             <Blurb
               variants={blurbVariants}
               initial="hidden"
               animate={aboutInView ? 'visible' : 'hidden'}
-              custom={{ delay: 0.5 }}
+              custom={{ delay: 0.2 }}
             >
               {blurbText}
             </Blurb>
@@ -467,7 +469,7 @@ const About = () => {
             variants={rowVariants}
             initial="hidden"
             animate={inView ? 'visible' : 'hidden'}
-            custom={{delay: 0.1}}              
+            custom={{delay: 0.2}}              
           >
             Work
             <BigBorder                  

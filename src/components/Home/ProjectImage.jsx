@@ -1,14 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { Plane } from "react-curtains";
-import { set } from 'lodash';
 
 const Scene = styled.div`  
   position: absolute;
   height: 0;
   width: 150%;
-  height: 33vh;
-  overflow: hidden;
+  height: calc(var(--vh, 1vh) * 50);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,15 +15,16 @@ const Scene = styled.div`
   backface-visibility: hidden;
   overflow: visible;
   &.even {
-    top: 0;
+    top: -10vh;
   }
   &.odd {
-    bottom: 0;
+    bottom: -10vh;
   }
   @media (max-width: 768px) {
     position: relative;
-    &.odd {
-      top: 0;
+    &.odd, &.even {
+      top: 5vh;
+      bottom: 0vh;
     }
   }
 `;
@@ -68,7 +67,7 @@ const vertexShader = `
     vec3 vertexPosition = aVertexPosition;
 
     // cool effect on scroll
-    vertexPosition.x += sin(((vertexPosition.y + 1.0) / 2.0) * 3.141592) * (sin(uPlaneDeformation / 90.0));
+
 
     gl_Position = uPMatrix * uMVMatrix * vec4(vertexPosition, 1.0);
     
@@ -96,6 +95,8 @@ const fragmentShader = `
   uniform vec2 uResolution;
   uniform float uTime;
   uniform float uEven;
+  uniform float uMobile;
+  uniform float uNumber;
 
   float sqrLen(vec2 vec)
   {
@@ -113,7 +114,7 @@ const fragmentShader = `
     f = f*f*(3.0-2.0*f);
     
     vec2 uv = (p.xy+vec2(37.0,1.0)*p.z) + f.xy;
-    vec2 rg = texture2D( noiseTexture, (uv+0.5)/256.0, -100.0 ).yx;
+    vec2 rg = texture2D( noiseTexture, (uv+(0.33 * (uNumber)))/256.0, -100.0 ).yx;
     return mix( rg.x, rg.y, f.z );
   }
 
@@ -164,11 +165,11 @@ const fragmentShader = `
 
   float FX2(float val, float noise, float expansion, float time)
   {    
-      noise 		= pow(noise, 6.0);
+      noise 		= pow(noise, 5.0);
       
       val 		= val * (expansion);
       float str 	= (1.0 + val * time) * (expansion);
-      float str2 	= pow(str, 20.0) ;
+      float str2 	= pow(str, 19.0) ;
       str 		= str2 * noise;
       str 		= mapToRange(0.2, 1.0, 0.0, 1.0, str);
       
@@ -180,17 +181,22 @@ const fragmentShader = `
       val = clamp(val, 0.0, 1.0);
       float str 	= mapToRange(0.3, 1.0, 0.0, 1.0, FX2(val, noise, expansion, time)) * expansion;
       float ins 	= FX2(val * pow(expansion - 0.5, 1.0), noise, expansion, time) * expansion;
-      ins 		= mapToRange(0.0, 20.0, 0.0, 1.0, ins);
+      ins 		= mapToRange(0.0, 50.0, 0.0, 1.0, ins);
       str 		+= ins;
       
       return str;
   }
+
+  float easeOutCubic(float t) {
+    return 1.0 - pow(1.0 - t, 3.0);
+  }
   
   void main() {
-    float time = uTime/500.;
+    float time = uTime/300.;
+    time = easeOutCubic(time);
 
     vec2 fragPos = vNoiseCoord;
-	  vec3 pos = vec3(fragPos, time * 0.0001 * SPEED);
+	  vec3 pos = vec3(fragPos, time * 0.0001);
     
     //noise sampling
     vec3 scaledPos 	= 4.0 * pos;
@@ -206,13 +212,10 @@ const fragmentShader = `
         ampl *= 0.5;
     }
     noiseVal /= maxValue;
-    vec2 center = vec2(0.5, 0.4);
-    if (uEven == 1.0) {
-      center = vec2(0.5, 0.6);
-    }        
 
-    float maxRadius = min(uResolution.x, uResolution.y) * 0.95;  // Adjust this to set how close the mask can get to edges
-    float currentRadius = 0.5 * time;
+    vec2 center = vec2(0.4, 0.5);
+
+    float currentRadius = 0.47 * time;
 
     float expansion = sqrLen(fragPos - center);
     expansion = 1.0 - expansion;
@@ -223,8 +226,7 @@ const fragmentShader = `
 
     res = clamp(res, 0.0, 1.0);
     vec3 targetColor = vec3(248./255., 248./255., 248./255.);
-    //gl_FragColor = texture2D(noiseTexture, vNoiseCoord); 
-    //gl_FragColor = vec4(noiseVal, noiseVal, noiseVal, 1.0);
+
     gl_FragColor = vec4(mix(targetColor, texture2D(planeTexture, vTextureCoord).rgb, res), 1.0);
   }
 `;
@@ -233,6 +235,7 @@ const Picture = styled.img`
   height: 100%;
   object-fit: cover;
   display: none;
+  padding-bottom: 6rem;
 `;
 
 const Noise = styled.img`
@@ -241,7 +244,7 @@ const Noise = styled.img`
   object-fit: cover;
 `;
 
-function ProjectImage({ number, imageUrl, even }) {
+function ProjectImage({ isMobile, number, imageUrl, even }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
 
@@ -249,7 +252,7 @@ function ProjectImage({ number, imageUrl, even }) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
-          isVisible.current = entry.isIntersecting;
+          isVisible.current = entry.isIntersecting > 0 ? true : false;
         });
       },
       {
@@ -272,6 +275,7 @@ function ProjectImage({ number, imageUrl, even }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
+    plane.uniforms.mobile.value = isMobile ? 1 : 0
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
   }
 
@@ -300,6 +304,16 @@ function ProjectImage({ number, imageUrl, even }) {
       name: "uEven",
       type: "1f",
       value: even ? 1 : 0
+    },
+    mobile: {
+      name: "uMobile",
+      type: "1f",
+      value: 0
+    },
+    number: {
+      name: "uNumber",
+      type: "1f",
+      value: number
     }
   };
 
@@ -307,7 +321,7 @@ function ProjectImage({ number, imageUrl, even }) {
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
-    else if (isVisible.current && plane.uniforms.time.value < 500) {
+    else if (isVisible.current && plane.uniforms.time.value < 300) {
       plane.uniforms.time.value += 1;
     }
   };

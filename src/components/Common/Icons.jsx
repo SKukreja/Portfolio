@@ -7,6 +7,7 @@ import { Square } from '@styled-icons/bootstrap/Square';
 import { Envelope } from '@styled-icons/bootstrap/Envelope';
 import { ArrowRight } from '@styled-icons/bootstrap/ArrowRight';
 import { Codesandbox } from '@styled-icons/simple-icons/Codesandbox';
+import { Diamond } from '@styled-icons/fa-solid/Diamond';
 import { Php } from '@styled-icons/simple-icons/Php';
 import { Javascript } from '@styled-icons/simple-icons/Javascript';
 import { Mysql } from '@styled-icons/simple-icons/Mysql';
@@ -49,4 +50,5 @@ export const Icons = {
     "Framer Motion" : <Framer />,
     "Strapi" : <Strapi />,
     "React" : <ReactLogo />,
+    "Diamond" : <Diamond />
 } 

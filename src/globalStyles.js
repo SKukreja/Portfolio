@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
     --accent-colour: #4F54D5;
     --secondary-colour: #9D282E;
     --black: #121518;
-    --body-text: clamp(1rem,1.1vw,1.3rem);
+    --body-text: clamp(1rem,1.1vw,1.4rem);
     --title-text: clamp(6rem,5vw,10rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;

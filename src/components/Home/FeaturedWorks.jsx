@@ -15,6 +15,7 @@ const Featured = styled(m.div)`
   justify-content: space-evenly;
   position: relative;
   align-items: center;
+  margin-left: 5vw;
   overflow: visible;
   @media (max-width: 1024px) {
     width: 100vw;
@@ -80,7 +81,7 @@ const Projects = styled(m.div)`
   height: 100%;
   overflow: visible;
   @media (max-width: 1024px) {
-    margin-top: 85vw;
+    margin-top: 10vw;
     flex-direction: column; 
   }
 `;
@@ -116,6 +117,7 @@ const Project = styled.div`
     margin-right: 5vw;
     flex-direction: column;
     width: 30vw;
+    max-width: 800px;
     height: 100%;
     align-items: center;
     justify-content: space-between;
@@ -348,83 +350,6 @@ const FeaturedWorks = ({ isMobile }) => {
     }),
   };
 
-  useCurtainsEvent(
-    "onRender",
-    (curtains) => {
-      // update our planes deformation
-      // increase/decrease the effect
-      planesDeformations.current = curtains.lerp(
-        planesDeformations.current,
-        0,
-        0.075
-      );
-
-      // update planes deformations
-      planes.forEach((plane) => {
-        plane.uniforms.planeDeformation.value = planesDeformations.current;
-      });
-    },
-    [planes]
-  );
-
-  useCurtainsEvent("onScroll", (curtains) => {
-    // get scroll deltas to apply the effect on scroll
-    const delta = curtains.getScrollDeltas();
-
-    // invert value for the effect
-    delta.x = -delta.x;
-    delta.y = -delta.y;
-
-    // threshold
-    if (delta.x > 10) {
-      delta.x = 10;
-    } else if (delta.x < -10) {
-      delta.x = -10;
-    }
-    if (delta.y > 10) {
-      delta.y = 10;
-    } else if (delta.y < -10) {
-      delta.y = -10;
-    }
-
-    if (Math.abs(delta.x) > Math.abs(planesDeformations.current)) {
-      planesDeformations.current = curtains.lerp(
-        planesDeformations.current,
-        delta.x,
-        0.5
-      );
-    }
-    else if (Math.abs(delta.y) > Math.abs(planesDeformations.current)) {
-      planesDeformations.current = curtains.lerp(
-        planesDeformations.current,
-        delta.y,
-        0.5
-      );
-    }
-  });
-
-  // post processing
-  const firstPassUniforms = {
-    timer: {
-      name: "uTimer",
-      type: "1f",
-      value: 0
-    },
-    displacement: {
-      name: "uDisplacement",
-      type: "1f",
-      value: 0
-    }
-  };
-
-  const secondPassUniforms = {
-    scrollEffect: {
-      name: "uScrollEffect",
-      type: "1f",
-      value: 0
-    }
-  };
-
   const onFirstPassReady = (shaderPass) => {
     shaderPass.loader.loadImage(
       "https://www.curtainsjs.com/examples/medias/displacement.jpg",
@@ -463,7 +388,7 @@ const FeaturedWorks = ({ isMobile }) => {
             <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
           ))}
 
-          <FXAAPass />
+
           </Projects>
         </Featured>
       )}

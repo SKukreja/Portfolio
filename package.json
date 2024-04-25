@@ -13,6 +13,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "@studio-freight/react-lenis": "^0.0.46",
     "@styled-icons/bootstrap": "^10.47.0",
+    "@styled-icons/fa-solid": "^10.47.0",
     "@styled-icons/simple-icons": "^10.46.0",
     "axios": "^1.6.8",
     "framer-motion": "^11.0.24",

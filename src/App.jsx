@@ -80,9 +80,9 @@ const App = () => {
 
 
   const options = {
-
-    lerp: 0.04,
+    lerp: 0.05,
     smoothWheel: true,
+    syncTouch: true,
     smoothTouch: false, //smooth scroll for touch devices            
     orientation: isMobile ? "vertical" : "horizontal", 
     gestureOrientataion: isMobile ? "vertical" : "horizontal"
@@ -114,8 +114,9 @@ const App = () => {
     <Curtains
       className="curtains-canvas"
       pixelRatio={Math.min(1.5, window.devicePixelRatio)}
-      antialias={false}
+      antialias={true}
       watchScroll={false}
+      premultipliedAlpha={true}
     >
       <ReactLenis root ref={lenisRef} options={options}>
         <LazyMotion features={domAnimation}>
