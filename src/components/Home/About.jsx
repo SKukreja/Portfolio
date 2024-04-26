@@ -305,15 +305,9 @@ const DiamondIcon = styled.div`
   user-select: none;
   pointer-events: none;
   margin-bottom: calc(var(--default-spacing) * 2);
-  @media (max-width: 1024px) {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    font-size: 2rem;
-  }
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
+  transform: scale(.75,1);
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const Border = styled(m.span)`

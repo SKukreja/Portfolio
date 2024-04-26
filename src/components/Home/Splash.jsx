@@ -4,10 +4,8 @@ import { Plane } from "react-curtains";
 
 const Scene = styled.div`
   position: relative;
-  height: 0;
   width: calc(var(--vh, 1vh) * 150);
   height: calc(var(--vh, 1vh) * 150);
-  position: relative;
   z-index: 1;
   overflow: visible;
   margin-top: calc(var(--vh, 1vh) * -30);

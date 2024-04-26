@@ -7,8 +7,6 @@ import ProfileImage from './ProfileImage';
 import Socials from './Socials';
 import WashedAwayText from './WashedAwayText';
 
-
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -101,7 +99,7 @@ const CopyrightSymbol = styled.span`
 const CopyrightText = styled.span`
 `;
 
-const Cover = () => {
+const Cover = ({ isMobile }) => {
   const { data, loading, error } = use(
     `/about?populate=deep`
   );
@@ -142,7 +140,7 @@ const Cover = () => {
         {({ inView, ref, entry }) => (
           <>
           <ProfileSection>
-            <ProfileImage imageUrl='avatar.png' />
+            <ProfileImage imageUrl='avatar.png' isMobile={isMobile} />
               <Bio ref={ref} className={`${inView ? 'active' : ''}`}>            
                 <Blurb
                   variants={fadeIn}

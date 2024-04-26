@@ -92,7 +92,7 @@ const Home = ({ $isMobile }) => {
           <Splash $isMobile={$isMobile} />
           <FeaturedWorks $isMobile={$isMobile} />
           <About />
-          <Cover />
+          <Cover $isMobile={$isMobile} />
         </Content>
     </Container>
   );
