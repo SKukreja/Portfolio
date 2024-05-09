@@ -3,8 +3,8 @@ import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { m, useAnimation } from 'framer-motion';
 import ProjectImage from './ProjectImage';
+import ProfileImage from './ProfileImage';
 import { InView, useInView } from 'react-intersection-observer';
-import { Plane, ShaderPass, FXAAPass, useCurtainsEvent } from "react-curtains";
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
@@ -14,8 +14,9 @@ const Featured = styled(m.div)`
   display: flex;
   justify-content: space-evenly;
   position: relative;
+  margin-left: -5vw;
   align-items: center;
-  margin-left: 5vw;
+  width: 200vw;
   overflow: visible;
   @media (max-width: 1024px) {
     width: 100vw;
@@ -42,7 +43,7 @@ const Header = styled(m.h1)`
   height: auto;
   top: 7.5rem;
   margin: 0;
-  left: -1rem;  
+  left: 5rem;  
   text-align: center;
   @media (max-width: 1024px) {    
     top: 0;
@@ -79,7 +80,9 @@ const ProjectName = styled(Link)`
 const Projects = styled(m.div)`
   display: flex;
   height: 100%;
+  width: 100%;
   overflow: visible;
+  justify-content: flex-end;
   @media (max-width: 1024px) {
     margin-top: 10vw;
     flex-direction: column; 
@@ -116,7 +119,7 @@ const Project = styled.div`
     margin-left: 5vw;
     margin-right: 5vw;
     flex-direction: column;
-    width: 30vw;
+    width: 25%;
     max-width: 800px;
     height: 100%;
     align-items: center;
@@ -208,51 +211,6 @@ const Spacer = styled.div`
 
 `;
 
-const firstPassFs = `
-  precision mediump float;
-
-  varying vec3 vVertexPosition;
-  varying vec2 vTextureCoord;
-
-  uniform sampler2D uRenderTexture;
-  uniform sampler2D displacementTexture;
-
-  uniform float uDisplacement;
-
-  void main( void ) {
-    vec2 textureCoords = vTextureCoord;
-    vec4 displacement = texture2D(displacementTexture, textureCoords);
-
-    // displace along Y axis
-    // textureCoords.x += (sin(displacement.r) / 5.0) * uDisplacement;
-    
-    gl_FragColor = texture2D(uRenderTexture, textureCoords);
-  }
-`;
-
-const secondPassFs = `
-  #ifdef GL_ES
-  precision mediump float;
-  #endif
-
-  varying vec3 vVertexPosition;
-  varying vec2 vTextureCoord;
-
-  uniform sampler2D uRenderTexture;
-
-  uniform float uScrollEffect;
-
-  void main() {
-    vec2 textureCoords = vTextureCoord;
-    vec2 texCenter = vec2(0.5, 0.5);
-
-    // distort around scene center
-    //textureCoords += vec2(texCenter - textureCoords).xy * sin(distance(texCenter, textureCoords)) * uScrollEffect / 175.0;
-
-    gl_FragColor = texture2D(uRenderTexture, textureCoords);
-  }
-`;
-
 
 const padNum = (num, targetLength) => {
   return num.toString().padStart(targetLength, "0");
@@ -285,10 +243,10 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
     <ProjectContent ref={projectRef} className={className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
-        <ProjectName to={"/project/" + project.attributes.slug}><AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} /></ProjectName>
+        <ProjectName to={"#"}><AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} /></ProjectName>
       </ProjectHeader>
       <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>{project.attributes.summary}</ProjectSummary>      
-      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"/project/" + project.attributes.slug}>Read More</ProjectLink>
+      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"#"}>Read More</ProjectLink>
     </ProjectContent>
   );
 }
@@ -301,13 +259,6 @@ const ProjectItem = ({ isMobile, project, number}) => {
     triggerOnce: true
   });
 
-  const [isFirefox, setIsFirefox] = useState(false);
-
-  const isFirefoxAndroid = navigator.userAgent.includes('Firefox');
-
-  useEffect(() => {    
-    setIsFirefox(isFirefoxAndroid);
-  }, []);
   return (
     <Project ref={viewRef} className={`${inView ? 'active' : ''} ${number % 2 === 0 ? 'odd' : 'even'}`}>
       {number % 2 == 0 ? (
@@ -331,12 +282,10 @@ const ProjectItem = ({ isMobile, project, number}) => {
   );
 };
 
-const FeaturedWorks = ({ isMobile }) => {
+const FeaturedWorks = ({ $isMobile }) => {
   const { data, loading, error } = use(
     `/home?populate=deep`
   );
-  const [planes, setPlanes] = useState([]);
-  const planesDeformations = useRef(0);
 
   const headerVariants = {
     hidden: { color: "var(--interact-hover-color)", opacity: 0 },
@@ -348,28 +297,6 @@ const FeaturedWorks = ({ isMobile }) => {
         type: 'linear',        
       },
     }),
-  };
-
-  const onFirstPassReady = (shaderPass) => {
-    shaderPass.loader.loadImage(
-      "https://www.curtainsjs.com/examples/medias/displacement.jpg",
-      {
-        sampler: "displacementTexture"
-      }
-    );
-  };
-
-  const onFirstPassRender = (shaderPass) => {
-    // update the uniforms
-    shaderPass.uniforms.timer.value++;
-    shaderPass.uniforms.displacement.value = planesDeformations.current / 60;
-  };
-
-  const onSecondPassRender = (shaderPass) => {
-    // update the uniforms
-    shaderPass.uniforms.scrollEffect.value = Math.abs(
-      planesDeformations.current
-    );
   };
   
   return (
@@ -385,7 +312,7 @@ const FeaturedWorks = ({ isMobile }) => {
           <Projects>
           {/* Loop through featured projects */}
           {data?.attributes.featured.works.data.map((project, number) => (
-            <ProjectItem key={project.id} isMobile={isMobile} project={project} number={number} />
+            <ProjectItem key={project.id} $isMobile={$isMobile} project={project} number={number} />
           ))}
 
 

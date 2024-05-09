@@ -3,6 +3,7 @@ import use from '../../hooks/use';
 import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 import { m } from 'framer-motion';
+import ProfileImage from './ProfileImage';
 import { useInView } from 'react-intersection-observer';
 
 const Container = styled.div`
@@ -372,7 +373,9 @@ const About = () => {
     visible: () => ({      
       opacity: 1,
       transition: {    
+        delay: 0.5,  
         duration: 3,
+        type: 'linear',
       },
     }),
   };
@@ -553,32 +556,32 @@ const About = () => {
             animate={inView ? 'visible' : 'hidden'}   
           /></ColumnHeader>
           <Table>
-              <TableRow 
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 1.5}}
-              >      
-                <TableColumn>
-                  <Primary>Software Engineering Technology</Primary>
-                  <Secondary>McMaster University</Secondary>                    
-                </TableColumn>
-                <Time>2018 - 2023</Time>
-                <Border />
-              </TableRow>
-              <TableRow 
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 1.7}}
-              >      
-                <TableColumn>
-                  <Primary>Software Development & Network Engineering</Primary>
-                  <Secondary>Sheridan College</Secondary>                    
-                </TableColumn>
-                <Time>2012 - 2015</Time>
-                <Border />
-              </TableRow>
+            <TableRow 
+              variants={rowVariants}
+              initial="hidden"
+              animate={inView ? 'visible' : 'hidden'}
+              custom={{delay: 1.5}}
+            >      
+              <TableColumn>
+                <Primary>Software Engineering Technology</Primary>
+                <Secondary>McMaster University</Secondary>                    
+              </TableColumn>
+              <Time>2018 - 2023</Time>
+              <Border />
+            </TableRow>
+            <TableRow 
+              variants={rowVariants}
+              initial="hidden"
+              animate={inView ? 'visible' : 'hidden'}
+              custom={{delay: 1.7}}
+            >      
+              <TableColumn>
+                <Primary>Software Development & Network Engineering</Primary>
+                <Secondary>Sheridan College</Secondary>                    
+              </TableColumn>
+              <Time>2012 - 2015</Time>
+              <Border />
+            </TableRow>
           </Table>
         </Column>
       </TwoColumn>  

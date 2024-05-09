@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react'
+import React from 'react'
 import { m } from 'framer-motion'
 import styled from 'styled-components'
 import AnimatedText from './AnimatedText'
@@ -131,6 +131,7 @@ const Button = styled(Link)`
 
 const NameContainer = styled(m.div)`
   width: 100%;
+  max-width: 1440px;
   margin-top: 1rem;
   margin-bottom: 1rem;  
 `;
@@ -139,8 +140,6 @@ const NameSvg = styled(m.svg)`
 `;
 
 function Landing() {
-  const [fillAnimation, setFillAnimation] = useState(false);
-
   return (
     <Scene>
       <SceneText>

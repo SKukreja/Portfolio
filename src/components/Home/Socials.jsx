@@ -9,6 +9,7 @@ const Container = styled(m.div)`
     display: flex;
     flex-direction: column;
     text-align: left;
+    z-index: 1001;
 `;
   
 const SocialLink = styled(m.a)`

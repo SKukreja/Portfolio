@@ -26,7 +26,7 @@ const Blur = styled.div`
       : ''};
 `;
  
-const Layout = ({ $isMobile }) => {
+const Layout = ({ $isMobile, $isFirefox }) => {
   const { data, loading, error } = use('/social?populate=deep');  
   const { isModalOpen } = useContext(ModalContext);
   const location = useLocation();
@@ -61,7 +61,7 @@ const Layout = ({ $isMobile }) => {
         <Blur $isModalOpen={isModalOpen}>
             <AnimatePresence mode='wait'>
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Home $isMobile={$isMobile} />} />
+              <Route path="/" element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
               <Route path="/project/:id" element={<Project />} />
               <Route path="/work" element={<Work />} />
               <Route path="/contact" element={<Contact />} />
@@ -73,11 +73,22 @@ const Layout = ({ $isMobile }) => {
   );
 };
 
+const ScrollToTop = (props) => {
+  const location = useLocation();
+  const lenis = useLenis();
+  useEffect(() => {
+    if (!location.hash) {
+      lenis?.scrollTo(0,0)
+    }
+  }, [location]);
+
+  return <>{props.children}</>
+};
+
 const App = () => {  
   const [isMobile, setIsMobile] = useState(false);
+  const [isFirefox, setIsFirefox] = useState(false);
   const lenisRef = useRef()  
-
-
 
   const options = {
     lerp: 0.05,
@@ -87,10 +98,23 @@ const App = () => {
     orientation: isMobile ? "vertical" : "horizontal", 
     gestureOrientataion: isMobile ? "vertical" : "horizontal"
   }
-
+  
+  useEffect(() => {    
+    let vh = window.innerHeight * 0.01;
+    // Set the --vh custom property
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    
+    window.addEventListener('resize', () => {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)');
+    const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
+
+    setIsFirefox(isFirefoxAndroid);
 
     // Handler to set state based on the media query
     function handleResize(e) {
@@ -123,7 +147,8 @@ const App = () => {
           <MotionConfig reducedMotion="user">
             <ModalProvider>
               <Router>
-                <Layout $isMobile={isMobile} />
+                <ScrollToTop />
+                <Layout $isMobile={isMobile} $isFirefox={isFirefox} />
               </Router>
             </ModalProvider> 
           </MotionConfig>

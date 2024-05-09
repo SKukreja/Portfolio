@@ -38,7 +38,7 @@ const Nav = styled.nav`
     content: "";
     background: url("Noise.png");
     background-repeat: repeat;
-    opacity: 1;
+    opacity: 0.75;
     width: 100%;
     height: 100%;
     pointer-events: none;

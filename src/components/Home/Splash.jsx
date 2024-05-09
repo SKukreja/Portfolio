@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { Plane } from "react-curtains";
+import { Plane, useCurtains } from "react-curtains";
 
 const Scene = styled.div`
   position: relative;
@@ -9,6 +9,7 @@ const Scene = styled.div`
   z-index: 1;
   overflow: visible;
   margin-top: calc(var(--vh, 1vh) * -30);
+  margin-left: -20vw;  
   @media (max-width: 1024px) {
     width: 200vw;
     height: 200vw;
@@ -16,7 +17,7 @@ const Scene = styled.div`
     margin-left: -50vw;    
   }
   @media (max-width: 768px) {
-    margin-top: -115vw;
+    margin-top: -175vw;
   }
 `;
 
@@ -177,11 +178,11 @@ const fragmentShader = `
   }
 
   float easeOutCubic(float t) {
-    return 1.0 - pow(1.0 - t, 3.0);
+    return 1.0 - pow(1.0 - t, 4.0);
   }
   
   void main() {
-    float time = uTime/400.;
+    float time = uTime/300.;
     time = easeOutCubic(time);
 
     vec2 fragPos = vNoiseCoord;
@@ -234,7 +235,8 @@ const Noise = styled.img`
 
 function Splash({ isMobile }) {
   const ref = useRef(null);
-  const isVisible = useRef(true);
+  const isVisible = useRef(false);
+  const curtains = useCurtains();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -246,7 +248,7 @@ function Splash({ isMobile }) {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0
+        threshold: 0.1
       }
     );
 
@@ -264,7 +266,8 @@ function Splash({ isMobile }) {
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
     plane.uniforms.mobile.value = isMobile ? 1 : 0
-    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
+    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]
+    curtains?.needRender() 
   }
 
   const onAfterResize = (plane) => {
@@ -299,7 +302,7 @@ function Splash({ isMobile }) {
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
-    else if (isVisible.current && plane.uniforms.time.value < 400) {
+    else if (isVisible.current && plane.uniforms.time.value < 300) {
       plane.uniforms.time.value += 1;
     }
   };

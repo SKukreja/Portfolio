@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { Plane } from "react-curtains";
+import { Plane, useCurtains } from "react-curtains";
 
 const Scene = styled.div`  
   position: absolute;
@@ -188,7 +188,7 @@ const fragmentShader = `
   }
 
   float easeOutCubic(float t) {
-    return 1.0 - pow(1.0 - t, 3.0);
+    return 1.0 - pow(1.0 - t, 4.0);
   }
   
   void main() {
@@ -247,6 +247,7 @@ const Noise = styled.img`
 function ProjectImage({ isMobile, number, imageUrl, even }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
+  const curtains = useCurtains();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -258,7 +259,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0
+        threshold: 0.1
       }
     );
 
@@ -277,6 +278,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
     const planeBox = plane.getBoundingRect()
     plane.uniforms.mobile.value = isMobile ? 1 : 0
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
+    curtains?.needRender();    
   }
 
   const onAfterResize = (plane) => {
@@ -318,6 +320,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
   };
 
   const onRender = (plane) => {
+
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }

@@ -149,15 +149,6 @@ const GlobalStyle = createGlobalStyle`
     }
   }  
 
-  .canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-  }
-
   html, body {
     margin: 0;
     padding: 0;    

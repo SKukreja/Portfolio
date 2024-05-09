@@ -7,39 +7,27 @@ import ProfileImage from './ProfileImage';
 import Socials from './Socials';
 import WashedAwayText from './WashedAwayText';
 
-const Container = styled.div`
+const Container = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: calc(25vw);
-  padding-left: 5vw;
+  width: 25vw;
+  margin-left: 5vw;
+  padding-left: 7.5vw;
+  padding-right: 7.5vw;
   height: calc(var(--vh) * 100);
-  padding-right: 5vw;  
-  z-index: 1001;  
   position: relative;  
   background: var(--black);
   color: var(--offwhite);
-  &::after {
-    content: "";
-    background: url("Noise.png");
-    background-repeat: repeat;
-    opacity: 1;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1002;
-    position: absolute;
-    inset: 0;
-  }
   @media (max-width: 1024px) {
-    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - var(--default-spacing) * 2 + 1px)' : 'calc(100svh - var(--default-spacing) * 2 + 1px)'};
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100vh - var(--default-spacing) * 2 + 1px)' : 'calc(100svh - var(--default-spacing) * 2 + 1px)'};
     margin-left: 0;
     padding: 0;    
     padding-top: var(--default-spacing);
     width: 100%;
   }
   @media (max-width: 768px) {
-    height: ${({ isFirefox }) => isFirefox ? 'calc(100vh - var(--default-spacing) * 3 + 1px)' : 'calc(100svh - var(--default-spacing) * 3 + 1px)'};
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100vh - var(--default-spacing) * 3 + 1px)' : 'calc(100svh - var(--default-spacing) * 3 + 1px)'};
   }
 `;
 
@@ -57,6 +45,7 @@ const Blurb = styled(m.div)`
   font-size: var(--body-text);
   width: 100%;
   overflow: visible;
+  z-index: 1001;
   font-weight: var(--body-weight);    
   & > p {
     margin: 0;
@@ -70,8 +59,8 @@ const ProfileSection = styled.div`
   width: 100%;    
   flex-wrap: nowrap;
   position: relative;
-  justify-content: flex-start;
-  height: calc(var(--vh) * 100);
+  justify-content: center;
+  height: 100%;
 `;
 
 const Footer = styled(m.div)`
@@ -85,6 +74,7 @@ const Footer = styled(m.div)`
   justify-content: flex-end;
   font-size: var(--body-text);
   font-family: var(--display-font);
+  z-index: 1001;
   vertical-align: middle;
   align-items: center;
 `;
@@ -99,15 +89,11 @@ const CopyrightSymbol = styled.span`
 const CopyrightText = styled.span`
 `;
 
-const Cover = ({ isMobile }) => {
+const Cover = ({ $isMobile, $isFirefox }) => {
   const { data, loading, error } = use(
     `/about?populate=deep`
   );
-
-  const [isFirefox, setIsFirefox] = useState(false);
-
-  const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
-
+  
   const fadeIn = {
     hidden: { opacity: 0, },
     visible: ({delay}) => ({      
@@ -121,27 +107,16 @@ const Cover = ({ isMobile }) => {
     }),
   };
 
-  useEffect(() => {    
-    setIsFirefox(isFirefoxAndroid);
 
-    let vh = window.innerHeight * 0.01;
-    // Set the --vh custom property
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-    
-    window.addEventListener('resize', () => {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    });
-  }, []);
 
   return (
-    <Container as={m.div} isFirefox={isFirefox}>
+    <Container $isFirefox={$isFirefox}>
       <InView>
         {({ inView, ref, entry }) => (
           <>
           <ProfileSection>
-            <ProfileImage imageUrl='avatar.png' isMobile={isMobile} />
-              <Bio ref={ref} className={`${inView ? 'active' : ''}`}>            
+              <ProfileImage $imageUrl='avatar.png' $isMobile={$isMobile} />
+              <Bio ref={ref} className={`${inView ? 'active' : ''}`}>                          
                 <Blurb
                   variants={fadeIn}
                   initial="hidden"

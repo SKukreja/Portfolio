@@ -7,6 +7,16 @@ import Cover from '../../components/Home/Cover'
 import { Helmet } from 'react-helmet-async'
 import styled from 'styled-components'
 
+const Container = styled.div`
+  position: relative;
+  background: var(--black);
+  overflow-y: hidden;
+  @media (max-width: 1024px) {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  } 
+`;
 
 const Content = styled.div`
   display: flex;
@@ -24,17 +34,6 @@ const Content = styled.div`
   }
 `;
 
-const Container = styled.div`
-  position: relative;
-  background: var(--black);
-  overflow-y: hidden;
-  @media (max-width: 1024px) {
-    height: auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-  } 
-`;
-
 const Noise = styled.div`
   background: url("Noise.png");
   background-repeat: repeat;
@@ -48,24 +47,25 @@ const Noise = styled.div`
   &::after {
     content: "";
     position: absolute;
-    width: 100%;
+    width: calc(100% - 40vw);
     height: 100%;
     pointer-events: none;
     opacity: 0.12;
     z-index: 999;
-    mix-blend-mode: multiply;
+    mix-blend-mode: color-burn;
     background: url("paper.jpg");
   }
 `;
 
 const BoxShadow = styled.div`
-  box-shadow: 2px 3px 20px var(--black), 0 0 250px #8f5922 inset;
+  box-shadow: 2px 3px 20px var(--black), 0 0 350px #8f5922 inset;
   position: absolute;
   width: 100%;
   height: calc(var(--vh) * 100);
   inset: 0;
   z-index: 10;
   pointer-events: none;
+  mix-blend-mode: multiply;
   @media (max-width: 1024px) {
     height: auto;
     width: 100%;
@@ -73,7 +73,7 @@ const BoxShadow = styled.div`
   }
 `;
 
-const Home = ({ $isMobile }) => {
+const Home = ({ $isMobile, $isFirefox }) => {
   const container = useRef(null);
   return (
     <Container
@@ -90,9 +90,9 @@ const Home = ({ $isMobile }) => {
           <BoxShadow />
           <Landing />
           <Splash $isMobile={$isMobile} />
-          <FeaturedWorks $isMobile={$isMobile} />
+          <FeaturedWorks $isMobile={$isMobile} $isFirefox={$isFirefox} />
           <About />
-          <Cover $isMobile={$isMobile} />
+          <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} />
         </Content>
     </Container>
   );
