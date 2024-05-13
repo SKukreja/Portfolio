@@ -8,13 +8,13 @@ const Scene = styled.div`
   height: calc(var(--vh, 1vh) * 150);
   z-index: 1;
   overflow: visible;
-  margin-top: calc(var(--vh, 1vh) * -30);
+  margin-top: calc(var(--vh, 1vh) * -35);
   margin-left: -20vw;  
   @media (max-width: 1024px) {
     width: 200vw;
     height: 200vw;
-    margin-top: -85vw;
-    margin-left: -50vw;    
+    margin-top: -140vw;
+    margin-left: -60vw;    
   }
   @media (max-width: 768px) {
     margin-top: -175vw;
@@ -155,11 +155,11 @@ const fragmentShader = `
 
   float FX2(float val, float noise, float expansion, float time)
   {    
-      noise 		= pow(noise, 4.0);
+      noise 		= pow(noise,2.8);
       
       val 		= val * (expansion);
       float str 	= (1.0 + val * time) * (expansion);
-      float str2 	= pow(str, 19.0) ;
+      float str2 	= pow(str, 20.) ;
       str 		= str2 * noise;
       str 		= mapToRange(0.2, 1.0, 0.0, 1.0, str);
       
@@ -189,7 +189,7 @@ const fragmentShader = `
 	  vec3 pos = vec3(fragPos, time * 0.0001);
     
     //noise sampling
-    vec3 scaledPos 	= 4.0 * pos;
+    vec3 scaledPos 	= 3.8 * pos;
     float noiseVal 	= 0.0;
     float ampl 		= 2.0;
     float maxValue 	= 0.0;
@@ -203,9 +203,9 @@ const fragmentShader = `
     }
     noiseVal /= maxValue;
 
-    vec2 center = vec2(0.4, 0.3);
+    vec2 center = vec2(0.5, 0.32);
 
-    float currentRadius = 0.5 * time;
+    float currentRadius = 0.38 * time;
 
     float expansion = sqrLen(fragPos - center);
     expansion = 1.0 - expansion;
@@ -225,11 +225,13 @@ const Picture = styled.img`
   height: 100%;
   width: 100%;
   display: none;
+  object-fit: cover;
 `;
 
 const Noise = styled.img`
   display: none;
   height: 100%;
+  width: 100%;
   object-fit: cover;
 `;
 
@@ -322,7 +324,7 @@ function Splash({ isMobile }) {
         onAfterResize={onAfterResize}
         onReady={setPlaneResolution}
       >
-        <Picture src={'placeholder.jpeg'} data-sampler="planeTexture" alt="" />
+        <Picture src={'splash.png'} data-sampler="planeTexture" alt="" />
         <Noise src={'splashnoise.png'} data-sampler="noiseTexture" alt="" />
       </ImagePlane>
     </Container>

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import use from '../../hooks/use';
 import { Icons } from './Icons';
+import { useLenis } from '@studio-freight/react-lenis';
 import { ModalContext } from './ModalContext.jsx';
 
 const slideInFromRight = keyframes`
@@ -38,11 +39,10 @@ const Nav = styled.nav`
     content: "";
     background: url("Noise.png");
     background-repeat: repeat;
-    opacity: 0.75;
+    opacity: 1;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1002;
     position: absolute;
     inset: 0;
   }
@@ -174,12 +174,26 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
     position: absolute;
     top: 0;
     bottom: 0;
+    background: url("Noise.png");
+    background-repeat: repeat;
     right: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(5px) saturate(180%) contrast(1.2);
+    backdrop-filter: blur(20px) saturate(180%) contrast(1.2);
     z-index: -1;
+  }
+  &::after {
+    content: "";
+    background: url("paper.jpg");
+    background-repeat: repeat;
+    opacity: 0.4;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mix-blend-mode: color-burn;
+    position: absolute;
+    inset: 0;
   }
 `;
 
@@ -261,13 +275,18 @@ const HamburgerButton = styled.button`
 `;
 
 const BoxShadow = styled.div`
-  box-shadow: 2px 3px 20px black, 0 0 250px #8f5922 inset;
+  box-shadow: 2px 3px 20px var(--black), 0 0 350px #8f5922 inset;
   position: absolute;
+  width: 100%;
+  height: calc(var(--vh) * 100);
   inset: 0;
-  z-index: 6;
+  z-index: 1003;
   pointer-events: none;
+  mix-blend-mode: multiply;
   @media (max-width: 1024px) {
+    height: auto;
     width: 100%;
+    box-shadow: 2px 3px 10px var(--black), 0 0 100px #8f5922 inset;
   }
 `;
 
@@ -287,10 +306,10 @@ function Navbar({ socialData }) {
   const socials = socialData;
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
   const [isSolid, setIsSolid] = useState(false);
-  const [scrollPos, setScrollPos] = useState(0);
   const [onHomePage, setOnHomePage] = useState(false);
   const path = usePath(); 
   const isSolidRef = useRef(isSolid);
+  const lenis = useLenis();
 
   useEffect(() => {
       isSolidRef.current = isSolid;
@@ -314,47 +333,21 @@ function Navbar({ socialData }) {
     }
   }, [onHomePage, path]);
 
+
+  
   useEffect(() => {    
-    let prevScrollpos = window.pageYOffset;
-    const onScroll = () => {
-      const currentScrollPos = window.pageYOffset;
-      setScrollPos(prevScrollpos === 0 || prevScrollpos > currentScrollPos ? "up" : "down");
-      prevScrollpos = currentScrollPos;
-      // handle the path check within the scroll event listener
-      if(path === '/') {
-        setIsSolid(true);
-      } else {
-        setIsSolid(true);
-      }
-    };
-  
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [path]); // remove the other scroll event listeners
-  
-  useEffect(() => {
-    let originalScrollY = 0;
     if (isModalOpen) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      originalScrollY = window.scrollY;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.top = `-${originalScrollY}px`;
+      lenis?.stop()
   
       return () => {
-        document.body.style.overflow = originalStyle;
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        //window.scrollTo(0, originalScrollY);        
+        lenis?.start()
       };
     } 
   }, [isModalOpen]);
 
   return (
     <>
-      <Nav $scrollPos={scrollPos} $isNavSolid={isSolid} $isMobile={isModalOpen}>
+      <Nav $isNavSolid={isSolid} $isMobile={isModalOpen}>
       <Left>
         <LogoContainer to="/">
           <Branding className="logo" src="/logo.svg" $isDark={isModalOpen} />

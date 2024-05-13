@@ -20,10 +20,12 @@ const Scene = styled.div`
   &.odd {
     bottom: -10vh;
   }
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     position: relative;
+    width: 100vw;
+    height: 100vw;
     &.odd, &.even {
-      top: 5vh;
+      top: 0vh;
       bottom: 0vh;
     }
   }
@@ -188,11 +190,11 @@ const fragmentShader = `
   }
 
   float easeOutCubic(float t) {
-    return 1.0 - pow(1.0 - t, 4.0);
+    return 1.0 - pow(1.0 - t, 3.0);
   }
   
   void main() {
-    float time = uTime/300.;
+    float time = uTime/400.;
     time = easeOutCubic(time);
 
     vec2 fragPos = vNoiseCoord;
@@ -236,6 +238,9 @@ const Picture = styled.img`
   object-fit: cover;
   display: none;
   padding-bottom: 6rem;
+  @media (max-width: 1024px) {
+    padding-bottom: 0;
+  }
 `;
 
 const Noise = styled.img`
@@ -324,7 +329,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
-    else if (isVisible.current && plane.uniforms.time.value < 300) {
+    else if (isVisible.current && plane.uniforms.time.value < 400) {
       plane.uniforms.time.value += 1;
     }
   };

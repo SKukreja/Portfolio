@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import use from '../../hooks/use';
 import styled, { keyframes } from 'styled-components';
 import { InView, useInView } from 'react-intersection-observer';
@@ -90,6 +90,7 @@ const CopyrightText = styled.span`
 `;
 
 const Cover = ({ $isMobile, $isFirefox }) => {
+
   const { data, loading, error } = use(
     `/about?populate=deep`
   );

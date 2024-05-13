@@ -29,6 +29,9 @@ const Content = styled.div`
     overflow-y: auto;
     overflow-x: hidden;    
   }
+  @media (max-width: 1024px) {
+    padding-top: calc(var(--default-spacing));
+  }
   @media (max-width: 768px) {
     padding-top: calc(var(--default-spacing) * 2);
   }
@@ -51,9 +54,16 @@ const Noise = styled.div`
     height: 100%;
     pointer-events: none;
     opacity: 0.12;
-    z-index: 999;
+    z-index: 5;
     mix-blend-mode: color-burn;
     background: url("paper.jpg");
+    @media (max-width: 1024px) {
+      width: 100%;
+      height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
+    }
+    @media (max-width: 768px) {
+      height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
+    }
   }
 `;
 
@@ -67,14 +77,20 @@ const BoxShadow = styled.div`
   pointer-events: none;
   mix-blend-mode: multiply;
   @media (max-width: 1024px) {
-    height: auto;
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
     width: 100%;
-    box-shadow: 2px 3px 10px var(--black), 0 0 100px #8f5922 inset;
+    box-shadow: 0 0 100px #8f5922 inset;
+  }
+  @media (max-width: 768px) {
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
   }
 `;
 
+export const CoverContext = React.createContext();
+
 const Home = ({ $isMobile, $isFirefox }) => {
   const container = useRef(null);
+  const [isInView, setIsInView] = useState(false);
   return (
     <Container
       initial={{ opacity: 0 }}
@@ -84,9 +100,10 @@ const Home = ({ $isMobile, $isFirefox }) => {
     > 
         <Helmet>
           <title>Sumit Kukreja</title>
-        </Helmet>        
+        </Helmet>
+        <CoverContext.Provider value={[isInView, setIsInView]}></CoverContext.Provider>
         <Content id="content-container" ref={container}>
-          <Noise />
+          <Noise $isFirefox={$isFirefox} />
           <BoxShadow />
           <Landing />
           <Splash $isMobile={$isMobile} />

@@ -10,7 +10,13 @@ const Scene = styled.div`
   margin-bottom: calc(var(--vh) * 10);
   overflow: visible;  
   @media (max-width: 1024px) {
-    height: calc(30% + var(--default-spacing));
+    width: 40%;
+    margin-top: calc(var(--vh) * 15);
+    margin-bottom: calc(var(--vh) * -35);
+  }
+  @media (max-width: 768px) {
+    margin-top: calc(var(--vh) * 17.5);
+    margin-bottom: calc(var(--vh) * -22.5);
   }
 `
 
@@ -187,9 +193,9 @@ void main() {
   }
   noiseVal /= maxValue;
 
-  vec2 center = vec2(0.5, 0.55);
+  vec2 center = vec2(0.48, 0.56);
 
-  float currentRadius = 0.2 * time;
+  float currentRadius = 0.21 * time;
 
   float expansion = sqrLen(fragPos - center);
   expansion = 1.0 - expansion;
@@ -207,7 +213,7 @@ void main() {
 
 const Picture = styled.img`
   height: 100%;
-  width: 80%;
+  width: 90%;
   object-fit: cover;
   display: none;
   filter: saturate(0.5) contrast(1.5) brightness(1.2);

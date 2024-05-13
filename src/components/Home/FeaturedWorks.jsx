@@ -12,16 +12,17 @@ import AnimatedText from './AnimatedText';
 const Featured = styled(m.div)`
   height: calc(var(--vh, 1vh) * 100);
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   position: relative;
-  margin-left: -5vw;
+  margin-left: 5vw;
   align-items: center;
   width: 200vw;
+  max-width: 4000px;
   overflow: visible;
   @media (max-width: 1024px) {
     width: 100vw;
-    height: auto;
-    margin-top: calc(var(--default-spacing) * 4);
+    height: calc(var(--vh) * 300);
+    margin-top: calc(var(--default-spacing));
     justify-content: flex-start;
     margin-left: 0;
   }
@@ -72,9 +73,6 @@ const ProjectName = styled(Link)`
   @media (max-width: 1024px) {
     font-size: 4vw;
   }
-  @media (max-width: 768px) {
-
-  }
 `;
 
 const Projects = styled(m.div)`
@@ -82,10 +80,11 @@ const Projects = styled(m.div)`
   height: 100%;
   width: 100%;
   overflow: visible;
-  justify-content: flex-end;
+  justify-content: space-between;
   @media (max-width: 1024px) {
-    margin-top: 10vw;
-    flex-direction: column; 
+    margin-top: 20vw;
+    flex-direction: column;
+    justify-content: space-between;
   }
 `;
 
@@ -107,8 +106,11 @@ const ProjectContent = styled.div`
     width: calc(100% - 2 * var(--default-spacing));
     margin: 0;
     position: relative;
-    margin-top: -15vw;
+    margin-top: -15vw;    
     padding: var(--default-spacing);
+    &.even, &.odd {
+      top: 0;    
+    }
   }
 `;
 
@@ -123,20 +125,21 @@ const Project = styled.div`
     max-width: 800px;
     height: 100%;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     @media (max-width: 1024px) {
       width: 100vw;
-      height: auto;
+      max-width: 100vw;
+      height: 25%;
       margin-left: 0;
       flex-direction: column;
       &.odd, &.odd .project-image {
         margin-top: calc(var(--default-spacing));        
-        margin-bottom: calc(var(--default-spacing) * 2); 
+        margin-bottom: calc(var(--default-spacing)); 
         flex-direction: column-reverse;
       }
       &.even, &.even .project-image {
         margin-top: calc(var(--default-spacing));        
-        margin-bottom: calc(var(--default-spacing) * 2);
+        margin-bottom: calc(var(--default-spacing));
         flex-direction: column;
       }
     }
@@ -197,9 +200,6 @@ const ProjectLink = styled(m(Link))`
     text-decoration: none;
     transform: scale(1.03);
   }
-  @media (max-width: 1024px) {
-
-  }
 `;
 
 const ProjectHeader = styled.div`
@@ -208,7 +208,7 @@ const ProjectHeader = styled.div`
 `;
 
 const Spacer = styled.div`
-
+  
 `;
 
 
@@ -246,7 +246,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
         <ProjectName to={"#"}><AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} /></ProjectName>
       </ProjectHeader>
       <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>{project.attributes.summary}</ProjectSummary>      
-      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"#"}>Read More</ProjectLink>
+      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"/project/" + project.attributes.slug}>Read More</ProjectLink>
     </ProjectContent>
   );
 }
@@ -288,9 +288,8 @@ const FeaturedWorks = ({ $isMobile }) => {
   );
 
   const headerVariants = {
-    hidden: { color: "var(--interact-hover-color)", opacity: 0 },
+    hidden: { opacity: 0 },
     visible: () => ({
-      color: "var(--black)",
       opacity: 1,
       transition: {
         duration: 3,
@@ -302,7 +301,7 @@ const FeaturedWorks = ({ $isMobile }) => {
   return (
     <InView triggerOnce>
       {({ inView, ref, entry }) => (
-        <Featured ref={ref}>
+        <Featured ref={ref} id={'featured-works'}>
           <Header
             initial="hidden"
             animate={inView ? "visible" : "hidden"}

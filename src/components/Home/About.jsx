@@ -17,11 +17,14 @@ const Container = styled.div`
   @media (max-width: 1024px) {
     padding-left: var(--default-spacing);
     padding-right: var(--default-spacing);
-    margin-top: 66vw;
+    margin-top: 60%;
     width: calc(100% - var(--default-spacing) * 2);
     height: auto;
     padding-bottom: calc(var(--default-spacing) * 2);
     flex-direction: column;
+  }
+  @media (max-width: 768px) {
+    margin-top: 70%;
   }
 `;
 
@@ -79,6 +82,9 @@ const ColumnHeader = styled(m.h2)`
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
   @media (max-width: 1024px) {
     &::before {
@@ -117,6 +123,9 @@ const Blurb = styled(m.div)`
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 60%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 50%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 40%);
     background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%), radial-gradient(var(--offwhite) 0%,transparent 40%);
     z-index: -1;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
   @media (max-width: 1024px) {
     &::before {
@@ -136,7 +145,7 @@ const ProfileSection = styled.div`
   position: relative;
   @media (max-width: 1024px) {
     padding-top: 0;
-    margin-top: -10rem;
+    margin-top: 0;
     width: 100%;
     height: auto;
     padding-left: 0;
@@ -231,6 +240,9 @@ const Column = styled.div`
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
   @media (max-width: 1024px) {
     width: 100%;
@@ -263,6 +275,9 @@ const TableColumn = styled.div`
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
 `;
 
@@ -295,6 +310,9 @@ const TableRow = styled(m.div)`
     background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 69%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 56%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 66%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 63%);
     background: radial-gradient(var(--offwhite) 0%,transparent 69%),radial-gradient(var(--offwhite) 0%,transparent 56%), radial-gradient(var(--offwhite) 0%,transparent 66%), radial-gradient(var(--offwhite) 0%,transparent 63%);
     z-index: -1;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
 `;
 
@@ -422,9 +440,8 @@ const About = () => {
   }, [data]);
 
   const headerVariants = {
-    hidden: { color: "var(--interact-hover-color)", opacity: 0 },
+    hidden: { opacity: 0 },
     visible: () => ({
-      color: "var(--black)",
       opacity: 1,
       transition: {
         duration: 3,

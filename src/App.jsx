@@ -15,32 +15,36 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import use from './hooks/use';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
+import { Lenis } from '@studio-freight/react-lenis';
 
 const Blur = styled.div`
   ${({ $isModalOpen }) =>
     $isModalOpen
       ? `
-    filter: blur(10px);
-    transition: filter 0.3s ease-in-out;    
+
   `
       : ''};
 `;
- 
-const Layout = ({ $isMobile, $isFirefox }) => {
-  const { data, loading, error } = use('/social?populate=deep');  
-  const { isModalOpen } = useContext(ModalContext);
-  const location = useLocation();
-  const [curtainsRef, setCurtainsRef] = useState(null)
 
+const LenisCurtainsSync = ({ $isMobile }) => {
+  const [curtainsRef, setCurtainsRef] = useState(null)
+  
   useCurtains((curtains) => {
     setCurtainsRef(curtains)
   });
 
   useLenis(({ scroll }) => {
-    if (!curtainsRef) return
+    if(curtainsRef === null) return
     if ($isMobile) curtainsRef.updateScrollValues(0, scroll)
     else curtainsRef.updateScrollValues(scroll, 0)
   });
+}
+ 
+const Layout = ({ $isMobile, $isFirefox }) => {
+  const { data, loading, error } = use('/social?populate=deep');  
+  const { isModalOpen } = useContext(ModalContext);
+  const location = useLocation()
+
 
   useEffect(() => {
     const loadingScreen = document.getElementById('loading-screen');
@@ -59,6 +63,14 @@ const Layout = ({ $isMobile, $isFirefox }) => {
           <link rel="icon" type="image/png" href="/favicon.ico" />         
         </Helmet>
         <Blur $isModalOpen={isModalOpen}>
+        <Curtains
+          className="curtains-canvas"
+          pixelRatio={Math.min(1.5, window.devicePixelRatio)}
+          antialias={true}
+          watchScroll={false}
+          premultipliedAlpha={true}
+        >
+            <LenisCurtainsSync $isMobile={$isMobile} />
             <AnimatePresence mode='wait'>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
@@ -67,6 +79,7 @@ const Layout = ({ $isMobile, $isFirefox }) => {
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </AnimatePresence>
+          </Curtains>
         </Blur>
       </HelmetProvider>
     </div>
@@ -135,13 +148,6 @@ const App = () => {
   }, [isMobile])
 
   return (
-    <Curtains
-      className="curtains-canvas"
-      pixelRatio={Math.min(1.5, window.devicePixelRatio)}
-      antialias={true}
-      watchScroll={false}
-      premultipliedAlpha={true}
-    >
       <ReactLenis root ref={lenisRef} options={options}>
         <LazyMotion features={domAnimation}>
           <MotionConfig reducedMotion="user">
@@ -154,7 +160,6 @@ const App = () => {
           </MotionConfig>
         </LazyMotion>
       </ReactLenis>
-    </Curtains>
   );
 }
 

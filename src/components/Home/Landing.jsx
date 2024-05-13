@@ -23,9 +23,7 @@ const Scene = styled(m.div)`
     width: 100%;    
     margin-left: 0;
     align-items: flex-start;
-  }
-  @media (max-width: 768px) {
-    margin-top: var(--default-spacing);
+    margin-top: 0;
   }
 `;
 
@@ -88,16 +86,11 @@ const ActionButtons = styled(m.div)`
   width: 100%;
   justify-content: flex-start;
   @media (max-width: 1024px) {
-    margin-top: var(--default-spacing);    
-    align-items: flex-start;    
-    width: 100%;
-  }  
-  @media (max-width: 768px) {
     margin-top: 25vh;
     margin-top: 25svh;
     flex-direction: column;
     margin-top: var(--default-spacing);
-  }
+  }  
 `;
 
 const Button = styled(Link)`
@@ -164,8 +157,8 @@ function Landing() {
         </NameContainer>
         <Intro><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
         <ActionButtons initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 2 }}>
-          <Button to="/work"><p>{Icons["Arrow Right"]} View my work</p></Button>
-          <Button to="/about"><p>{Icons["Arrow Right"]} More about me</p></Button>
+          <Button to={"#featured-works"}><p>{Icons["Arrow Right"]} View my work</p></Button>
+          <Button to={"#about"}><p>{Icons["Arrow Right"]} More about me</p></Button>
         </ActionButtons>      
       </SceneText>
     </Scene>
