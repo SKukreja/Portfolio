@@ -58,19 +58,27 @@ const SceneText = styled(m.div)`
   &::before {
     content: "";
     position: absolute;
-    top: 0;
+    top: -30%;
     opacity: 1;
-    height: 100%;
+    height: 180%;
     width: 100%;
-    left: 0;  
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),-webkit-radial-gradient(var(--offwhite) 0%,transparent 70%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%);
+    left: 0%;  
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),
+                -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),
+                -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%),
+                -webkit-radial-gradient(var(--offwhite) 0%,transparent 60%),  
+                -webkit-radial-gradient(var(--offwhite) 0%,transparent 50%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%),
+                radial-gradient(var(--offwhite) 0%,transparent 70%),
+                radial-gradient(var(--offwhite) 0%,transparent 70%),
+                radial-gradient(var(--offwhite) 0%,transparent 60%),
+                radial-gradient(var(--offwhite) 0%,transparent 50%);
     z-index: -1;
   }
   @media (max-width: 1024px) {
     padding: var(--default-spacing);
     width: calc(100% - var(--default-spacing) * 2);
-    margin-top: 3rem;
+    margin-top: 2rem;
     margin-left: auto;
     margin-right: auto;
     justify-content: flex-start;

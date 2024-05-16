@@ -315,7 +315,7 @@ function ProfileImage({ $imageUrl, $isMobile }) {
           onReady={setPlaneResolution} 
         >
           <Picture src={$imageUrl} data-sampler="planeTexture" alt="" />
-          <Noise src={'profilenoise.png'} data-sampler="noiseTexture" alt="" />
+          <Noise src={'/profilenoise.png'} data-sampler="noiseTexture" alt="" />
         </ImagePlane>
       </Container>
     </Scene>

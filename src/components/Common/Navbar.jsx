@@ -37,7 +37,7 @@ const Nav = styled.nav`
   z-index: 1002;    
   &::after {
     content: "";
-    background: url("Noise.png");
+    background: url("/Noise.png");
     background-repeat: repeat;
     opacity: 1;
     width: 100%;

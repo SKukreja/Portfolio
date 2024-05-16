@@ -116,7 +116,7 @@ const Cover = ({ $isMobile, $isFirefox }) => {
         {({ inView, ref, entry }) => (
           <>
           <ProfileSection>
-              <ProfileImage $imageUrl='avatar.png' $isMobile={$isMobile} />
+              <ProfileImage $imageUrl='/avatar.png' $isMobile={$isMobile} />
               <Bio ref={ref} className={`${inView ? 'active' : ''}`}>                          
                 <Blurb
                   variants={fadeIn}

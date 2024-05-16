@@ -350,7 +350,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
           onReady={setPlaneResolution}
         >
           <Picture src={imageUrl} data-sampler="planeTexture" alt="" />
-          <Noise src={'inknoise.png'} data-sampler="noiseTexture" alt="" />
+          <Noise src={'/inknoise.png'} data-sampler="noiseTexture" alt="" />
         </ImagePlane>
       </Container>
     </Scene>

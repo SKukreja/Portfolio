@@ -8,16 +8,16 @@ const Scene = styled.div`
   height: calc(var(--vh, 1vh) * 150);
   z-index: 1;
   overflow: visible;
-  margin-top: calc(var(--vh, 1vh) * -35);
-  margin-left: -20vw;  
+  margin-top: calc(var(--vh, 1vh) * -37.5);
+  margin-left: -25vw;  
   @media (max-width: 1024px) {
-    width: 200vw;
-    height: 200vw;
-    margin-top: -140vw;
-    margin-left: -60vw;    
+    width: 150vw;
+    height: 150vw;
+    margin-top: -120vw;
+    margin-left: -30vw;    
   }
   @media (max-width: 768px) {
-    margin-top: -175vw;
+    margin-top: -145vw;
   }
 `;
 
@@ -94,7 +94,7 @@ const fragmentShader = `
   }
 
   vec2 random2( vec2 p ) {
-      return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
+      return fract(sin(vec2(dot(p,vec2(115.1,311.7)),dot(p,vec2(289.5,183.3))))*37958.5453);
   }
 
   float noise( in vec3 x )
@@ -103,7 +103,7 @@ const fragmentShader = `
     vec3 f = fract(x);
     f = f*f*(3.0-2.0*f);
     
-    vec2 uv = (p.xy+vec2(37.0,1.0)*p.z) + f.xy;
+    vec2 uv = (p.xy+vec2(32.0,1.0)*p.z) + f.xy;
     vec2 rg = texture2D( noiseTexture, (uv+0.5)/256.0, -100.0 ).yx;
     return mix( rg.x, rg.y, f.z );
   }
@@ -155,13 +155,13 @@ const fragmentShader = `
 
   float FX2(float val, float noise, float expansion, float time)
   {    
-      noise 		= pow(noise,2.8);
+      noise 		= pow(noise,2.4);
       
       val 		= val * (expansion);
       float str 	= (1.0 + val * time) * (expansion);
-      float str2 	= pow(str, 20.) ;
+      float str2 	= pow(str, 22.) ;
       str 		= str2 * noise;
-      str 		= mapToRange(0.2, 1.0, 0.0, 1.0, str);
+      str 		= mapToRange(0.1, 1.0, 0.0, 1.0, str);
       
       return str;
   }
@@ -189,9 +189,9 @@ const fragmentShader = `
 	  vec3 pos = vec3(fragPos, time * 0.0001);
     
     //noise sampling
-    vec3 scaledPos 	= 3.8 * pos;
+    vec3 scaledPos 	= 4. * pos;
     float noiseVal 	= 0.0;
-    float ampl 		= 2.0;
+    float ampl 		= 4.0;
     float maxValue 	= 0.0;
     
     for(float i = 0.0; i < 8.0; ++i)
@@ -199,13 +199,13 @@ const fragmentShader = `
         noiseVal += noise(scaledPos) * ampl;
         scaledPos *= 2.0;
         maxValue += ampl;
-        ampl *= 0.5;
+        ampl *= 0.4;
     }
     noiseVal /= maxValue;
 
-    vec2 center = vec2(0.5, 0.32);
+    vec2 center = vec2(0.47, 0.28);
 
-    float currentRadius = 0.38 * time;
+    float currentRadius = 0.35 * time;
 
     float expansion = sqrLen(fragPos - center);
     expansion = 1.0 - expansion;
@@ -223,7 +223,7 @@ const fragmentShader = `
 
 const Picture = styled.img`
   height: 100%;
-  width: 100%;
+  width: 100%;  
   display: none;
   object-fit: cover;
 `;
@@ -324,8 +324,8 @@ function Splash({ isMobile }) {
         onAfterResize={onAfterResize}
         onReady={setPlaneResolution}
       >
-        <Picture src={'splash.png'} data-sampler="planeTexture" alt="" />
-        <Noise src={'splashnoise.png'} data-sampler="noiseTexture" alt="" />
+        <Picture src={'/splash.png'} data-sampler="planeTexture" alt="" />
+        <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />
       </ImagePlane>
     </Container>
   </Scene>
