@@ -1,189 +1,83 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
-import { InView, useInView } from 'react-intersection-observer';
+import styled from 'styled-components';
 import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
-import Slider from '../../components/Project/Slider';
-import { m } from 'framer-motion'
-import Footer from '../../components/Common/Footer';
 import { Helmet } from 'react-helmet-async';
-import Landing from '../../components/Home/Landing'
 import ProjectTitle from './ProjectTitle';
 import ProjectSplash from './ProjectSplash';
-import Splash from '../../components/Home/Splash'
-import FeaturedWorks from '../../components/Home/FeaturedWorks'
-import About from '../../components/Home/About'
-import Cover from '../../components/Home/Cover'
+import ProjectBlurb from './ProjectBlurb';
+import Cover from '../../components/Home/Cover';
+import Figure from './Figure';
+import About from '../../components/Home/About';
 
 const Container = styled.div`
   position: relative;
   overflow-y: hidden;
+  display: flex;
+  padding-left: 80px;
   @media (max-width: 1024px) {
+    padding-left: 0;
+    padding-top: 80px;
     height: auto;
     overflow-y: auto;
     overflow-x: hidden;
+    flex-direction: column;
+    width: 100vw;
   } 
 `;
 
-const Content = styled.div`
-  display: flex;
-  background: var(--offwhite);
-  position: relative;
-  overflow-y: hidden;
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    width: 100vw;
-    overflow-y: auto;
-    overflow-x: hidden;    
-  }
-  @media (max-width: 1024px) {
-    padding-top: calc(var(--default-spacing));
-  }
-  @media (max-width: 768px) {
-    padding-top: calc(var(--default-spacing) * 2);
-  }
-`;
-
-const Noise = styled.div`
-  background: url("Noise.png");
-  background-repeat: repeat;
-  opacity: 1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1001;
-  &::after {
-    content: "";
-    position: absolute;
-    width: calc(100% - 40vw);
-    height: 100%;
-    pointer-events: none;
-    opacity: 0.12;
-    z-index: 5;
-    mix-blend-mode: color-burn;
-    background: url("paper.jpg");
-    @media (max-width: 1024px) {
-      width: 100%;
-      height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
-    }
-    @media (max-width: 768px) {
-      height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
-    }
-  }
-`;
-
-const BoxShadow = styled.div`
-  box-shadow: 2px 3px 20px var(--black), 0 0 350px #8f5922 inset;
-  position: absolute;
-  width: 100%;
-  height: calc(var(--vh) * 100);
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  @media (max-width: 1024px) {
-    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
-    width: 100%;
-    box-shadow: 0 0 100px #8f5922 inset;
-  }
-  @media (max-width: 768px) {
-    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
-  }
-`;
-
-const ProjectContainer = styled.div`
+const ProjectLanding = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: var(--content-margin-top);
-`;
-
-const Browser = styled.div`
-  width: var(--desktop-container-width);
+  width: auto;
+  height: 100vh;
+  color: var(--black);
   position: relative;
-  aspect-ratio: 16/9;
-  margin-bottom: var(--article-spacing);
   @media (max-width: 1024px) {
-    width: calc(100% - 3rem);
+    width: 100vw;
+    height: calc(var(--vh, 1vh) * 100 - 80px);
   }
 `;
 
-const Window = styled.div`
-  border: 5px solid #FF6281;
-  border-top: 50px solid #FF6281;
-  box-shadow: 0px 0px 15px 3px #050829;
-  aspect-ratio: 16/9;
-  @media (max-width: 1024px) {
-    border: 3px solid #FF6281;
-    border-top: 25px solid #FF6281;
-  }
-`;
-
-const Website = styled.div`
-  width: calc(100% - 10px);
-  aspect-ratio: 16/9;
-  background-position: center;
+const ProjectLandingText = styled.div`
   position: absolute;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
-  background-size: cover;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: right;
-  position: absolute;
-  top: 5px;
-  right: 0;
-  height: 40px;
+  bottom: 7.5rem;
+  left: 7.5rem;
+  height: 25%;
+  width: calc(100% - var(--default-spacing) * 2);
+  display: block;
   @media (max-width: 1024px) {
-    top: 3px;
-    height: 20px;
-  }
-`;
-
-const Button = styled.div`
-  width: 40px;
-  height: 40px;
-  color: black;
-  font-size: 1.25rem;
-  display: flex;
-  margin-left: 5px;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 1024px) {
-    margin-left: 3px;
-    width: 20px;
-    height: 20px;
-    font-size: 1rem;
+    height: auto;
+    left: var(--default-spacing);
+    max-width: calc(100% - var(--default-spacing) * 2);
+    bottom: 120px; 
   }
 `;
 
 const StackComponents = styled.div`
   display: flex;
-  width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  align-content: flex-start;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const ProjectTechnology = styled.div`
   font-size: var(--body-text);
-  font-family: 'Satoshi';
+  font-family: var(--body-font);
   height: 4rem;
   display: flex;
-  width: 33%;
+  flex-direction: row;
   align-items: center;
   line-height: 2;
-  letter-spacing: 0.5px;
-  justify-content: start;
+  text-align: left;
+  letter-spacing: 0.5px;  
   & svg {
+    width: 40px;
     font-size: 2rem;
     padding-right: 1rem;
   }
@@ -194,140 +88,105 @@ const ProjectTechnology = styled.div`
 `;
 
 const ProjectInfo = styled.div`
-  display: flex;
-  flex-direction: column;
   line-height: 2;
-  letter-spacing: 0.5px;
-  align-items: center;
-  width: 100%;
-  padding: 1rem;
 `;
 
-const Section = styled.div`
-  display: flex;
-  width: calc(var(--desktop-container-width) * 3/4);
-  margin-bottom: var(--article-spacing);
-  &.bw {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  &.bw.active {
-    opacity: 1;
-  }
-  &.figure {
-    width: 50%;
-  }
-  @media (max-width: 1600px) {
-    &.figure {
-      width: 60%;
-    }
-  }
-  @media (max-width: 1440px) {
-    &.figure {
-      width: 100%;
-    }
-  }
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    width: 100%;
-  }
-`;
-
-const TextSection = styled.div`
-  display: flex;
-  opacity: 1;
-  transition: opacity 0.5s ease;
-  &.active {
-    opacity: 1;
-  }
+const TextSection = styled.div` 
+  text-align: justify;
   &.intro {
     width: 100%;
   }
-  @media (max-width: 1024px) {
-    flex-direction: column;
-  }
 `;
 
-const InvertedTitle = styled.h1`
-  color: var(--black);
-  margin-bottom: var(--article-spacing);
-  font-family: 'Satoshi';
-  font-size: 4rem;
-  font-weight: 600;
-  @media (max-width: 1600px) {
-    font-size: 3.5rem;
-  }
-  @media (max-width: 1024px) {
-    font-size: 3rem;
-  }
-`;
-
-const Figure = styled.div`
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: -5rem;
-  margin-bottom: 5rem;
-  text-align: center;
-  & img, & video {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-  }
-  opacity: 1;
-  transition: opacity 0.5s ease;
-  &.active {
-    opacity: 1;
-  }
-  @media (max-width: 1024px) {
-    width: ;
-  }
-  @media (max-width: 1024px) {
-    margin-top: -5rem;
-    width: 100vw;
-  }
-`;
-
-const Article = styled.div`
+const SectionTitle = styled.h1`
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Headers = styled.div`
-  width: 33%;
-  font-family: 'Satoshi';
+  font-family: var(--body-font);
   font-size: var(--body-text);
-  font-weight: 600;
-  color: #FF6281;
+  font-weight: var(--header-weight);
   transition: opacity 0.5s ease;
+  text-align: center;
+  margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {
     width: 100%;
     font-size: 1.2rem;
     padding: 1.5rem;
+  }
+`;
+
+const Article = styled.div`
+  padding-top: 7.5rem;
+  padding-bottom: 7.5rem;
+  width: ${({ $columns }) => `calc(75vw * ${$columns})`};
+  max-width: ${({ $columns }) => `calc(1000px * ${$columns} +  var(--default-spacing) * 4 * ${$columns})`};
+  display: flex;
+  flex-flow: column wrap;
+  height: calc(100vh - 15rem);
+  align-items: center;
+  z-index: 5;
+  @media (max-width: 1024px) {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    flex-flow: column nowrap;
+    padding-top: var(--default-spacing);
+    padding-bottom: 0;
+    height: ${({ $dynamicHeight }) => `${$dynamicHeight}px`};
+  }
+`;
+
+const Section = styled.div`
+  margin-bottom: calc(var(--default-spacing) * 2);
+  width: 75vw;
+  max-width: 1000px;
+  display: block;
+  line-height: 2;
+  padding-left: calc(var(--default-spacing) * 2);
+  padding-right: calc(var(--default-spacing) * 2);
+  &.figure {
+    width: 75vw;    
+  }
+  @media (max-width: 1024px) {
+    &.figure {
+      width: 100%;
+    }
+    padding-top: 0;
+    flex-direction: column;
+    padding-left: var(--default-spacing);
+    padding-right: var(--default-spacing);
+    max-width: 100%;
+    width: calc(100% - var(--default-spacing) * 2);
+  }
+`;
+
+const Headers = styled.div`
+  width: 100%;
+  font-family: var(--body-font);
+  font-size: var(--body-text);
+  font-weight: var(--header-weight);
+  transition: opacity 0.5s ease;
+  text-align: center;
+  margin-bottom: var(--default-spacing);
+  @media (max-width: 1024px) {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 0;
   }
 `;
 
 const Topic = styled.div`
   font-size: var(--body-text);
-  font-family: 'Satoshi';
+  font-family: var(--body-font);
   display: flex;
-  width: 66%;
-  @media (max-width: 1024px) {
-    width: calc(100% - 3rem);
-    font-size: 1.2rem;
-    padding: 1.5rem;
-  }
+  width: 100%;
 `;
 
 const BuiltWith = styled.div`
   font-size: var(--body-text);
-  font-family: 'Satoshi';
+  font-family: var(--body-font);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 66%;
+  width: 100%;
   @media (max-width: 1024px) {
     width: 100%;
     padding: 1.5rem;
@@ -340,65 +199,21 @@ const TopicText = styled.div`
   }
 `;
 
-const ProjectLinks = styled.div`
-  height: 50vh;
-  width: var(--desktop-container-width);
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  opacity: 0;
-  transition: all 0.5s ease;
-  &.active {
-    opacity: 1;
+const ScrollLine = styled.div`
+  height: 100px;
+  width: 1px;
+  background: linear-gradient(45deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 25%, var(--black) 50%, rgba(0,0,0,0.3) 75%, rgba(0,0,0,0) 100%);
+  position: absolute;
+  left: 50%;  
+  transform: translate(-50%, 0);
+  bottom: 10px;
+  z-index: 2;
+  display: none;
+  opacity: ${({ $scrollPosition }) => ($scrollPosition > 0 ? 0 : 1)};
+  transition: opacity 0.5s ease;
+  @media (max-width: 1024px) {    
+    display: block;
   }
-  @media (max-width: 1024px) {
-    width: 100%;
-    align-content: flex-end;
-  }
-`;
-
-const Action = styled.a`
-  margin: 2rem;
-  background-color: var(--accent-colour);
-  width: 25%;
-  text-align: center;
-  font-size: var(--body-text);
-  color: var(--offwhite);
-  font-family: 'Satoshi';
-  font-weight: 500;
-  letter-spacing: 2px;
-  text-decoration: none;
-  padding: 3rem;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.5s ease;
-  & svg {
-    margin-right: 1rem;
-  }
-  &:hover {
-    background: var(--offwhite);
-    color: var(--black);
-  }
-  @media (max-width: 1024px) {
-    width: 100%;
-    font-size: 2rem;
-    margin: 1rem 5%;
-  }
-`;
-
-const Caption = styled.span`
-  margin-top: 3rem;
-  overflow: visible;
-  width: 100%;  
-  display: block;
-  font-size: var(--body-text);
-  font-family: 'Satoshi';
-  color: var(--black);
 `;
 
 const Project = ({ $isMobile, $isFirefox }) => {
@@ -408,139 +223,108 @@ const Project = ({ $isMobile, $isFirefox }) => {
     `/slugify/slugs/work/` + id + `?populate=deep`
   );
 
+  const [articleHeight, setArticleHeight] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const articleRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (window.innerWidth <= 1024 && articleRef.current) {
+        const children = Array.from(articleRef.current.children);
+        const height = children.reduce((totalHeight, child) => {
+          const style = getComputedStyle(child);
+          const marginTop = parseFloat(style.marginTop);
+          const marginBottom = parseFloat(style.marginBottom);
+          return totalHeight + child.offsetHeight + marginBottom + marginTop;
+        }, 0);
+        setArticleHeight(height);
+      }
+    };
+
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [data]);
+
   return (
-    <Container
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
-    > 
+    <Container>
       <Helmet>
         <title>Sumit Kukreja</title>
       </Helmet>
-        <ProjectTitle titleText={data?.attributes.title} />
-        <ProjectSplash />
-    </Container>
-  );
-
-  /*return (
-    <m.div
-    initial={{ 
-      opacity: 0,      
-     }} 
-    animate={{ 
-      opacity: 1,      
-    }} 
-    exit={{ 
-      opacity: 0,
-     }} 
-    transition={{ duration: 1 }}
-    >
-    <ProjectContainer as={ m.div} 
-    initial={{ 
-      opacity: 0,      
-     }} 
-    animate={{ 
-      opacity: 1,      
-    }} 
-    exit={{ 
-      opacity: 0,
-     }} 
-    transition={{ duration: 1 }}
-    >
-      <Helmet>      
-        <title>{'Sumit Kukreja | ' + data?.attributes.title}</title>        
-        <link rel="icon" type="image/png" href="/favicon.ico" />
-      </Helmet>
-      <ProjectTitle>{data?.attributes.title}</ProjectTitle>
-      <Browser>
-        <Window>
-          <Buttons>
-            <Button className='minimize'>{Icons['Minimize']}</Button>
-            <Button className='maximize'>{Icons['Square']}</Button>
-            <Button className='close'>{Icons['Close']}</Button>
-          </Buttons>
-        </Window>
-        <Website style={{backgroundImage: "url(" + import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.cover.data.attributes.url + ")"}}></Website>
-      </Browser>
-      <ProjectInfo>
-        <Article>
-          <Section className='bw dark'>
-            <Headers className='topic-header'>Built With</Headers>
-            <BuiltWith>
-              <StackComponents>
-                {data?.attributes.technologies.data?.map((technology) => (
-                  <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
-                ))}
-              </StackComponents>
-            </BuiltWith>
-          </Section>
-          <Section>
-            <TextSection className='dark intro'>
-                <Headers className='topic-header'>Introduction</Headers>
-                <Topic>
-                  <TopicText>
-                    {data?.attributes.summary}
-                  </TopicText>
-                </Topic>
-              </TextSection>  
-          </Section>
-          {data?.attributes.article.map((topic, index) => {
-            const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
-            const first = index === 0 ? 'active' : '';
-            if (isFigure) {
-              return (
-                <Section key={topic.id} className='figure'>
-                  <InView onChange={onFigureInViewChange} threshold={0.7} style={{ width: '100%' }}>
-                    {topic.__component === 'article.slides' ? (
-                      <Figure className='light'>
-                        <InvertedTitle>{topic.title}</InvertedTitle>
-                        <Slider media={topic.media} />
-                        <Caption>{topic.caption}</Caption>
-                      </Figure>
-                    ) : (
-                    <Figure className='light'>
-                      <InvertedTitle>{topic.title}</InvertedTitle>                      
-                      <FigureMedia item={(topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])} />
-                      <Caption>{topic.caption}</Caption>
-                    </Figure>
-                    )}
-                  </InView>
-                </Section>
-              );
-            }
-
+      <ProjectLanding>
+        {data ? (
+          <>
+            <ProjectSplash $isMobile={$isMobile} $imgUrl={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.featured.data.attributes.url} />
+          </>
+        ) : (
+          null
+        )}
+        <ProjectLandingText>
+          <ProjectTitle titleText={data?.attributes.title} />
+          <ProjectBlurb blurbText={data?.attributes.summary} />
+        </ProjectLandingText>
+        <ScrollLine $scrollPosition={scrollPosition} />
+      </ProjectLanding>
+      <Article ref={articleRef} $columns={data?.attributes.columns} $dynamicHeight={articleHeight}>
+        <Section>
+          <Headers className='topic-header'>Built With</Headers>
+          <BuiltWith>
+            <StackComponents>
+              {data?.attributes.technologies.data?.map((technology) => (
+                <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
+              ))}
+            </StackComponents>
+          </BuiltWith>
+        </Section>
+        {data?.attributes.article.map((topic, index) => {
+          const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
+          const first = index === 0 ? 'active' : '';
+          if (isFigure) {
             return (
-              <Section key={topic.id}>
-                <TextSection className={'dark ' + first}>
-                  <Headers className='topic-header'>
-                    {topic.header ? topic.header : ''}
-                  </Headers>
-                  <Topic>
-                    {topic.__component === 'article.topic' ? (
+              <Section key={topic.id} className='figure'>
+                <Figure
+                  title={topic.title}
+                  media={topic.__component === 'article.slides' ? topic.media : (topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])}
+                  caption={topic.caption}
+                  isSlider={topic.__component === 'article.slides'}
+                />
+              </Section>
+            );
+          }
+
+          return (
+            <Section key={topic.id}>
+              <TextSection className={'dark ' + first}>
+                <Headers className='topic-header'>
+                  {topic.header ? topic.header : ''}
+                </Headers>
+                <Topic>
+                  {topic.__component === 'article.topic' ? (
                     <TopicText>
                       {topic.content}
                     </TopicText>
-                    ) : 
+                  ) :
                     topic.__component === 'article.sandbox' ? (
                       <div></div>
                     ) : ("")}
-                  </Topic>
-                </TextSection>
-              </Section>
-            );
-          })}
-        </Article>
-        <ProjectLinks className='dark'>
-          {data?.attributes.links?.map((action, index) => {
-            return <Action key={index} target='_blank' href={action.url}>{Icons[action.icon]}{action.name}</Action>;
-          })}
-        </ProjectLinks>
-      </ProjectInfo>
-    </ProjectContainer>
-    <Footer />
-    </m.div>
-  )*/
-}
+                </Topic>
+              </TextSection>
+            </Section>
+          );
+        })}
+      </Article>
+      <Cover $srcData={data} $isMobile={$isMobile} $isFirefox={$isFirefox} />
+    </Container>
+  );
+};
 
-export default Project
+export default Project;

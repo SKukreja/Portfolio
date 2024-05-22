@@ -10,6 +10,7 @@ const Scene = styled.div`
   overflow: visible;
   margin-top: calc(var(--vh, 1vh) * -37.5);
   margin-left: -25vw;  
+  pointer-events: none;
   @media (max-width: 1024px) {
     width: 150vw;
     height: 150vw;
@@ -238,7 +239,9 @@ const Noise = styled.img`
 function Splash({ isMobile }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
-  const curtains = useCurtains();
+  const curtains = useCurtains((curtains) => {    
+    curtains.resize();
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -267,6 +270,7 @@ function Splash({ isMobile }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
+    plane.updatePosition()
     plane.uniforms.mobile.value = isMobile ? 1 : 0
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]
     curtains?.needRender() 
@@ -276,6 +280,9 @@ function Splash({ isMobile }) {
     setPlaneResolution(plane)
   }
 
+  const onPlaneReady = (plane) => {
+    plane.updatePosition();
+  };
 
   const uniforms = {
     planeVisibility: {
@@ -301,6 +308,7 @@ function Splash({ isMobile }) {
   };
 
   const onRender = (plane) => {
+    plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
@@ -322,7 +330,7 @@ function Splash({ isMobile }) {
         // plane events
         onRender={onRender}
         onAfterResize={onAfterResize}
-        onReady={setPlaneResolution}
+        onReady={onPlaneReady}
       >
         <Picture src={'/splash.png'} data-sampler="planeTexture" alt="" />
         <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />

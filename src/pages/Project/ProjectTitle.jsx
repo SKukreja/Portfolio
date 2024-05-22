@@ -6,23 +6,20 @@ const Header = styled(m.h1)`
   font-family: var(--display-font);
   font-size: var(--title-text);
   color: var(--black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex;  
   white-space: nowrap;
   letter-spacing: 4px;
   position: relative;  
   z-index: 4;
   height: auto;
-  margin-top: 7.5rem;
-  margin: 0;
-  margin-left: 5rem;  
-  text-align: center;
+  margin: 0;  
   width: 100%;
+  margin-bottom: -1rem;
   @media (max-width: 1024px) {    
     margin-top: 0;
     margin-left: auto;
-    margin-right: auto;    
+    margin-right: auto;
+    margin-bottom: 0;
   }
 `;
 

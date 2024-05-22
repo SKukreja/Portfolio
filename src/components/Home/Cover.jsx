@@ -108,7 +108,9 @@ const Cover = ({ $isMobile, $isFirefox }) => {
     }),
   };
 
-
+  if (!data) {
+    return null; // or a fallback component
+  }
 
   return (
     <Container $isFirefox={$isFirefox}>

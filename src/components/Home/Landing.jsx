@@ -10,7 +10,6 @@ const Scene = styled(m.div)`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-left: 100px;
   width: 50vw;
   height: 100vh;
   height: 100svh;
@@ -21,7 +20,6 @@ const Scene = styled(m.div)`
   z-index: 2;
   @media (max-width: 1024px) {
     width: 100%;    
-    margin-left: 0;
     align-items: flex-start;
     margin-top: 0;
   }

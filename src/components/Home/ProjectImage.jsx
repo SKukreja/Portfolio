@@ -8,6 +8,7 @@ const Scene = styled.div`
   width: 150%;
   height: calc(var(--vh, 1vh) * 50);
   display: flex;
+  pointer-events: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -252,7 +253,9 @@ const Noise = styled.img`
 function ProjectImage({ isMobile, number, imageUrl, even }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
-  const curtains = useCurtains();
+  const curtains = useCurtains((curtains) => {    
+    curtains.resize();
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -281,10 +284,15 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
+    plane.updatePosition()
     plane.uniforms.mobile.value = isMobile ? 1 : 0
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
     curtains?.needRender();    
   }
+
+  const onPlaneReady = (plane) => {
+    plane.updatePosition();
+  };
 
   const onAfterResize = (plane) => {
     setPlaneResolution(plane)
@@ -325,7 +333,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
   };
 
   const onRender = (plane) => {
-
+    plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
@@ -347,7 +355,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
           // plane events
           onRender={onRender}
           onAfterResize={onAfterResize}
-          onReady={setPlaneResolution}
+          onReady={onPlaneReady}
         >
           <Picture src={imageUrl} data-sampler="planeTexture" alt="" />
           <Noise src={'/inknoise.png'} data-sampler="noiseTexture" alt="" />

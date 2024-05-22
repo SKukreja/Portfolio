@@ -18,13 +18,16 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis'
 import ModalContext from './components/Common/ModalContext.jsx';
 import { Lenis } from '@studio-freight/react-lenis';
 
-const Blur = styled.div`
-  ${({ $isModalOpen }) =>
-    $isModalOpen
-      ? `
-
-  `
-      : ''};
+const AppContainer = styled.div`
+  & .curtains-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
 `;
 
 const Content = styled.div`
@@ -37,8 +40,7 @@ const Content = styled.div`
     width: 100vw;
     overflow-y: auto;
     overflow-x: hidden;    
-  }
-  @media (max-width: 1024px) {
+
     padding-top: calc(var(--default-spacing));
   }
   @media (max-width: 768px) {
@@ -112,10 +114,6 @@ const LenisCurtainsSync = ({ $isMobile }) => {
  
 const Layout = ({ $isMobile, $isFirefox }) => {
   const { data, loading, error } = use('/social?populate=deep');  
-  const { isModalOpen } = useContext(ModalContext);
-  const location = useLocation()
-  const container = useRef(null);
-  const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const loadingScreen = document.getElementById('loading-screen');
@@ -123,9 +121,10 @@ const Layout = ({ $isMobile, $isFirefox }) => {
       loadingScreen.style.opacity = '0';      
     }
   }, []);
+  
 
   return (
-    <div className="app">
+    <AppContainer className="app">
       <HelmetProvider>
         <GlobalStyle />
         <Navbar socialData={data} />
@@ -133,7 +132,6 @@ const Layout = ({ $isMobile, $isFirefox }) => {
           <title>Sumit Kukreja</title>                
           <link rel="icon" type="image/png" href="/favicon.ico" />         
         </Helmet>
-        <Blur $isModalOpen={isModalOpen}>
         <Curtains
           className="curtains-canvas"
           pixelRatio={Math.min(1.5, window.devicePixelRatio)}
@@ -141,28 +139,49 @@ const Layout = ({ $isMobile, $isFirefox }) => {
           watchScroll={false}
           premultipliedAlpha={true}
         >
-            <LenisCurtainsSync $isMobile={$isMobile} />
-            <AnimatePresence mode='wait'>
-            <Content id="content-container" ref={container}>
-              <Noise $isFirefox={$isFirefox} className={'noise'} />
-              <BoxShadow />  
-              <CoverContext.Provider value={[isInView, setIsInView]}>                
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
-                  <Route path="/project/:id" element={<Project $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
-                  <Route path="/work" element={<Work />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
-                <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} />      
-              </CoverContext.Provider>
-            </Content>
+          <LenisCurtainsSync $isMobile={$isMobile} />
+          <AnimatePresence mode='wait'>
+            <Root $isMobile={$isMobile} $isFirefox={$isFirefox} />
           </AnimatePresence>
-          </Curtains>
-        </Blur>
+        </Curtains>
       </HelmetProvider>
-    </div>
+    </AppContainer>
   );
 };
+
+const Root = ({ $isMobile, $isFirefox }) => {
+  const { isModalOpen } = useContext(ModalContext);
+  const location = useLocation()
+  const container = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+
+  const curtains = useCurtains((curtains) => {
+    curtains.resize();
+    curtains.updateScrollValues(0, 0);
+  });
+
+  // useEffect to watch location changes
+  useEffect(() => {
+    if (curtains) {
+      curtains.updateScrollValues(0, 0);
+    }
+  }, [location, curtains]);
+
+  return (
+    <Content id="content-container" ref={container}>
+      <Noise $isFirefox={$isFirefox} className={'noise'} />
+      <BoxShadow />  
+      <CoverContext.Provider value={[isInView, setIsInView]}>                
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
+          <Route path="/project/:id" element={<Project $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
+          <Route path="/work" element={<Work />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>     
+      </CoverContext.Provider>
+    </Content>
+  );
+}
 
 const ScrollToTop = (props) => {
   const location = useLocation();

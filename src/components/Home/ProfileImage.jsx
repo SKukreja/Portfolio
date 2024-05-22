@@ -4,20 +4,9 @@ import { Plane, useCurtains } from "react-curtains";
 
 const Scene = styled.div`  
   position: relative;
-  width: 60%;
+  height: 250px;
   aspect-ratio: 3 / 4;
-  margin-top: calc(var(--vh) * -20);
-  margin-bottom: calc(var(--vh) * 10);
   overflow: visible;  
-  @media (max-width: 1024px) {
-    width: 40%;
-    margin-top: calc(var(--vh) * 15);
-    margin-bottom: calc(var(--vh) * -35);
-  }
-  @media (max-width: 768px) {
-    margin-top: calc(var(--vh) * 17.5);
-    margin-bottom: calc(var(--vh) * -22.5);
-  }
 `
 
 const Container = styled.div`
@@ -213,7 +202,7 @@ void main() {
 
 const Picture = styled.img`
   height: 100%;
-  width: 90%;
+  width: 100%;
   object-fit: cover;
   display: none;
   filter: saturate(0.5) contrast(1.5) brightness(1.2);
@@ -229,6 +218,9 @@ const Noise = styled.img`
 function ProfileImage({ $imageUrl, $isMobile }) {
   const ref = useRef(null)
   const isVisible = useRef(true)
+  const curtains = useCurtains((curtains) => {    
+    curtains.resize(); 
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -257,10 +249,14 @@ function ProfileImage({ $imageUrl, $isMobile }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
-    console.log(planeBox);
+    plane.updatePosition()    
     plane.uniforms.mobile.value = $isMobile ? 1 : 0
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height]
   }
+  
+  const onPlaneReady = (plane) => {
+    plane.updatePosition();
+  };
 
   const onAfterResize = (plane) => {
     setPlaneResolution(plane)
@@ -290,7 +286,8 @@ function ProfileImage({ $imageUrl, $isMobile }) {
     },
   }
 
-  const onRender = (plane) => { 
+  const onRender = (plane) => {
+    plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1
     }
@@ -312,7 +309,7 @@ function ProfileImage({ $imageUrl, $isMobile }) {
           // plane events
           onRender={onRender}
           onAfterResize={onAfterResize}
-          onReady={setPlaneResolution} 
+          onReady={onPlaneReady} 
         >
           <Picture src={$imageUrl} data-sampler="planeTexture" alt="" />
           <Noise src={'/profilenoise.png'} data-sampler="noiseTexture" alt="" />

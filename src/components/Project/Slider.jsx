@@ -7,29 +7,31 @@ const SliderWrapper = styled.div`
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 50vmin;
+    height: 500px;
     margin-left: auto;
     margin-right: auto;
     overflow: visible;
     @media (max-width: 1024px) {
-        height: 80vmin;
+        height: 350px;
     }
 `;
 
 const Slides = styled.div`
     position: relative;
-    width: 80%;
+    width: calc(100% - var(--default-spacing) * 8);
     display: flex;
     align-items: center;
     justify-content: center;
     height: fit-content;
+    @media (max-width: 1024px) {
+        width: calc(100% - var(--default-spacing) * 4);
+    }
 `;
 
 const Slide = styled.div`
     position: absolute;
-    width: 50%;
-    height: auto;
-    max-height: 100%;
+    width: auto;
+    height: 300px;    
     opacity: 0.5;
     display: flex;
     justify-content: center;
@@ -41,9 +43,11 @@ const Slide = styled.div`
     background-size: cover;
     &.active {
         opacity: 1;
-        width: 70%;
+        height: 500px;
         z-index: 3;
-        height: auto;
+        @media (max-width: 1024px) {
+            height: 350px;
+        }
     }
     &.left {
         transform: translateX(-50%);
@@ -56,9 +60,12 @@ const Slide = styled.div`
 
     img, video {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
     }
     @media (max-width: 1024px) {
+        height: 350px;
+        max-height: 350px;
         &.active {            
             width: 100%;
         }

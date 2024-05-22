@@ -345,6 +345,10 @@ function Navbar({ socialData }) {
     } 
   }, [isModalOpen]);
 
+  if (!data) {
+    return null; // or a fallback component
+  }
+
   return (
     <>
       <Nav $isNavSolid={isSolid} $isMobile={isModalOpen}>

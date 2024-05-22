@@ -23,6 +23,7 @@ const GlobalStyle = createGlobalStyle`
     --content-margin-top: 25svh;
     --body-font: 'Parchment', sans-serif;
     --body-weight: 400;
+    --header-weight: 600;
     --display-font: 'WizardHand', sans-serif;
     @media (max-width: 1920px) {      
       --article-spacing: 4rem;
@@ -76,16 +77,6 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'WizardHand';
     src: url(${WizardHandWoff2}) format('woff2');
     font-weight: 600;
-  }
-
-  .curtains-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    pointer-events: none;
   }
 
   html.lenis {
