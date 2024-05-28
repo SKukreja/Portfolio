@@ -8,6 +8,7 @@ import { InView, useInView } from 'react-intersection-observer';
 import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
+import CustomLink from '../Common/CustomLink';
 
 const Featured = styled(m.div)`
   height: calc(var(--vh, 1vh) * 100);
@@ -179,7 +180,7 @@ const ProjectActions = styled.div`
   margin: 2rem -0.5rem;
 `;
 
-const ProjectLink = styled(m(Link))`      
+const ProjectLink = styled(CustomLink)`      
   z-index: 2;  
   letter-spacing: 1px;
   color: var(--black);    
@@ -193,8 +194,6 @@ const ProjectLink = styled(m(Link))`
   display: flex;
   cursor: pointer;
   align-items: center;
-  transition: all 0.5s ease;
-  transition-delay: 0.1s;
   &:hover {
     color: var(--interact-hover-color);
     text-decoration: none;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import use from '../../hooks/use';
@@ -9,13 +9,17 @@ import ProjectSplash from './ProjectSplash';
 import ProjectBlurb from './ProjectBlurb';
 import Cover from '../../components/Home/Cover';
 import Figure from './Figure';
-import About from '../../components/Home/About';
+import { m } from 'framer-motion';
+
+import LoadingScreen, { loadingVariants } from '../../components/Common/LoadingScreen';
 
 const Container = styled.div`
   position: relative;
   overflow-y: hidden;
   display: flex;
   padding-left: 80px;
+  height: 100%;
+  min-width: 100vw;
   @media (max-width: 1024px) {
     padding-left: 0;
     padding-top: 80px;
@@ -27,13 +31,14 @@ const Container = styled.div`
   } 
 `;
 
-const ProjectLanding = styled.div`
+const ProjectLanding = styled(m.div)`
   display: flex;
   flex-direction: column;
   width: auto;
   height: 100vh;
   color: var(--black);
   position: relative;
+  z-index: 8;
   @media (max-width: 1024px) {
     width: 100vw;
     height: calc(var(--vh, 1vh) * 100 - 80px);
@@ -87,29 +92,10 @@ const ProjectTechnology = styled.div`
   }
 `;
 
-const ProjectInfo = styled.div`
-  line-height: 2;
-`;
-
 const TextSection = styled.div` 
   text-align: justify;
   &.intro {
     width: 100%;
-  }
-`;
-
-const SectionTitle = styled.h1`
-  width: 100%;
-  font-family: var(--body-font);
-  font-size: var(--body-text);
-  font-weight: var(--header-weight);
-  transition: opacity 0.5s ease;
-  text-align: center;
-  margin-bottom: var(--default-spacing);
-  @media (max-width: 1024px) {
-    width: 100%;
-    font-size: 1.2rem;
-    padding: 1.5rem;
   }
 `;
 
@@ -130,7 +116,7 @@ const Article = styled.div`
     flex-flow: column nowrap;
     padding-top: var(--default-spacing);
     padding-bottom: 0;
-    height: ${({ $dynamicHeight }) => `${$dynamicHeight}px`};
+    height: auto;
   }
 `;
 
@@ -188,8 +174,7 @@ const BuiltWith = styled.div`
   justify-content: space-between;
   width: 100%;
   @media (max-width: 1024px) {
-    width: 100%;
-    padding: 1.5rem;
+    width: 100%;    
   }
 `;
 
@@ -222,106 +207,109 @@ const Project = ({ $isMobile, $isFirefox }) => {
   const { data, loading, error } = use(
     `/slugify/slugs/work/` + id + `?populate=deep`
   );
+  
+  const landingVariants = {
+    hidden: { opacity: 0, },
+    visible: () => ({      
+      opacity: 1,
+      transition: {    
+        delay: 0.5,  
+        duration: 3,
+        type: 'linear',
+      },
+    }),
+  };  
 
-  const [articleHeight, setArticleHeight] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const articleRef = useRef(null);
 
   useEffect(() => {
-    const updateHeight = () => {
-      if (window.innerWidth <= 1024 && articleRef.current) {
-        const children = Array.from(articleRef.current.children);
-        const height = children.reduce((totalHeight, child) => {
-          const style = getComputedStyle(child);
-          const marginTop = parseFloat(style.marginTop);
-          const marginBottom = parseFloat(style.marginBottom);
-          return totalHeight + child.offsetHeight + marginBottom + marginTop;
-        }, 0);
-        setArticleHeight(height);
-      }
-    };
-
     const handleScroll = () => {
       setScrollPosition(window.scrollY);
     };
 
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("resize", updateHeight);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [data]);
+  }, []);
+
+  if (loading) return <LoadingScreen variants={loadingVariants} initial="hidden" animate="visible" exit="exit">Loading...</LoadingScreen>;
+  if (error) return <div>Error loading project.</div>;
 
   return (
     <Container>
       <Helmet>
         <title>Sumit Kukreja</title>
       </Helmet>
-      <ProjectLanding>
-        {data ? (
+      <ProjectLanding
+          variants={landingVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+        {data && (
           <>
-            <ProjectSplash $isMobile={$isMobile} $imgUrl={import.meta.env.VITE_APP_UPLOAD_URL + data?.attributes.featured.data.attributes.url} />
+            <ProjectSplash $isMobile={$isMobile} $imgUrl={import.meta.env.VITE_APP_UPLOAD_URL + data.attributes.featured.data.attributes.url} />
+            <ProjectLandingText>
+              <ProjectTitle titleText={data.attributes.title} />
+              <ProjectBlurb blurbText={data.attributes.summary} />
+            </ProjectLandingText>
+            <ScrollLine $scrollPosition={scrollPosition} />
           </>
-        ) : (
-          null
         )}
-        <ProjectLandingText>
-          <ProjectTitle titleText={data?.attributes.title} />
-          <ProjectBlurb blurbText={data?.attributes.summary} />
-        </ProjectLandingText>
-        <ScrollLine $scrollPosition={scrollPosition} />
       </ProjectLanding>
-      <Article ref={articleRef} $columns={data?.attributes.columns} $dynamicHeight={articleHeight}>
-        <Section>
-          <Headers className='topic-header'>Built With</Headers>
-          <BuiltWith>
-            <StackComponents>
-              {data?.attributes.technologies.data?.map((technology) => (
-                <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
-              ))}
-            </StackComponents>
-          </BuiltWith>
-        </Section>
-        {data?.attributes.article.map((topic, index) => {
-          const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
-          const first = index === 0 ? 'active' : '';
-          if (isFigure) {
+      {data && (
+        <Article $columns={data.attributes.columns}>
+          <Section>
+            <Headers className='topic-header'>Built With</Headers>
+            <BuiltWith>
+              <StackComponents>
+                {data.attributes.technologies.data.map((technology) => (
+                  <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
+                ))}
+              </StackComponents>
+            </BuiltWith>
+          </Section>
+          {data.attributes.article.map((topic, index) => {
+            const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
+            const first = index === 0 ? 'active' : '';
+            if (isFigure) {
+              return (
+                <Section key={topic.id} className='figure'>
+                  <Figure
+                    title={topic.title}
+                    media={topic.__component === 'article.slides' ? topic.media : (topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])}
+                    caption={topic.caption}
+                    isSlider={topic.__component === 'article.slides'}
+                  />
+                </Section>
+              );
+            }
+
             return (
-              <Section key={topic.id} className='figure'>
-                <Figure
-                  title={topic.title}
-                  media={topic.__component === 'article.slides' ? topic.media : (topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])}
-                  caption={topic.caption}
-                  isSlider={topic.__component === 'article.slides'}
-                />
+              <Section key={topic.id}>
+                <TextSection className={'dark ' + first}>
+                  <Headers className='topic-header'>
+                    {topic.header ? topic.header : ''}
+                  </Headers>
+                  <Topic>
+                    {topic.__component === 'article.topic' ? (
+                      <TopicText>
+                        {topic.content}
+                      </TopicText>
+                    ) : (
+                      topic.__component === 'article.sandbox' ? (
+                        <div></div>
+                      ) : ("")
+                    )}
+                  </Topic>
+                </TextSection>
               </Section>
             );
-          }
-
-          return (
-            <Section key={topic.id}>
-              <TextSection className={'dark ' + first}>
-                <Headers className='topic-header'>
-                  {topic.header ? topic.header : ''}
-                </Headers>
-                <Topic>
-                  {topic.__component === 'article.topic' ? (
-                    <TopicText>
-                      {topic.content}
-                    </TopicText>
-                  ) :
-                    topic.__component === 'article.sandbox' ? (
-                      <div></div>
-                    ) : ("")}
-                </Topic>
-              </TextSection>
-            </Section>
-          );
-        })}
-      </Article>
+          })}
+        </Article>
+      )}
       <Cover $srcData={data} $isMobile={$isMobile} $isFirefox={$isFirefox} />
     </Container>
   );

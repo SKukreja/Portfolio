@@ -1,10 +1,9 @@
 // globalStyles.js
 import { createGlobalStyle } from 'styled-components';
 
-import ParchmentWoff2 from './assets/fonts/ParchmentPrint.woff2'
-import ParchmentItalicWoff2 from './assets/fonts/ParchmentPrintItalic.woff2'
-import WizardHandWoff2 from './assets/fonts/WizardHand.woff2'
-
+import ParchmentWoff2 from './assets/fonts/ParchmentPrint.woff2';
+import ParchmentItalicWoff2 from './assets/fonts/ParchmentPrintItalic.woff2';
+import WizardHandWoff2 from './assets/fonts/WizardHand.woff2';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -57,13 +56,7 @@ const GlobalStyle = createGlobalStyle`
     src: url(${ParchmentWoff2}) format('woff2');
     font-weight: 400;
     font-style: normal;
-  }
-
-  @font-face {
-    font-family: 'Parchment';
-    src: url(${ParchmentWoff2}) format('woff2');
-    font-weight: 400;
-    font-style: normal;
+    font-display: swap;
   }
 
   @font-face {
@@ -71,12 +64,14 @@ const GlobalStyle = createGlobalStyle`
     src: url(${ParchmentItalicWoff2}) format('woff2');
     font-weight: 400;
     font-style: italic;
+    font-display: swap;
   }
 
   @font-face {
     font-family: 'WizardHand';
     src: url(${WizardHandWoff2}) format('woff2');
     font-weight: 600;
+    font-display: swap;
   }
 
   html.lenis {
@@ -144,39 +139,21 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;    
     box-sizing: border-box;
-    
   }
+
   body {
-    background: var(--offwhite);
+    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
     color: var(--black);
     box-sizing: border-box;
     transition: background 0.5s ease;
     display: flex;
     justify-content: center;
-    font-family: 'Garamond', Open-Sans, Helvetica, Sans-Serif;
+    font-family: 'Parchment', Open-Sans, Helvetica, Sans-Serif;
   }
-  .inverted body {
-    background: var(--offwhite);
-  }
-  .inverted nav, .inverted .nav-menu {
-    mix-blend-mode: normal;
-    background: var(--offwhite);
-  }
-  .inverted nav a {
-    color: var(--black);
-  }
-  .inverted .topic-header {
-    opacity: 0;
-  }
-  .inverted nav .logo {
-    filter: brightness(0) invert(0);    
-  }
-  .inverted .hamburger span{
-    background: var(--black);
-  }
+
   .no-scroll {
     overflow: hidden;
   }
 `;
- 
+
 export default GlobalStyle;

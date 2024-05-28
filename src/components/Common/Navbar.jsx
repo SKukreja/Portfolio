@@ -26,7 +26,8 @@ const Nav = styled.nav`
   left: 0;
   height: 100vh;
   width: 80px;
-  padding-top: 1rem;
+  padding-top: calc(var(--default-spacing) * 0.5);
+  padding-bottom: calc(var(--default-spacing) * 0.5);
   box-sizing: border-box;
   display: flex;
   flex-direction: column; 
@@ -42,6 +43,7 @@ const Nav = styled.nav`
     opacity: 1;
     width: 100%;
     height: 100%;
+    
     pointer-events: none;
     position: absolute;
     inset: 0;
@@ -174,7 +176,7 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
     position: absolute;
     top: 0;
     bottom: 0;
-    background: url("Noise.png");
+    background: url("/Noise.png");
     background-repeat: repeat;
     right: 0;
     left: 0;
@@ -185,7 +187,7 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
   }
   &::after {
     content: "";
-    background: url("paper.jpg");
+    background: url("/paper.jpg");
     background-repeat: repeat;
     opacity: 0.4;
     width: 100%;
