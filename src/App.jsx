@@ -42,9 +42,11 @@ const Content = styled.div`
   background: var(--offwhite);
   position: relative;
   overflow-y: hidden;
+  min-width: 100vw;
   @media (max-width: 1024px) {
     flex-direction: column;
     width: 100vw;
+    min-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding-top: calc(var(--default-spacing));
@@ -67,7 +69,7 @@ const Noise = styled.div`
   &::after {
     content: '';
     position: absolute;
-    width: calc(100% - 40vw);
+    width: ${({ $isWorkPage }) => ($isWorkPage ? '100%' : 'calc(100% - 35vw)')};
     height: 100%;
     pointer-events: none;
     opacity: 0.12;
@@ -76,12 +78,12 @@ const Noise = styled.div`
     background: url('/paper.jpg');
     @media (max-width: 1024px) {
       width: 100%;
-      height: ${({ $isFirefox }) =>
-        $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
+      height: ${({ $isWorkPage, $isFirefox }) =>
+        $isWorkPage ? '100%' : $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
     }
     @media (max-width: 768px) {
-      height: ${({ $isFirefox }) =>
-        $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
+      height: ${({ $isWorkPage, $isFirefox }) =>
+        $isWorkPage ? '100%' : $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
     }
   }
 `;
@@ -96,14 +98,14 @@ const BoxShadow = styled.div`
   pointer-events: none;
   mix-blend-mode: multiply;
   @media (max-width: 1024px) {
-    height: ${({ $isFirefox }) =>
-      $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
+    height: ${({ $isWorkPage, $isFirefox }) =>
+        $isWorkPage ? '100%' : $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
     width: 100%;
     box-shadow: 0 0 100px #8f5922 inset;
   }
   @media (max-width: 768px) {
-    height: ${({ $isFirefox }) =>
-      $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
+    height: ${({ $isWorkPage, $isFirefox }) =>
+        $isWorkPage ? '100%' : $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
   }
 `;
 
@@ -121,8 +123,21 @@ const LenisCurtainsSync = ({ $isMobile }) => {
   });
 };
 
+const ScrollToTop = (props) => {
+  const location = useLocation();
+  const lenis = useLenis();
+  useEffect(() => {
+    if (!location.hash) {
+      lenis?.scrollTo(0, 0);
+    }
+  }, [location]);
+
+  return <>{props.children}</>;
+};
+
 const Layout = ({ $isMobile, $isFirefox }) => {
   const { data, loading, error } = use('/social?populate=deep');
+  const location = useLocation();
 
   useEffect(() => {
     const loadingScreen = document.getElementById('loading-screen');
@@ -130,6 +145,8 @@ const Layout = ({ $isMobile, $isFirefox }) => {
       loadingScreen.style.opacity = '0';
     }
   }, []);
+
+  const isWorkPage = location.pathname.includes('/work');
 
   return (
     <AppContainer className='app'>
@@ -151,14 +168,14 @@ const Layout = ({ $isMobile, $isFirefox }) => {
           premultipliedAlpha={true}
         >
           <LenisCurtainsSync $isMobile={$isMobile} />
-          <Root $isMobile={$isMobile} $isFirefox={$isFirefox} />
+          <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} />
         </Curtains>
       </HelmetProvider>
     </AppContainer>
   );
 };
 
-const Root = ({ $isMobile, $isFirefox }) => {
+const Root = ({ $isMobile, $isFirefox, isWorkPage }) => {
   const location = useLocation();
   const container = useRef(null);
 
@@ -176,8 +193,8 @@ const Root = ({ $isMobile, $isFirefox }) => {
 
   return (
     <Content id='content-container' ref={container}>
-      <Noise $isFirefox={$isFirefox} className={'noise'} />
-      <BoxShadow />
+      <Noise $isFirefox={$isFirefox} className={'noise'} $isWorkPage={isWorkPage} />
+      <BoxShadow $isWorkPage={isWorkPage} />
       <TransitionMask />
       <AnimatePresence mode="wait">
         <Suspense fallback={<LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' $isFirefox={$isFirefox} />}>
@@ -251,6 +268,7 @@ const App = () => {
           <ModalProvider>
             <TransitionProvider>
             <Router>
+              <ScrollToTop />
               <Layout $isMobile={isMobile} $isFirefox={isFirefox} />
             </Router>
             </TransitionProvider>

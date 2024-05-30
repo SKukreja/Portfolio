@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
     --accent-colour: #4F54D5;
     --secondary-colour: #9D282E;
     --black: #121518;
-    --body-text: clamp(1rem,1.1vw,1.4rem);
+    --body-text: clamp(1rem,0.9vw,1.4rem);
     --title-text: clamp(6rem,5vw,10rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
@@ -45,7 +45,7 @@ const GlobalStyle = createGlobalStyle`
     }    
     @media (max-width: 767px) {
       --title-text: 12vw;
-      --body-text: 3.5vw;
+      --body-text: 4vw;
       --default-spacing: 1.5rem;
       --desktop-container-width: 95vw;
     }
@@ -145,6 +145,7 @@ const GlobalStyle = createGlobalStyle`
     background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
     color: var(--black);
     box-sizing: border-box;
+    letter-spacing: 0.5px; 
     transition: background 0.5s ease;
     display: flex;
     justify-content: center;

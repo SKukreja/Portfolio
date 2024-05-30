@@ -9,7 +9,7 @@ const Scene = styled.div`
   z-index: 1;
   overflow: visible;
   margin-top: calc(var(--vh, 1vh) * -37.5);
-  margin-left: -25vw;  
+  margin-left: -15vw;  
   pointer-events: none;
   @media (max-width: 1024px) {
     width: 150vw;
@@ -18,7 +18,10 @@ const Scene = styled.div`
     margin-left: -30vw;    
   }
   @media (max-width: 768px) {
-    margin-top: -145vw;
+    width: 130vw;
+    height: 130vw;
+    margin-top: -110vw;
+    margin-left: -15vw;
   }
 `;
 
@@ -156,11 +159,11 @@ const fragmentShader = `
 
   float FX2(float val, float noise, float expansion, float time)
   {    
-      noise 		= pow(noise,2.4);
+      noise 		= pow(noise,2.2);
       
       val 		= val * (expansion);
       float str 	= (1.0 + val * time) * (expansion);
-      float str2 	= pow(str, 22.) ;
+      float str2 	= pow(str, 25.) ;
       str 		= str2 * noise;
       str 		= mapToRange(0.1, 1.0, 0.0, 1.0, str);
       
@@ -190,9 +193,9 @@ const fragmentShader = `
 	  vec3 pos = vec3(fragPos, time * 0.0001);
     
     //noise sampling
-    vec3 scaledPos 	= 4. * pos;
+    vec3 scaledPos 	= 6.67 * pos;
     float noiseVal 	= 0.0;
-    float ampl 		= 4.0;
+    float ampl 		= 2.42;
     float maxValue 	= 0.0;
     
     for(float i = 0.0; i < 8.0; ++i)
@@ -200,13 +203,13 @@ const fragmentShader = `
         noiseVal += noise(scaledPos) * ampl;
         scaledPos *= 2.0;
         maxValue += ampl;
-        ampl *= 0.4;
+        ampl *= 0.5;
     }
     noiseVal /= maxValue;
 
-    vec2 center = vec2(0.47, 0.28);
+    vec2 center = vec2(0.47, 0.355);
 
-    float currentRadius = 0.35 * time;
+    float currentRadius = 0.23 * time;
 
     float expansion = sqrLen(fragPos - center);
     expansion = 1.0 - expansion;
@@ -226,6 +229,7 @@ const Picture = styled.img`
   height: 100%;
   width: 100%;  
   display: none;
+  transform: flip;
   object-fit: cover;
 `;
 

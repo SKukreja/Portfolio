@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
 
 const API = axios.create({
@@ -8,27 +8,63 @@ const API = axios.create({
   },
 });
 
+// Define action types
+const FETCH_INIT = 'FETCH_INIT';
+const FETCH_SUCCESS = 'FETCH_SUCCESS';
+const FETCH_FAILURE = 'FETCH_FAILURE';
+
+// Define reducer
+const dataFetchReducer = (state, action) => {
+  switch (action.type) {
+    case FETCH_INIT:
+      return {
+        ...state,
+        loading: true,
+        error: false,
+      };
+    case FETCH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: false,
+        data: action.payload,
+      };
+    case FETCH_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: true,
+      };
+    default:
+      throw new Error();
+  }
+};
+
 // Custom hook to fetch data from API
 const use = (url) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    data: null,
+    loading: false,
+    error: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
+      dispatch({ type: FETCH_INIT });
+
       try {
-        setLoading(true);
+        console.log('Fetching data from:', url);
         const res = await API.get(url);
-        setData(res.data.data);
+        dispatch({ type: FETCH_SUCCESS, payload: res.data.data });
       } catch (err) {
-        setError(true);
+        dispatch({ type: FETCH_FAILURE });
       }
-      setLoading(false);
     };
+
     fetchData();
   }, [url]);
 
-  return { data, loading, error };
+  return state;
 };
 
 export default use;

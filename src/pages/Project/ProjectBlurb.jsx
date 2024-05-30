@@ -5,8 +5,7 @@ import { m } from 'framer-motion'
 const Text = styled(m.p)`
   font-family: var(--body-font);
   letter-spacing: 0.5px;
-  position: relative;
-  letter-spacing: 1px;
+  position: relative;  
   text-align: justify;
   font-size: var(--body-text);
   font-weight: var(--body-weight);

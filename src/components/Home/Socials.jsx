@@ -5,7 +5,7 @@ import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 
 const Container = styled(m.div)`
-    margin-top: 4rem;
+    margin-top: calc(var(--default-spacing) * 2);
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -19,7 +19,7 @@ const SocialLink = styled(m.a)`
   letter-spacing: 0.5px;
   color: var(--offwhite);
   text-decoration: none;
-  margin-bottom: 2rem;
+  margin-bottom: calc(var(--default-spacing) * 2);
   transition: color 0.2s ease-in-out;
   display: flex;
   align-items: center;
@@ -30,7 +30,10 @@ const SocialLink = styled(m.a)`
     margin-right: 1rem;
     margin-bottom: 0.1rem;
     width: 1.5rem;
-  }  
+  }
+  @media (max-width: 1024px) {
+    margin-bottom: var(--default-spacing);
+  }
 `;
 
 const Socials = ({inView, treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {

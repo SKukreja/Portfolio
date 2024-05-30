@@ -13,8 +13,8 @@ const Container = styled(m.div)`
   align-items: flex-start;
   width: 25vw;
   margin-left: 5vw;
-  padding-left: 7.5vw;
-  padding-right: 7.5vw;
+  padding-left: 5vw;
+  padding-right: 5vw;
   height: calc(var(--vh) * 100);
   position: relative;  
   background: var(--black);
@@ -46,6 +46,7 @@ const Blurb = styled(m.div)`
   width: 100%;
   overflow: visible;
   z-index: 1001;
+  max-width: 600px;
   font-weight: var(--body-weight);    
   & > p {
     margin: 0;
@@ -61,6 +62,9 @@ const ProfileSection = styled.div`
   position: relative;
   justify-content: center;
   height: 100%;
+  @media (max-width: 1024px) {
+    margin-top: calc(var(--default-spacing) * -2);
+  }
 `;
 
 const Footer = styled(m.div)`

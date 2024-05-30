@@ -27,10 +27,10 @@ const Home = ({ $isMobile, $isFirefox }) => {
       <Helmet>
         <title>Sumit Kukreja</title>
       </Helmet>        
-        <Landing />
+        <Landing $isMobile={$isMobile} />
         <Splash $isMobile={$isMobile} />
         <FeaturedWorks $isMobile={$isMobile} $isFirefox={$isFirefox} />
-        <About />
+        <About $isMobile={$isMobile} />
         <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} />
     </Container>
   );

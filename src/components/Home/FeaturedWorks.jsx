@@ -9,6 +9,7 @@ import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
 import CustomLink from '../Common/CustomLink';
+import FetchProjectData from './FetchProjectData';
 
 const Featured = styled(m.div)`
   height: calc(var(--vh, 1vh) * 100);
@@ -114,7 +115,7 @@ const ProjectContent = styled.div`
     }
   }
 `;
-
+ 
 
 const Project = styled.div`
     display: flex;
@@ -148,9 +149,8 @@ const Project = styled.div`
 
 const ProjectSummary = styled(m.div)`
   font-family: var(--body-font);
-  letter-spacing: 0.5px;  
+  letter-spacing: 0.5px; 
   position: relative;  
-  letter-spacing: 1px;
   text-align: justify;
   font-size: var(--body-text);
   font-weight: var(--body-weight);
@@ -180,9 +180,9 @@ const ProjectActions = styled.div`
   margin: 2rem -0.5rem;
 `;
 
-const ProjectLink = styled(CustomLink)`      
+const ProjectLink = styled(m(CustomLink))`
   z-index: 2;  
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: var(--black);    
   font-family: var(--body-font);
   font-size: var(--body-text);  
@@ -232,8 +232,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
   useEffect(() => {
     if (isInView) {
       controls.start('visible');
-    }
-    else {
+    } else {
       controls.start('hidden');
     }
   }, [controls, isInView]);
@@ -242,13 +241,19 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
     <ProjectContent ref={projectRef} className={className}>
       <ProjectHeader>
         <ProjectNumber>{padNum(number + 1, 2)}</ProjectNumber>
-        <ProjectName to={"#"}><AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} /></ProjectName>
+        <ProjectName to={`/project/${project.attributes.slug}`}>
+          <AnimatedText isLink={true} startImmediately={false} text={project.attributes.title} />
+        </ProjectName>
       </ProjectHeader>
-      <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>{project.attributes.summary}</ProjectSummary>      
-      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={"/project/" + project.attributes.slug}>Read More</ProjectLink>
+      <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>
+        {project.attributes.summary}
+      </ProjectSummary>
+      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={`/project/${project.attributes.slug}`} preloadData={() => FetchProjectData(project.attributes.slug)}>
+        Read More
+      </ProjectLink>
     </ProjectContent>
   );
-}
+};
 
 const ProjectItem = ({ isMobile, project, number}) => {
   const ref = useRef(null);

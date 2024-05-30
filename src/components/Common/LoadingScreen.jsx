@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const moveUp = keyframes`
     0% {
@@ -11,7 +11,7 @@ const moveUp = keyframes`
     }
 `;
 
-const StyledLoadingScreen = styled(motion.div)`
+const StyledLoadingScreen = styled(m.div)`
   position: fixed;
   top: 0;
   left: 0;
@@ -105,6 +105,7 @@ const BoxShadow = styled.div`
 const loadingVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
+  enter: { opacity: 1 },
   exit: { opacity: 0 },
   transition: { duration: 2 }
 };

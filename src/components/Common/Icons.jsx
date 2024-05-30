@@ -1,5 +1,5 @@
 import { Github } from '@styled-icons/bootstrap/Github';
-import { Linkedin } from '@styled-icons/bootstrap/Linkedin';
+import { LinkedinIn } from '@styled-icons/fa-brands/LinkedinIn';
 import { ArrowUpRight } from '@styled-icons/bootstrap/ArrowUpRight';
 import { Link45deg } from '@styled-icons/bootstrap/Link45deg';
 import { Wordpress } from '@styled-icons/bootstrap/Wordpress';
@@ -25,7 +25,7 @@ export const Icons = {
     "Open in New" : <Link45deg />,
     "Info" : <Php />,
     "Codepen" : <Square />,
-    "LinkedIn" : <Linkedin />,
+    "LinkedIn" : <LinkedinIn />,
     "Code Sandbox" : <Codesandbox />,
     "Up Right" : <ArrowUpRight />,
     "WordPress" : <Wordpress />,

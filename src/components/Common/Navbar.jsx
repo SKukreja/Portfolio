@@ -6,6 +6,7 @@ import use from '../../hooks/use';
 import { Icons } from './Icons';
 import { useLenis } from '@studio-freight/react-lenis';
 import { ModalContext } from './ModalContext.jsx';
+import CustomLink from './CustomLink';
 
 const slideInFromRight = keyframes`
   0% {
@@ -142,7 +143,7 @@ const Right = styled.div`
   }
 `;
 
-const LogoContainer = styled(Link)`
+const LogoContainer = styled(CustomLink)`
   position: relative;
   display: flex;
   width: 100%;
@@ -199,10 +200,10 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
   }
 `;
 
-const OverlayLink = styled(Link)`
+const OverlayLink = styled(CustomLink)`
   color: var(--black);
   text-decoration: none;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   font-size: 2rem;
   background: transparent;
   text-shadow: 0 0 2px var(--black);

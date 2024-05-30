@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import use from '../../hooks/use';
 import { Icons } from '../../components/Common/Icons';
 import { Helmet } from 'react-helmet-async';
 import ProjectTitle from './ProjectTitle';
@@ -10,8 +9,10 @@ import ProjectBlurb from './ProjectBlurb';
 import Cover from '../../components/Home/Cover';
 import Figure from './Figure';
 import { m } from 'framer-motion';
-
 import LoadingScreen, { loadingVariants } from '../../components/Common/LoadingScreen';
+import use from '../../hooks/use'; // Ensure the correct path
+import TransitionMask from '../../components/Common/TransitionMask'; // Import TransitionMask
+import ScrollLine from './ScrollLine'; // Import ScrollLine component
 
 const Container = styled.div`
   position: relative;
@@ -28,7 +29,7 @@ const Container = styled.div`
     overflow-x: hidden;
     flex-direction: column;
     width: 100vw;
-  } 
+  }
 `;
 
 const ProjectLanding = styled(m.div)`
@@ -56,7 +57,7 @@ const ProjectLandingText = styled.div`
     height: auto;
     left: var(--default-spacing);
     max-width: calc(100% - var(--default-spacing) * 2);
-    bottom: 120px; 
+    bottom: 120px;
   }
 `;
 
@@ -80,7 +81,7 @@ const ProjectTechnology = styled.div`
   align-items: center;
   line-height: 2;
   text-align: left;
-  letter-spacing: 0.5px;  
+  letter-spacing: 0.5px;
   & svg {
     width: 40px;
     font-size: 2rem;
@@ -92,8 +93,9 @@ const ProjectTechnology = styled.div`
   }
 `;
 
-const TextSection = styled.div` 
+const TextSection = styled.div`
   text-align: justify;
+  letter-spacing: 0.5px; 
   &.intro {
     width: 100%;
   }
@@ -129,7 +131,7 @@ const Section = styled.div`
   padding-left: calc(var(--default-spacing) * 2);
   padding-right: calc(var(--default-spacing) * 2);
   &.figure {
-    width: 75vw;    
+    width: 75vw;
   }
   @media (max-width: 1024px) {
     &.figure {
@@ -151,6 +153,7 @@ const Headers = styled.div`
   font-weight: var(--header-weight);
   transition: opacity 0.5s ease;
   text-align: center;
+  letter-spacing: 0.5px; 
   margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {
     width: 100%;
@@ -168,13 +171,13 @@ const Topic = styled.div`
 
 const BuiltWith = styled.div`
   font-size: var(--body-text);
-  font-family: var(--body-font);
+  font-family: var (--body-font);
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   @media (max-width: 1024px) {
-    width: 100%;    
+    width: 100%;
   }
 `;
 
@@ -184,55 +187,43 @@ const TopicText = styled.div`
   }
 `;
 
-const ScrollLine = styled.div`
-  height: 100px;
-  width: 1px;
-  background: linear-gradient(45deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 25%, var(--black) 50%, rgba(0,0,0,0.3) 75%, rgba(0,0,0,0) 100%);
-  position: absolute;
-  left: 50%;  
-  transform: translate(-50%, 0);
-  bottom: 10px;
-  z-index: 2;
-  display: none;
-  opacity: ${({ $scrollPosition }) => ($scrollPosition > 0 ? 0 : 1)};
-  transition: opacity 0.5s ease;
-  @media (max-width: 1024px) {    
-    display: block;
-  }
-`;
-
 const Project = ({ $isMobile, $isFirefox }) => {
   const { id } = useParams();
+  const location = useLocation();
 
-  const { data, loading, error } = use(
-    `/slugify/slugs/work/` + id + `?populate=deep`
-  );
-  
-  const landingVariants = {
-    hidden: { opacity: 0, },
-    visible: () => ({      
-      opacity: 1,
-      transition: {    
-        delay: 0.5,  
-        duration: 3,
-        type: 'linear',
-      },
-    }),
-  };  
+  const { data: fetchedData, loading: fetchedLoading, error: fetchedError } = use(`/slugify/slugs/work/${id}?populate=deep`);
 
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [data, setData] = useState(location.state?.preloadedData || null);
+  const [loading, setLoading] = useState(!location.state?.preloadedData);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
+    // Validate preloaded data
+    const isValidPreloadedData = location.state?.preloadedData?.attributes;
 
-    window.addEventListener("scroll", handleScroll);
+    if (isValidPreloadedData) {
+      console.log("Using preloaded data:", location.state.preloadedData);
+      setData(location.state.preloadedData);
+      setLoading(false);
+    } else if (fetchedData) {
+      console.log("Using fetched data:", fetchedData);
+      setData(fetchedData);
+      setLoading(fetchedLoading);
+      setError(fetchedError);
+    } else if (fetchedError) {
+      console.log("Fetch error:", fetchedError);
+      setError(fetchedError);
+      setLoading(false);
+    }
+  }, [fetchedData, fetchedLoading, fetchedError, location.state]);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const landingVariants = {
+    hidden: { opacity: 0 },
+    visible: () => ({
+      opacity: 1,
+      transition: { delay: 0.5, duration: 3, type: 'linear' },
+    }),
+  };
 
   if (loading) return <LoadingScreen variants={loadingVariants} initial="hidden" animate="visible" exit="exit">Loading...</LoadingScreen>;
   if (error) return <div>Error loading project.</div>;
@@ -242,27 +233,23 @@ const Project = ({ $isMobile, $isFirefox }) => {
       <Helmet>
         <title>Sumit Kukreja</title>
       </Helmet>
-      <ProjectLanding
-          variants={landingVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-        {data && (
+      <TransitionMask /> {/* Add the TransitionMask component */}
+      <ProjectLanding variants={landingVariants} initial="hidden" animate="visible" exit="exit">
+        {data && data.attributes && data.attributes.featured && (
           <>
             <ProjectSplash $isMobile={$isMobile} $imgUrl={import.meta.env.VITE_APP_UPLOAD_URL + data.attributes.featured.data.attributes.url} />
             <ProjectLandingText>
               <ProjectTitle titleText={data.attributes.title} />
               <ProjectBlurb blurbText={data.attributes.summary} />
             </ProjectLandingText>
-            <ScrollLine $scrollPosition={scrollPosition} />
+            <ScrollLine />
           </>
         )}
       </ProjectLanding>
-      {data && (
+      {data && data.attributes && (
         <Article $columns={data.attributes.columns}>
           <Section>
-            <Headers className='topic-header'>Built With</Headers>
+            <Headers className="topic-header">Built With</Headers>
             <BuiltWith>
               <StackComponents>
                 {data.attributes.technologies.data.map((technology) => (
@@ -276,10 +263,10 @@ const Project = ({ $isMobile, $isFirefox }) => {
             const first = index === 0 ? 'active' : '';
             if (isFigure) {
               return (
-                <Section key={topic.id} className='figure'>
+                <Section key={topic.id} className="figure">
                   <Figure
                     title={topic.title}
-                    media={topic.__component === 'article.slides' ? topic.media : (topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0])}
+                    media={topic.__component === 'article.slides' ? topic.media : topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0]}
                     caption={topic.caption}
                     isSlider={topic.__component === 'article.slides'}
                   />
@@ -290,7 +277,7 @@ const Project = ({ $isMobile, $isFirefox }) => {
             return (
               <Section key={topic.id}>
                 <TextSection className={'dark ' + first}>
-                  <Headers className='topic-header'>
+                  <Headers className="topic-header">
                     {topic.header ? topic.header : ''}
                   </Headers>
                   <Topic>
@@ -298,10 +285,10 @@ const Project = ({ $isMobile, $isFirefox }) => {
                       <TopicText>
                         {topic.content}
                       </TopicText>
+                    ) : topic.__component === 'article.sandbox' ? (
+                      <div></div>
                     ) : (
-                      topic.__component === 'article.sandbox' ? (
-                        <div></div>
-                      ) : ("")
+                      ''
                     )}
                   </Topic>
                 </TextSection>

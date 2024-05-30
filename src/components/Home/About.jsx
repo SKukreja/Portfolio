@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import use from '../../hooks/use';
 import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 import { m } from 'framer-motion';
 import ProfileImage from './ProfileImage';
 import { useInView } from 'react-intersection-observer';
+import { useLenis } from '@studio-freight/react-lenis';
 
 const Container = styled.div`
   display: flex;
@@ -102,7 +103,7 @@ const AboutContainer = styled.div`
 
 const Blurb = styled(m.div)`
   font-family: var(--body-font);
-  letter-spacing: 0.5px;    
+  letter-spacing: 0.5px; 
   font-size: var(--body-text);  
   width: 100%;
   text-align: justify;
@@ -116,20 +117,16 @@ const Blurb = styled(m.div)`
     content: "";
     position: absolute;
     opacity: 1;
-    height: 100%;
+    height: 70%;
     width: 150%;
-    left: -40%;
+    top: 10%;
+    left: -30%;
     right: -10%;
-    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 60%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 50%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 40%);
-    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%), radial-gradient(var(--offwhite) 0%,transparent 40%);
+    background: -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 70%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 60%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 50%), -webkit-radial-gradient(var(--offwhite) 0%,transparent 40%);
+    background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%), radial-gradient(var(--offwhite) 0%,transparent 40%);
     z-index: -1;
     @media (max-width: 1024px) {
-      display: none;
-    }
-  }
-  @media (max-width: 1024px) {
-    &::before {
-      opacity: 0.5;
+      top: 30%;
     }
   }
 `;
@@ -153,53 +150,27 @@ const ProfileSection = styled.div`
   }
 `;
 
-const Tree = styled(m.img)`
-  position: absolute;
-  top: -90%;
-  left: 200%;
-  width: auto;
-  height: 200%;
-  z-index: 4;
-`;
-
-const TreeContainer = styled(m.div)`
-pointer-events: none;
-@media (max-width: 1024px) {
-  display: none;
-}
-`;
-
-const TreeMask = styled(m.img)`
-position: absolute;
-top: -40%;
-left: 0;
-filter: blur(4px);
-width: auto;
-height: 150%;
-z-index: 2;
--webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%);
-mask-image: linear-gradient(to left, black 70%, transparent 100%);
-`;
-
 const Background = styled(m.div)`
 -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, transparent 100%);
 mask-image: linear-gradient(to right, transparent 0%, black 40%, transparent 100%);
 height: 100%;
 width: 100%;
+background: url('/bg-min.jpg');
 background-size: cover;
-background-position: -15% center;
+background-position: -35% center;
 position: absolute;
 inset: 0;
 filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
-will-change: opacity, filter;
+will-change: opacity, filter, transform;
 opacity: 0.35;
 mix-blend-mode: darken;
-z-index: 1;
+z-index: 2;
+pointer-events: none;
 @media (max-width: 1024px) {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
-  background-position: -90% 0%;
-  display: none;
+  background-position: -98% 0%;
+  height: 70%;  
 }
 `;
 
@@ -327,6 +298,7 @@ const DiamondIcon = styled.div`
   transform: scale(.75,1);
   margin-left: auto;
   margin-right: auto;
+  z-index: 5;
 `;
 
 const Border = styled(m.span)`
@@ -352,39 +324,21 @@ border-image-slice: 1;
 border-image-source: linear-gradient(to right, #793A2B, var(--offwhite));
 transform-origin: left;
 `;
- 
-const DividerRight = styled.div`
-  position: absolute;
-  border-left: 1px solid #8f5922;
-  border-style: collapse;
-  height: 100%;
-  top: 50%;
-  display: none;
-  opacity: 0.5;  
-  transform: translateY(-50%);
-  right: 0;
-`;
 
-const DividerLeft = styled.div`
-  position: absolute;
-  border-left: 1px solid #8f5922;
-  border-style: collapse;
-  height: 100%;
-  top: 50%;
-  display: none;
-  opacity: 0.5;  
-  transform: translateY(-50%);
-  left: 0;
-`;
-
-const About = () => {
+const About = ( {$isMobile} ) => {
   const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true});
   const [aboutRef, aboutInView] = useInView({ threshold: 0.25, triggerOnce: true});
-  const [bgRef, bgInView] = useInView({ threshold: 0.25});
+  const bgRef = useRef(null);
   const [blurbText, setBlurbText] = useState('');
   const { data, loading, error } = use(
     `/about?populate=deep`
   );
+
+  useLenis(({ scroll }) => {
+    if (bgRef.current) {
+      bgRef.current.style.transform = $isMobile ? `translateY(${scroll * 0.075 - 500}px)` : `translateX(${scroll * 0.075 - 800}px)`;
+    }
+  });
 
   const blurbVariants = {
     hidden: { opacity: 0, },
@@ -422,18 +376,6 @@ const About = () => {
     }),
   };
 
-  const bgVariants = {
-    hidden: { opacity: 0, filter: 'saturate(0) brightness(0) contrast(0) grayscale(0)' },
-    visible: () => ({      
-      opacity: 0.3,
-      filter: 'saturate(0.5) brightness(0.9) contrast(1.2) grayscale(0.5)' ,
-      transition: {      
-        delay: 0.1,  
-        duration: 2,        
-      },
-    }),
-  };
-
   useEffect(() => {
     if(!data) return;
     setBlurbText(data.attributes.blurb);    
@@ -451,31 +393,27 @@ const About = () => {
   };
   
   return (
-    <Container ref={ref} as={m.div}>
-      <Background ref={bgRef} style={{backgroundImage: 'url(bg-min.jpg)'}}
-        variants={bgVariants}
-        initial="hidden"
-        animate={bgInView ? 'visible' : 'hidden'}
+    <Container ref={ref} as={m.div} id="about">
+      <Background ref={bgRef}
+
       />
       <ProfileSection ref={aboutRef}>
-        <DividerLeft />
-          <Bio className={`${inView ? 'active' : ''}`}>
-            <Intro
-              initial="hidden"
-              animate={inView ? "visible" : "hidden"}
-              variants={headerVariants}
-            >About Me</Intro>
-            <DiamondIcon>{Icons["Diamond"]}</DiamondIcon>
-            <Blurb
-              variants={blurbVariants}
-              initial="hidden"
-              animate={aboutInView ? 'visible' : 'hidden'}
-              custom={{ delay: 0.2 }}
-            >
-              {blurbText}
-            </Blurb>
-          </Bio>
-        <DividerRight />
+        <Bio className={`${inView ? 'active' : ''}`}>
+          <Intro
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            variants={headerVariants}
+          >About Me</Intro>
+          <DiamondIcon>{Icons["Diamond"]}</DiamondIcon>
+          <Blurb
+            variants={blurbVariants}
+            initial="hidden"
+            animate={aboutInView ? 'visible' : 'hidden'}
+            custom={{ delay: 0.2 }}
+          >
+            {blurbText}
+          </Blurb>
+        </Bio>
       </ProfileSection>
       <TwoColumn ref={ref}>
         <Column>

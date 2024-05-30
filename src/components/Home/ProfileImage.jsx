@@ -4,9 +4,12 @@ import { Plane, useCurtains } from "react-curtains";
 
 const Scene = styled.div`  
   position: relative;
-  height: 250px;
+  height: 350px;
   aspect-ratio: 3 / 4;
-  overflow: visible;  
+  overflow: visible;
+  @media (max-width: 1024px) {
+    height: 250px;
+  }
 `
 
 const Container = styled.div`

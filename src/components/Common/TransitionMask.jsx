@@ -1,10 +1,10 @@
 // TransitionMask.jsx
 import React from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useTransition } from './TransitionContext';
 
-const Mask = styled(motion.div)`
+const Mask = styled(m.div)`
   position: fixed;
   inset: 0;
   background: var(--offwhite);

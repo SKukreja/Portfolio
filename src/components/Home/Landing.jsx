@@ -1,9 +1,9 @@
-import React from 'react'
-import { m } from 'framer-motion'
-import styled from 'styled-components'
-import AnimatedText from './AnimatedText'
-import { Icons } from '../Common/Icons'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { m } from 'framer-motion';
+import styled from 'styled-components';
+import AnimatedText from './AnimatedText';
+import { Icons } from '../Common/Icons';
+import ScrollButton from '../Common/ScrollButton'
 
 // background-image: url('bg.png');
 const Scene = styled(m.div)`  
@@ -41,6 +41,7 @@ const SceneText = styled(m.div)`
   position: relative;
   height: 50%;
   width: var(--desktop-container-width);
+  max-width: 40vw;
   margin-left: 100px;
   text-align: left;
   padding-right: 6rem;
@@ -76,9 +77,10 @@ const SceneText = styled(m.div)`
   @media (max-width: 1024px) {
     padding: var(--default-spacing);
     width: calc(100% - var(--default-spacing) * 2);
-    margin-top: 2rem;
+    margin-top: calc(var(--default-spacing));
     margin-left: auto;
     margin-right: auto;
+    max-width: 100%;
     justify-content: flex-start;
     &::before {
       background: transparent;
@@ -99,7 +101,7 @@ const ActionButtons = styled(m.div)`
   }  
 `;
 
-const Button = styled(Link)`
+const Button = styled(ScrollButton)` 
   pointer-events: all;
   text-decoration: none;
   margin: var(--default-spacing);
@@ -135,10 +137,10 @@ const NameContainer = styled(m.div)`
   margin-bottom: 1rem;  
 `;
 
-const NameSvg = styled(m.svg)`  
+const NameSvg = styled(m.svg)`
 `;
 
-function Landing() {
+function Landing({ $isMobile }) {
   return (
     <Scene>
       <SceneText>
@@ -163,13 +165,12 @@ function Landing() {
         </NameContainer>
         <Intro><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
         <ActionButtons initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 2 }}>
-          <Button to={"#featured-works"}><p>{Icons["Arrow Right"]} View my work</p></Button>
-          <Button to={"#about"}><p>{Icons["Arrow Right"]} More about me</p></Button>
+          <Button $isMobile={$isMobile} to={"#featured-works"}><p>{Icons["Arrow Right"]} View my work</p></Button>
+          <Button $isMobile={$isMobile} to={"#about"}><p>{Icons["Arrow Right"]} More about me</p></Button>
         </ActionButtons>      
       </SceneText>
     </Scene>
   );
 }
-
 
 export default Landing;
