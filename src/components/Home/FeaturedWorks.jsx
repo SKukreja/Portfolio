@@ -248,7 +248,7 @@ const ProjectInfo = ({ className, number, project, isInView }) => {
       <ProjectSummary initial="hidden" animate={controls} variants={textVariants}>
         {project.attributes.summary}
       </ProjectSummary>
-      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={`/project/${project.attributes.slug}`} preloadData={() => FetchProjectData(project.attributes.slug)}>
+      <ProjectLink initial="hidden" animate={controls} variants={linkVariants} to={`/project/${project.attributes.slug}`}>
         Read More
       </ProjectLink>
     </ProjectContent>
@@ -286,10 +286,8 @@ const ProjectItem = ({ isMobile, project, number}) => {
   );
 };
 
-const FeaturedWorks = ({ $isMobile }) => {
-  const { data, loading, error } = use(
-    `/home?populate=deep`
-  );
+const FeaturedWorks = ({ $isMobile, data }) => {
+  const [featuredProjects, setFeaturedProjects] = useState(null);
 
   const headerVariants = {
     hidden: { opacity: 0 },
@@ -301,6 +299,12 @@ const FeaturedWorks = ({ $isMobile }) => {
       },
     }),
   };
+
+  useEffect(() => {
+    if (!data) return;
+    const featured = data?.filter(project => project.attributes.isFeatured === true);
+    setFeaturedProjects(featured);
+  }, [data]);
   
   return (
     <InView triggerOnce>
@@ -313,9 +317,8 @@ const FeaturedWorks = ({ $isMobile }) => {
           >Featured Work</Header>
 
           <Projects>
-          {/* Loop through featured projects */}
-          {data?.attributes.featured.works.data.map((project, number) => (
-            <ProjectItem key={project.id} $isMobile={$isMobile} project={project} number={number} />
+          {featuredProjects && featuredProjects.map((project, number) => (
+            <ProjectItem key={project.id} $isMobile={$isMobile} project={project} number={number}  />
           ))}
 
 

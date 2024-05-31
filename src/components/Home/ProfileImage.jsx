@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Plane, useCurtains } from "react-curtains";
 
@@ -10,7 +10,7 @@ const Scene = styled.div`
   @media (max-width: 1024px) {
     height: 250px;
   }
-`
+`;
 
 const Container = styled.div`
   position: absolute;
@@ -18,7 +18,7 @@ const Container = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-`
+`;
 
 const ImagePlane = styled(Plane)`
   position: absolute;
@@ -26,7 +26,7 @@ const ImagePlane = styled(Plane)`
   right: 0;
   bottom: 0;
   left: 0;
-`
+`;
 
 const vertexShader = `
   precision mediump float;
@@ -51,7 +51,7 @@ const vertexShader = `
     vTextureCoord = (planeTextureMatrix * vec4(aTextureCoord, 0.0, 1.0)).xy;
     vNoiseCoord = (noiseTextureMatrix * vec4(aTextureCoord, 0.0, 1.0)).xy;
   }
-`
+`;
 
 const fragmentShader = `
 #define SPEED 10.0
@@ -201,7 +201,7 @@ void main() {
 
   gl_FragColor = vec4(mix(targetColor, texture2D(planeTexture, vTextureCoord).rgb, res), 1.0);
 }
-`
+`;
 
 const Picture = styled.img`
   height: 100%;
@@ -219,52 +219,52 @@ const Noise = styled.img`
 `;
 
 function ProfileImage({ $imageUrl, $isMobile }) {
-  const ref = useRef(null)
-  const isVisible = useRef(true)
+  const ref = useRef(null);
+  const isVisible = useRef(true);
   const curtains = useCurtains((curtains) => {    
     curtains.resize(); 
   });
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
-          isVisible.current = entry.isIntersecting > 0 ? true : false
-        })
+          isVisible.current = entry.isIntersecting > 0 ? true : false;
+        });
       },
       {
         root: null,
         rootMargin: '0px',
         threshold: 0.1
       }
-    )
+    );
 
     if (ref.current) {
-      observer.observe(ref.current)
+      observer.observe(ref.current);
     }
 
     return () => {
       if (ref.current) {
-        observer.unobserve(ref.current)
+        observer.unobserve(ref.current);
       }
     };
-  }, [ref])
+  }, [ref]);
 
   const setPlaneResolution = (plane) => {
-    const planeBox = plane.getBoundingRect()
-    plane.updatePosition()    
-    plane.uniforms.mobile.value = $isMobile ? 1 : 0
-    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]
-  }
-  
+    const planeBox = plane.getBoundingRect();
+    plane.updatePosition();    
+    plane.uniforms.mobile.value = $isMobile ? 1 : 0;
+    plane.uniforms.resolution.value = [planeBox.width, planeBox.height];
+  };
+
   const onPlaneReady = (plane) => {
     plane.updatePosition();
   };
 
   const onAfterResize = (plane) => {
-    setPlaneResolution(plane)
-  }
-
+    setPlaneResolution(plane);
+  };
 
   const uniforms = {
     planeVisibility: {
@@ -287,38 +287,43 @@ function ProfileImage({ $imageUrl, $isMobile }) {
       type: "1f",
       value: 0
     },
-  }
+  };
 
   const onRender = (plane) => {
     plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
-      plane.uniforms.time.value -= 1
+      plane.uniforms.time.value -= 1;
     }
     else if (isVisible.current && plane.uniforms.time.value < 300) {
-      plane.uniforms.time.value += 1
+      plane.uniforms.time.value += 1;
     }
-  }
+  };
 
   return (
     <Scene ref={ref}>
       <Container>
-        <ImagePlane
-          // plane init parameters
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          widthSegments={10}
-          heightSegments={10}
-          uniforms={uniforms}
-          // plane events
-          onRender={onRender}
-          onAfterResize={onAfterResize}
-          onReady={onPlaneReady} 
-        >
-          <Picture src={$imageUrl} data-sampler="planeTexture" alt="" />
-          <Noise src={'/profilenoise.png'} data-sampler="noiseTexture" alt="" />
-        </ImagePlane>
+        {isImageLoaded && (
+          <ImagePlane
+            // plane init parameters
+            vertexShader={vertexShader}
+            fragmentShader={fragmentShader}
+            widthSegments={10}
+            heightSegments={10}
+            uniforms={uniforms}
+            // plane events
+            onRender={onRender}
+            onAfterResize={onAfterResize}
+            onReady={onPlaneReady} 
+          >
+            <Picture src={$imageUrl} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
+            <Noise src={'/profilenoise.png'} data-sampler="noiseTexture" alt="" />
+          </ImagePlane>
+        )}
+        {!isImageLoaded && (
+          <Picture src={$imageUrl} alt="" onLoad={() => setIsImageLoaded(true)} />
+        )}
       </Container>
     </Scene>
-  )
+  );
 }
 export default ProfileImage;

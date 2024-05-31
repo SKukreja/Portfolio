@@ -36,10 +36,7 @@ const SocialLink = styled(m.a)`
   }
 `;
 
-const Socials = ({inView, treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
-    const { data, loading, error } = use(
-        `/social?populate=deep`
-    );
+const Socials = ({inView, socialData}) => {
 
     const socialVariants = {
         hidden: { opacity: 0, x: -20 },
@@ -57,7 +54,7 @@ const Socials = ({inView, treeScroll = 0, headerScroll = 0, bgScroll = 0}) => {
 
     return (
         <Container as={m.div}>
-        {data?.attributes.links.map((link, index) => (
+        {socialData?.attributes.links.map((link, index) => (
         <SocialLink 
             key={link.id}
             href={link.url} target="_blank"

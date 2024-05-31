@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Plane, useCurtains } from "react-curtains";
 
@@ -246,6 +246,7 @@ function Splash({ isMobile }) {
   const curtains = useCurtains((curtains) => {    
     curtains.resize();
   });
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -324,21 +325,26 @@ function Splash({ isMobile }) {
   return (
     <Scene ref={ref}>
     <Container>
-      <ImagePlane
-        // plane init parameters
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        widthSegments={10}
-        heightSegments={10}
-        uniforms={uniforms}
-        // plane events
-        onRender={onRender}
-        onAfterResize={onAfterResize}
-        onReady={onPlaneReady}
-      >
-        <Picture src={'/splash.png'} data-sampler="planeTexture" alt="" />
-        <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />
-      </ImagePlane>
+      {isImageLoaded && (
+        <ImagePlane
+          // plane init parameters
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          widthSegments={10}
+          heightSegments={10}
+          uniforms={uniforms}
+          // plane events
+          onRender={onRender}
+          onAfterResize={onAfterResize}
+          onReady={onPlaneReady}
+        >
+          <Picture src={'/splash.png'} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
+          <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />
+        </ImagePlane>
+      )}
+      {!isImageLoaded && (
+        <Picture src={'/splash.png'} alt="" onLoad={() => setIsImageLoaded(true)} />
+      )}
     </Container>
   </Scene>
   );

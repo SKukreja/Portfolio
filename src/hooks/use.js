@@ -53,7 +53,6 @@ const use = (url) => {
       dispatch({ type: FETCH_INIT });
 
       try {
-        console.log('Fetching data from:', url);
         const res = await API.get(url);
         dispatch({ type: FETCH_SUCCESS, payload: res.data.data });
       } catch (err) {

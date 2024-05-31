@@ -126,11 +126,16 @@ const BigBorder = styled(m.span)`
   }
 `;
 
-const Work = () => {
-  const { data, loading, error } = use('/works?populate=deep&sort=year:desc');
+const Work = ({ projectData }) => {
+  const [data, setData] = useState(null);
   const [currentProject, setCurrentProject] = useState(0);
   const controls = useAnimation();
   let scrollTimeout = useRef(null);
+
+  useEffect(() => {
+    if (!projectData) return;    
+    setData(projectData);
+  }, [projectData]);
 
   const handleScroll = (e) => {
     e.preventDefault();
@@ -155,8 +160,6 @@ const Work = () => {
     };
   }, [data]);
 
-  if (error) return <>{error}</>;
-
   return (
     <Featured
       initial={{ opacity: 0 }}
@@ -174,7 +177,7 @@ const Work = () => {
           All Projects
         </Header>
         <Projects as={m.div} animate={controls}>
-          {data?.map((project, index) => (
+          {data && data?.map((project, index) => (
             <Project key={project.id} isCurrent={index === currentProject}>
               <Year>{project.attributes.year}</Year>
               <ProjectName to={"/project/" + project.attributes.slug} preloadData={() => FetchProjectData(project.attributes.slug)}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Icons } from '../../components/Common/Icons';
 import { Helmet } from 'react-helmet-async';
@@ -9,8 +9,6 @@ import ProjectBlurb from './ProjectBlurb';
 import Cover from '../../components/Home/Cover';
 import Figure from './Figure';
 import { m } from 'framer-motion';
-import LoadingScreen, { loadingVariants } from '../../components/Common/LoadingScreen';
-import use from '../../hooks/use'; // Ensure the correct path
 import TransitionMask from '../../components/Common/TransitionMask'; // Import TransitionMask
 import ScrollLine from './ScrollLine'; // Import ScrollLine component
 
@@ -81,7 +79,7 @@ const ProjectTechnology = styled.div`
   align-items: center;
   line-height: 2;
   text-align: left;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   & svg {
     width: 40px;
     font-size: 2rem;
@@ -95,7 +93,7 @@ const ProjectTechnology = styled.div`
 
 const TextSection = styled.div`
   text-align: justify;
-  letter-spacing: 0.5px; 
+  letter-spacing: 0.3px;
   &.intro {
     width: 100%;
   }
@@ -153,7 +151,7 @@ const Headers = styled.div`
   font-weight: var(--header-weight);
   transition: opacity 0.5s ease;
   text-align: center;
-  letter-spacing: 0.5px; 
+  letter-spacing: 0.3px;
   margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {
     width: 100%;
@@ -187,35 +185,17 @@ const TopicText = styled.div`
   }
 `;
 
-const Project = ({ $isMobile, $isFirefox }) => {
+const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
   const { id } = useParams();
-  const location = useLocation();
-
-  const { data: fetchedData, loading: fetchedLoading, error: fetchedError } = use(`/slugify/slugs/work/${id}?populate=deep`);
-
-  const [data, setData] = useState(location.state?.preloadedData || null);
-  const [loading, setLoading] = useState(!location.state?.preloadedData);
-  const [error, setError] = useState(null);
+  const [project, setProject] = useState(null);
 
   useEffect(() => {
-    // Validate preloaded data
-    const isValidPreloadedData = location.state?.preloadedData?.attributes;
-
-    if (isValidPreloadedData) {
-      console.log("Using preloaded data:", location.state.preloadedData);
-      setData(location.state.preloadedData);
-      setLoading(false);
-    } else if (fetchedData) {
-      console.log("Using fetched data:", fetchedData);
-      setData(fetchedData);
-      setLoading(fetchedLoading);
-      setError(fetchedError);
-    } else if (fetchedError) {
-      console.log("Fetch error:", fetchedError);
-      setError(fetchedError);
-      setLoading(false);
+    if (!data || !id) return;
+    const thisProject = data?.filter(project => project.attributes.slug === id);
+    if (thisProject.length > 0) {
+      setProject(thisProject[0]);
     }
-  }, [fetchedData, fetchedLoading, fetchedError, location.state]);
+  }, [data, id]);
 
   const landingVariants = {
     hidden: { opacity: 0 },
@@ -225,9 +205,6 @@ const Project = ({ $isMobile, $isFirefox }) => {
     }),
   };
 
-  if (loading) return <LoadingScreen variants={loadingVariants} initial="hidden" animate="visible" exit="exit">Loading...</LoadingScreen>;
-  if (error) return <div>Error loading project.</div>;
-
   return (
     <Container>
       <Helmet>
@@ -235,38 +212,43 @@ const Project = ({ $isMobile, $isFirefox }) => {
       </Helmet>
       <TransitionMask /> {/* Add the TransitionMask component */}
       <ProjectLanding variants={landingVariants} initial="hidden" animate="visible" exit="exit">
-        {data && data.attributes && data.attributes.featured && (
+        {project && project.attributes && project.attributes.featured && (
           <>
-            <ProjectSplash $isMobile={$isMobile} $imgUrl={import.meta.env.VITE_APP_UPLOAD_URL + data.attributes.featured.data.attributes.url} />
+            <ProjectSplash
+              $isMobile={$isMobile}
+              $imgUrl={`${import.meta.env.VITE_APP_UPLOAD_URL}${project.attributes.featured.data.attributes.url}`}
+            />
             <ProjectLandingText>
-              <ProjectTitle titleText={data.attributes.title} />
-              <ProjectBlurb blurbText={data.attributes.summary} />
+              <ProjectTitle titleText={project.attributes.title} />
+              <ProjectBlurb blurbText={project.attributes.summary} />
             </ProjectLandingText>
             <ScrollLine />
           </>
         )}
       </ProjectLanding>
-      {data && data.attributes && (
-        <Article $columns={data.attributes.columns}>
+      {project && project.attributes && (
+        <Article $columns={project.attributes.columns}>
           <Section>
             <Headers className="topic-header">Built With</Headers>
             <BuiltWith>
               <StackComponents>
-                {data.attributes.technologies.data.map((technology) => (
-                  <ProjectTechnology key={technology.id}>{Icons[technology.attributes.name]} {technology.attributes.name}</ProjectTechnology>
+                {project.attributes.technologies.data.map((technology) => (
+                  <ProjectTechnology key={technology.id}>
+                    {Icons[technology.attributes.name]} {technology.attributes.name}
+                  </ProjectTechnology>
                 ))}
               </StackComponents>
             </BuiltWith>
           </Section>
-          {data.attributes.article.map((topic, index) => {
+          {project.attributes.article.map((topic, index) => {
             const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
             const first = index === 0 ? 'active' : '';
-            if (isFigure) {
+            if (isFigure && topic) {
               return (
                 <Section key={topic.id} className="figure">
                   <Figure
                     title={topic.title}
-                    media={topic.__component === 'article.slides' ? topic.media : topic.__component === 'article.figure' ? topic.figure.data : topic.images.data[0]}
+                    media={topic.__component === 'article.slides' ? topic.media.data : topic.figure.data}
                     caption={topic.caption}
                     isSlider={topic.__component === 'article.slides'}
                   />
@@ -297,7 +279,7 @@ const Project = ({ $isMobile, $isFirefox }) => {
           })}
         </Article>
       )}
-      <Cover $srcData={data} $isMobile={$isMobile} $isFirefox={$isFirefox} />
+      <Cover $srcproject={project} $isMobile={$isMobile} $isFirefox={$isFirefox} socialData={socialData} />
     </Container>
   );
 };

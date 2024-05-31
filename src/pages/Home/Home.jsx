@@ -21,7 +21,7 @@ const Container = styled.div`
   } 
 `;
 
-const Home = ({ $isMobile, $isFirefox }) => {
+const Home = ({ $isMobile, $isFirefox, data, socialData, aboutData }) => {
   return (
     <Container> 
       <Helmet>
@@ -29,9 +29,9 @@ const Home = ({ $isMobile, $isFirefox }) => {
       </Helmet>        
         <Landing $isMobile={$isMobile} />
         <Splash $isMobile={$isMobile} />
-        <FeaturedWorks $isMobile={$isMobile} $isFirefox={$isFirefox} />
-        <About $isMobile={$isMobile} />
-        <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} />
+        <FeaturedWorks $isMobile={$isMobile} $isFirefox={$isFirefox} data={data} />
+        <About $isMobile={$isMobile} aboutData={aboutData} />
+        <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} socialData={socialData} />
     </Container>
   );
 };

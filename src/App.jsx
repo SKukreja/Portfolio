@@ -22,7 +22,6 @@ import LoadingScreen, { loadingVariants } from './components/Common/LoadingScree
 import { TransitionProvider } from './components/Common/TransitionContext';
 import TransitionMask from './components/Common/TransitionMask.jsx';
 
-// Lazy load the Project component
 const Project = lazy(() => import('./pages/Project/Project'));
 
 const AppContainer = styled.div`
@@ -135,16 +134,8 @@ const ScrollToTop = (props) => {
   return <>{props.children}</>;
 };
 
-const Layout = ({ $isMobile, $isFirefox }) => {
-  const { data, loading, error } = use('/social?populate=deep');
+const Layout = ({ $isMobile, $isFirefox, data, socialData, aboutData }) => {
   const location = useLocation();
-
-  useEffect(() => {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen) {
-      loadingScreen.style.opacity = '0';
-    }
-  }, []);
 
   const isWorkPage = location.pathname.includes('/work');
 
@@ -152,13 +143,10 @@ const Layout = ({ $isMobile, $isFirefox }) => {
     <AppContainer className='app'>
       <HelmetProvider>
         <GlobalStyle />
-        <Navbar socialData={data} />
+        <Navbar socialData={socialData} />
         <Helmet>
           <title>Sumit Kukreja</title>
           <link rel='icon' type='image/png' href='/favicon.ico' />
-          <link rel='preload' href={ParchmentWoff2} as='font' type='font/woff2' crossorigin='anonymous' />
-          <link rel='preload' href={ParchmentItalicWoff2} as='font' type='font/woff2' crossorigin='anonymous' />
-          <link rel='preload' href={WizardHandWoff2} as='font' type='font/woff2' crossorigin='anonymous' />
         </Helmet>
         <Curtains
           className='curtains-canvas'
@@ -168,14 +156,14 @@ const Layout = ({ $isMobile, $isFirefox }) => {
           premultipliedAlpha={true}
         >
           <LenisCurtainsSync $isMobile={$isMobile} />
-          <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} />
+          <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />
         </Curtains>
       </HelmetProvider>
     </AppContainer>
   );
 };
 
-const Root = ({ $isMobile, $isFirefox, isWorkPage }) => {
+const Root = ({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }) => {
   const location = useLocation();
   const container = useRef(null);
 
@@ -184,7 +172,6 @@ const Root = ({ $isMobile, $isFirefox, isWorkPage }) => {
     curtains.updateScrollValues(0, 0);
   });
 
-  // useEffect to watch location changes
   useEffect(() => {
     if (curtains) {
       curtains.updateScrollValues(0, 0);
@@ -199,9 +186,9 @@ const Root = ({ $isMobile, $isFirefox, isWorkPage }) => {
       <AnimatePresence mode="wait">
         <Suspense fallback={<LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' $isFirefox={$isFirefox} />}>
           <Routes location={location} key={location.pathname}>
-            <Route path='/' element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
-            <Route path='/project/:id' element={<Project $isMobile={$isMobile} $isFirefox={$isFirefox} />} />
-            <Route path='/work' element={<Work />} />
+            <Route path='/' element={<Home $isMobile={$isMobile} $isFirefox={$isFirefox} data={data} socialData={socialData} aboutData={aboutData} />} />
+            <Route path='/project/:id' element={<Project $isMobile={$isMobile} data={data} socialData={socialData} $isFirefox={$isFirefox} />} />
+            <Route path='/work' element={<Work projectData={data} />} />
             <Route path='/contact' element={<Contact />} />
           </Routes>
         </Suspense>
@@ -212,10 +199,56 @@ const Root = ({ $isMobile, $isFirefox, isWorkPage }) => {
 
 export const CoverContext = React.createContext();
 
+const preloadFonts = (fontUrls) => {
+  const promises = fontUrls.map((url) => {
+    const font = new FontFace('FontName', `url(${url})`);
+    return font.load().then((loadedFont) => {
+      document.fonts.add(loadedFont);
+    });
+  });
+  return Promise.all(promises);
+};
+
+const preloadImages = (imageUrls) => {
+  const promises = imageUrls.map((url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = resolve;
+      img.onerror = reject;
+    });
+  });
+  return Promise.all(promises);
+};
+
+const extractImageUrlsFromData = (data) => {
+  let imageUrls = [
+    '/splash.png',
+    '/splashnoise.png',
+    '/profilenoise.png',
+    '/avatar.png',
+    '/bg-min.jpg',
+    '/paper.jpg',
+  ];
+  data.map(project => {
+    if (project.attributes.featured.data.attributes.url) {
+      imageUrls.push(import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url);
+    }
+  });
+  return imageUrls;
+};
+
 const App = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isFirefox, setIsFirefox] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState(null);
+  const [loadedSocialData, setLoadedSocialData] = useState(null);
+  const [loadedAboutData, setLoadedAboutData] = useState(null);
   const lenisRef = useRef();
+  const { data: apiData, loading: apiLoading, error } = use('/works?populate=deep&sort=year:desc');
+  const { data: socialData, loading: socialApiLoading, sError } = use('/social?populate=deep');
+  const { data: aboutData, loading: aboutApiLoading, aError } = use('/about?populate=deep');
 
   const options = {
     lerp: 0.05,
@@ -243,23 +276,44 @@ const App = () => {
 
     setIsFirefox(isFirefoxAndroid);
 
-    // Handler to set state based on the media query
     function handleResize(e) {
-      // Update state based on the media query result
       setIsMobile(e.matches);
     }
 
-    // Register event listener
     mediaQuery.addEventListener('change', handleResize);
 
-    // Initial check
     handleResize(mediaQuery);
 
-    // Cleanup function to remove the event listener
     return () => {
       mediaQuery.removeEventListener('change', handleResize);
     };
   }, [isMobile]);
+
+  useEffect(() => {
+    if (!apiLoading && !socialApiLoading && !aboutApiLoading && apiData && socialData && aboutData) {
+      const imageUrls = extractImageUrlsFromData(apiData);
+      const fontUrls = [
+        ParchmentWoff2,
+        ParchmentItalicWoff2,
+        WizardHandWoff2
+      ];
+      setData(apiData);
+      setLoadedSocialData(socialData);
+      setLoadedAboutData(aboutData);
+      Promise.all([preloadImages(imageUrls), preloadFonts(fontUrls)]).then(() => {
+        setIsLoading(false);
+      });
+    }
+  }, [apiLoading, socialApiLoading, socialData, apiData, aboutApiLoading, aboutData]);
+
+  
+  useEffect(() => {
+    if (isLoading) return;
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';
+    }
+  }, [isLoading]);
 
   return (
     <ReactLenis root ref={lenisRef} options={options}>
@@ -268,8 +322,14 @@ const App = () => {
           <ModalProvider>
             <TransitionProvider>
             <Router>
-              <ScrollToTop />
-              <Layout $isMobile={isMobile} $isFirefox={isFirefox} />
+              {isLoading ? (
+                <LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' />
+              ) : (
+                <>
+                  <ScrollToTop />
+                  <Layout $isMobile={isMobile} $isFirefox={isFirefox} data={data} socialData={loadedSocialData} aboutData={loadedAboutData} />
+                </>
+              )}
             </Router>
             </TransitionProvider>
           </ModalProvider>

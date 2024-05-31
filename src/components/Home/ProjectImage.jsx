@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Plane, useCurtains } from "react-curtains";
 
@@ -256,6 +256,7 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
   const curtains = useCurtains((curtains) => {    
     curtains.resize();
   });
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -297,7 +298,6 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
   const onAfterResize = (plane) => {
     setPlaneResolution(plane)
   }
-
 
   const uniforms = {
     planeVisibility: {
@@ -345,21 +345,26 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
   return (
     <Scene ref={ref} className={even ? 'even' : 'odd'} number={number}>
       <Container className={even ? 'even' : 'odd'}>
-        <ImagePlane
-          // plane init parameters
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          widthSegments={10}
-          heightSegments={10}
-          uniforms={uniforms}
-          // plane events
-          onRender={onRender}
-          onAfterResize={onAfterResize}
-          onReady={onPlaneReady}
-        >
-          <Picture src={imageUrl} data-sampler="planeTexture" alt="" />
-          <Noise src={'/inknoise.png'} data-sampler="noiseTexture" alt="" />
-        </ImagePlane>
+        {isImageLoaded && (
+          <ImagePlane
+            // plane init parameters
+            vertexShader={vertexShader}
+            fragmentShader={fragmentShader}
+            widthSegments={10}
+            heightSegments={10}
+            uniforms={uniforms}
+            // plane events
+            onRender={onRender}
+            onAfterResize={onAfterResize}
+            onReady={onPlaneReady}
+          >
+            <Picture src={imageUrl} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
+            <Noise src={'/inknoise.png'} data-sampler="noiseTexture" alt="" />
+          </ImagePlane>
+        )}
+        {!isImageLoaded && (
+          <Picture src={imageUrl} alt="" onLoad={() => setIsImageLoaded(true)} />
+        )}
       </Container>
     </Scene>
   );

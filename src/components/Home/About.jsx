@@ -325,14 +325,17 @@ border-image-source: linear-gradient(to right, #793A2B, var(--offwhite));
 transform-origin: left;
 `;
 
-const About = ( {$isMobile} ) => {
+const About = ( {$isMobile, aboutData} ) => {
   const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true});
   const [aboutRef, aboutInView] = useInView({ threshold: 0.25, triggerOnce: true});
   const bgRef = useRef(null);
   const [blurbText, setBlurbText] = useState('');
-  const { data, loading, error } = use(
-    `/about?populate=deep`
-  );
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (!aboutData) return;
+    setData(aboutData);
+  }, [data]);
 
   useLenis(({ scroll }) => {
     if (bgRef.current) {

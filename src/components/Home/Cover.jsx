@@ -93,11 +93,7 @@ const CopyrightSymbol = styled.span`
 const CopyrightText = styled.span`
 `;
 
-const Cover = ({ $isMobile, $isFirefox }) => {
-
-  const { data, loading, error } = use(
-    `/about?populate=deep`
-  );
+const Cover = ({ $isMobile, $isFirefox, socialData }) => {
   
   const fadeIn = {
     hidden: { opacity: 0, },
@@ -111,10 +107,6 @@ const Cover = ({ $isMobile, $isFirefox }) => {
       },
     }),
   };
-
-  if (!data) {
-    return null; // or a fallback component
-  }
 
   return (
     <Container $isFirefox={$isFirefox}>
@@ -132,7 +124,7 @@ const Cover = ({ $isMobile, $isFirefox }) => {
                 >
                   Please feel free to contact me by e-mail or find me on one of the platforms below.
                 </Blurb>
-                <Socials inView={inView} />
+                <Socials inView={inView} socialData={socialData} />
               </Bio>
           </ProfileSection>
           <Footer

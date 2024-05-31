@@ -81,17 +81,24 @@ const FigureMedia = ({ item }) => {
 };
 
 const Figure = ({ title, media, caption, isSlider }) => {
-    const [figureHeight, setFigureHeight] = useState(0);
+    const [figureMedia, setFigureMedia] = useState(null);
     const figureRef = useRef(null);
     
+    useEffect(() => {
+      if (!media) return;
+      setFigureMedia(media);
+    }, [media]);
 
     return (
-        <FigureContainer ref={figureRef} $dynamicHeight={figureHeight} className='light'>
+        <FigureContainer ref={figureRef} className='light'>
             <Headers className='topic-header'>{title}</Headers>
-            {isSlider ? (
-            <Slider media={media} />
-            ) : (
-            <FigureMedia item={media} />
+
+            {media && isSlider && (
+              <Slider media={media} />
+            )}
+
+            {media && !isSlider && (
+              <FigureMedia item={media} />
             )}
             <Caption>{caption}</Caption>
         </FigureContainer>
