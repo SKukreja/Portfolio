@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import use from '../../hooks/use';
 import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 import { m } from 'framer-motion';
-import ProfileImage from './ProfileImage';
 import { useInView } from 'react-intersection-observer';
 import { useLenis } from '@studio-freight/react-lenis';
 
@@ -25,7 +23,7 @@ const Container = styled.div`
     flex-direction: column;
   }
   @media (max-width: 768px) {
-    margin-top: 70%;
+    margin-top: calc(var(--default-spacing) * 4);
   }
 `;
 
@@ -155,7 +153,7 @@ const Background = styled(m.div)`
 mask-image: linear-gradient(to right, transparent 0%, black 40%, transparent 100%);
 height: 100%;
 width: 100%;
-background: url('/bg-min.jpg');
+background: url('/bg.avif');
 background-size: cover;
 background-position: -35% center;
 position: absolute;
@@ -169,7 +167,7 @@ pointer-events: none;
 @media (max-width: 1024px) {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
-  background-position: -98% 0%;
+  background-position: -96% 0%;
   height: 70%;  
 }
 `;
@@ -177,7 +175,7 @@ pointer-events: none;
 const TwoColumn = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 7.5vh;
+  margin-top: 7.5rem;
   width: 50%;
   padding-left: 5vw;
   padding-right: 5vw;
@@ -287,7 +285,7 @@ const TableRow = styled(m.div)`
   }
 `;
 
-const DiamondIcon = styled.div`
+const DiamondIcon = styled(m.div)`
   font-size: 3rem;
   font-family: var(--display-font);
   color: var(--black);
@@ -299,6 +297,9 @@ const DiamondIcon = styled.div`
   margin-left: auto;
   margin-right: auto;
   z-index: 5;
+  & svg {
+    width: 1.5rem;
+  }
 `;
 
 const Border = styled(m.span)`
@@ -407,7 +408,12 @@ const About = ( {$isMobile, aboutData} ) => {
             animate={inView ? "visible" : "hidden"}
             variants={headerVariants}
           >About Me</Intro>
-          <DiamondIcon>{Icons["Diamond"]}</DiamondIcon>
+          <DiamondIcon
+          variants={blurbVariants}
+          initial="hidden"
+          animate={aboutInView ? 'visible' : 'hidden'}
+          custom={{ delay: 0.2 }}
+          >{Icons["Diamond"]}</DiamondIcon>
           <Blurb
             variants={blurbVariants}
             initial="hidden"
@@ -444,7 +450,7 @@ const About = ( {$isMobile, aboutData} ) => {
                   <Primary>IT Engineer</Primary>
                   <Secondary>KPMB Architects</Secondary>                    
                 </TableColumn>
-                <Time>2018 - 2023</Time>
+                <Time>2018 - 2024</Time>
                 <Border />
               </TableRow>
               <TableRow

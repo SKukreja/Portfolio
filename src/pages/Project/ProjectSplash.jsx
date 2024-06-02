@@ -4,14 +4,20 @@ import { Plane, useCurtains } from "react-curtains";
 
 const Scene = styled.div`
   position: relative;
-  width: calc(var(--vh) * 120 * 4/3);
-  height: calc(var(--vh) * 120);
+  width: calc(80vw * 4/3);
+  height: calc(80vw * 120);
   z-index: 1;
   overflow: visible;
   pointer-events: none;
   margin-top: calc(var(--vh, 1vh) * -5);
   margin-left: 15vw;  
   @media (max-width: 1024px) {
+    width: calc(var(--vh, 1vh) * 110);
+    height: calc(var(--vh, 1vh) * 110);
+    margin-top: calc(var(--vh, 1vh) * -35);
+    margin-left: calc(var(--vh, 1vh) * -20);
+  }
+  @media (max-width: 768px) {
     width: calc(var(--vh, 1vh) * 90);
     height: calc(var(--vh, 1vh) * 90);
     margin-top: calc(var(--vh, 1vh) * -30);
@@ -31,6 +37,7 @@ const ImagePlane = styled(Plane)`
   position: absolute;
   top: 0;
   right: 0;
+  pointer-events: none;
   bottom: 0;
   left: 0;
 `;
@@ -233,7 +240,7 @@ const Noise = styled.img`
   object-fit: cover;
 `;
 
-function ProjectSplash({ $imgUrl, $isMobile }) {
+function ProjectSplash({ $img, $isMobile }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
   const curtains = useCurtains((curtains) => {    
@@ -331,12 +338,12 @@ function ProjectSplash({ $imgUrl, $isMobile }) {
           onAfterResize={onAfterResize}
           onReady={onPlaneReady}
         >
-          <Picture src={$imgUrl} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
-          <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />
+          <Picture src={import.meta.env.VITE_APP_UPLOAD_URL + $img.data.attributes.url} data-sampler="planeTexture" alt={$img.data.attributes.alternativeText} onLoad={() => setIsImageLoaded(true)} />
+          <Noise src={'/splashnoise.avif'} aria-hidden="true" data-sampler="noiseTexture" alt="" />
         </ImagePlane>
       )}
       {!isImageLoaded && (
-        <Picture src={$imgUrl} alt="" onLoad={() => setIsImageLoaded(true)} />
+        <Picture src={import.meta.env.VITE_APP_UPLOAD_URL + $img.data.attributes.url} alt="" aria-hidden="true" onLoad={() => setIsImageLoaded(true)} />
       )}
     </Container>
   </Scene>

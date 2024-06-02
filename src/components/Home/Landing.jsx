@@ -5,7 +5,6 @@ import AnimatedText from './AnimatedText';
 import { Icons } from '../Common/Icons';
 import ScrollButton from '../Common/ScrollButton'
 
-// background-image: url('bg.png');
 const Scene = styled(m.div)`  
   background-size: cover;
   background-position: center;
@@ -163,10 +162,10 @@ function Landing({ $isMobile }) {
           <m.path initial={{ strokeDasharray: 1000, strokeDashoffset: 1000, fill: "rgba(18, 21, 24, 0)" }} animate={{ strokeDashoffset: 0, fill: "rgba(18, 21, 24, 1)" }} transition={{ duration: 4, ease: "easeInOut", delay: 1 }} className="name-path" d="M244.68,18.89c4.22-.06,7.26,2.86,7.17,6.9-.07,3.45-3.53,6.59-7.33,6.65-3.43.05-6.88-3.44-6.99-7.08-.11-3.68,2.92-6.41,7.14-6.47Z" style={{ strokeWidth: "1px", stroke: "#121518" }} />
         </NameSvg>
         </NameContainer>
-        <Intro><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
+        <Intro aria-label="Introduction"><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
         <ActionButtons initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 2 }}>
-          <Button $isMobile={$isMobile} to={"#featured-works"}><p>{Icons["Arrow Right"]} View my work</p></Button>
-          <Button $isMobile={$isMobile} to={"#about"}><p>{Icons["Arrow Right"]} More about me</p></Button>
+          <Button $isMobile={$isMobile} to={"#featured-works"} aria-label="View my work"><p>{Icons["Arrow Right"]} View my work</p></Button>
+          <Button $isMobile={$isMobile} to={"#about"} aria-label="More about me"><p>{Icons["Arrow Right"]} More about me</p></Button>
         </ActionButtons>      
       </SceneText>
     </Scene>

@@ -1,0 +1,15 @@
+User-agent: *
+Disallow:
+
+# Disallow specific directories
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+
+# Allow specific web crawlers to access certain parts
+User-agent: Googlebot
+Allow: /public/
+
+# Block specific web crawlers entirely
+User-agent: BadBot
+Disallow: /

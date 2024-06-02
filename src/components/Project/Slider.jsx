@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 const SliderWrapper = styled.div`
     position: relative;
@@ -84,7 +84,7 @@ const Arrow = styled.svg`
     user-select: none;
     z-index: 2;
     &:hover {
-        fill: var(--accent-colour);
+        fill: var(--secondary-colour);
     }
     &.left {
         left: 10px;
@@ -163,7 +163,7 @@ const Slider = ({ media, className, interval = 5000 }) => {
                         }`}
                     >
                         {type === "image" ? (
-                        <img src={src} alt="" onClick={handleNext} />
+                        <img src={src} alt={item.attributes.alternativeText} onClick={handleNext} />
                         ) : (
                         <video
                             ref={videoRef}
@@ -171,6 +171,7 @@ const Slider = ({ media, className, interval = 5000 }) => {
                             muted
                             loop
                             onClick={handleNext}
+                            alt={item.attributes.alternativeText}
                         ></video>
                         )}
                     </Slide>

@@ -17,14 +17,8 @@ const CustomLink = forwardRef(({ to, children, preloadData, ...props }, ref) => 
       setIsTransitioning(true);
       lenis?.scrollTo(0, 0);
 
-      let preloadedData = null;
-      if (preloadData) {
-        preloadedData = await preloadData();
-        console.log('Preloaded data:', preloadedData.data);
-      }
-
       setTimeout(() => {
-        navigate(to, { state: { preloadedData: preloadedData?.data } });
+        navigate(to);
         setIsTransitioning(false);
       }, 2000);
     }

@@ -9,13 +9,13 @@ const Scene = styled.div`
   z-index: 1;
   overflow: visible;
   margin-top: calc(var(--vh, 1vh) * -37.5);
-  margin-left: -15vw;  
+  margin-left: -10vw;  
   pointer-events: none;
   @media (max-width: 1024px) {
-    width: 150vw;
-    height: 150vw;
-    margin-top: -120vw;
-    margin-left: -30vw;    
+    width: 130vw;
+    height: 130vw;
+    margin-top: -85vw;
+    margin-left: -20vw;    
   }
   @media (max-width: 768px) {
     width: 130vw;
@@ -38,6 +38,7 @@ const ImagePlane = styled(Plane)`
   top: 0;
   right: 0;
   bottom: 0;
+  pointer-events: none;
   left: 0;
 `;
 
@@ -338,12 +339,12 @@ function Splash({ isMobile }) {
           onAfterResize={onAfterResize}
           onReady={onPlaneReady}
         >
-          <Picture src={'/splash.png'} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
-          <Noise src={'/splashnoise.png'} data-sampler="noiseTexture" alt="" />
+          <Picture src={'/splash.avif'} data-sampler="planeTexture" alt="Watercolour art depicting Sumit walking his dog and holding a laptop" onLoad={() => setIsImageLoaded(true)} />
+          <Noise src={'/splashnoise.avif'} data-sampler="noiseTexture" alt="" aria-hidden="true" />
         </ImagePlane>
       )}
       {!isImageLoaded && (
-        <Picture src={'/splash.png'} alt="" onLoad={() => setIsImageLoaded(true)} />
+        <Picture src={'/splash.avif'} alt="" aria-hidden="true" onLoad={() => setIsImageLoaded(true)} />
       )}
     </Container>
   </Scene>

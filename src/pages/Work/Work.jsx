@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { m, useAnimation } from 'framer-motion';
-import use from '../../hooks/use';
 import CustomLink from '../../components/Common/CustomLink';
-import FetchProjectData from '../../components/Home/FetchProjectData';
-import Cover from '../../components/Home/Cover';
 
 const Featured = styled(m.div)`
   position: relative;
@@ -48,7 +44,7 @@ const AllProjects = styled.div`
   }
 `;
 
-const Projects = styled.div`
+const Projects = styled(m.div)`
   display: flex;
   height: calc(var(--vh) * 100);
   width: 50%;
@@ -160,12 +156,32 @@ const Work = ({ projectData }) => {
     };
   }, [data]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 0.2, // This adds a delay before the first child starts animating
+      },
+    },
+  };
+
+  const projectVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: ({ delay }) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: delay * 0.3,
+        duration: 0.5,
+      },
+    }),
+  };
+
   return (
     <Featured
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
+
     >
       <AllProjects>
         <Header
@@ -176,11 +192,11 @@ const Work = ({ projectData }) => {
         >
           All Projects
         </Header>
-        <Projects as={m.div} animate={controls}>
-          {data && data?.map((project, index) => (
-            <Project key={project.id} isCurrent={index === currentProject}>
+        <Projects as={m.div} variants={containerVariants} initial="hidden" animate="visible">
+          {data && data.map((project, index) => (
+            <Project key={project.id} isCurrent={index === currentProject} variants={projectVariants} custom={{ delay: index }}>
               <Year>{project.attributes.year}</Year>
-              <ProjectName to={"/project/" + project.attributes.slug} preloadData={() => FetchProjectData(project.attributes.slug)}>
+              <ProjectName to={"/project/" + project.attributes.slug}>
                 {project.attributes.title}
               </ProjectName>
               <BigBorder />

@@ -1,15 +1,6 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { m } from 'framer-motion';
-
-const moveUp = keyframes`
-    0% {
-        transform: translateY(0);
-    }
-    100% { 
-        transform: translateY(-100%); 
-    }
-`;
 
 const StyledLoadingScreen = styled(m.div)`
   position: fixed;
@@ -28,7 +19,7 @@ const StyledLoadingScreen = styled(m.div)`
 const Container = styled.div`
   position: relative;
   display: flex;
-  height: 100vh; /* Ensure it's twice the viewport height */
+  height: 100vh;
   width: 100%;
 `;
 
@@ -52,15 +43,13 @@ const NoiseLayer = styled.div`
     opacity: 0.12;
     z-index: 5;
     mix-blend-mode: color-burn;
-    background: url('/paper.jpg');
+    background: url('/paper.avif');
     @media (max-width: 1024px) {
       width: 100%;
-      height: ${({ $isFirefox }) =>
-        $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) + 1px))' : 'calc(100% - (100svh - var(--default-spacing) + 1px))'};
+      height: calc(100% - (100vh - var(--default-spacing) + 1px));
     }
     @media (max-width: 768px) {
-      height: ${({ $isFirefox }) =>
-        $isFirefox ? 'calc(100% - (100vh - var(--default-spacing) * 2 + 1px))' : 'calc(100% - (100svh - var(--default-spacing) * 2 + 1px))'};
+      height: calc(100% - (100vh - var(--default-spacing) * 2 + 1px));
     }
   }
 `;
@@ -71,7 +60,7 @@ const PaperLayer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("/paper.jpg");
+  background: url("/paper.avif");
   background-repeat: repeat;
   opacity: 0.4;
   width: 100%;

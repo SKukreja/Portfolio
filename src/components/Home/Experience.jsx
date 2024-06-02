@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import use from '../../hooks/use';
 import styled from 'styled-components';
-import { InView, useInView } from 'react-intersection-observer';
+import { InView } from 'react-intersection-observer';
 import { m } from 'framer-motion';
 
 const Container = styled.div`

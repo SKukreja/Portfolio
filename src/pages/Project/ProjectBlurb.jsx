@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { m } from 'framer-motion'
 
 const Text = styled(m.p)`
@@ -13,6 +13,7 @@ const Text = styled(m.p)`
   max-width: 500px;
   @media (max-width: 1024px) {    
     margin-top: 0;
+    max-width: 100%;
     margin-left: auto;
     margin-right: auto;    
   }

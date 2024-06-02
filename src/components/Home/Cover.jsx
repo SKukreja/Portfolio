@@ -1,11 +1,9 @@
-import React, { useContext } from 'react';
-import use from '../../hooks/use';
-import styled, { keyframes } from 'styled-components';
-import { InView, useInView } from 'react-intersection-observer';
+import React from 'react';
+import styled from 'styled-components';
+import { InView } from 'react-intersection-observer';
 import { m } from 'framer-motion'
 import ProfileImage from './ProfileImage';
 import Socials from './Socials';
-import WashedAwayText from './WashedAwayText';
 
 const Container = styled(m.div)`
   display: flex;
@@ -20,14 +18,14 @@ const Container = styled(m.div)`
   background: var(--black);
   color: var(--offwhite);
   @media (max-width: 1024px) {
-    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100vh - var(--default-spacing) * 2 + 1px)' : 'calc(100svh - var(--default-spacing) * 2 + 1px)'};
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(var(--vh) * 100 - var(--default-spacing) * 2 + 1px)' : 'calc(100svh - var(--default-spacing) * 2 + 1px)'};
     margin-left: 0;
     padding: 0;    
     padding-top: var(--default-spacing);
     width: 100%;
   }
   @media (max-width: 768px) {
-    height: ${({ $isFirefox }) => $isFirefox ? 'calc(100vh - var(--default-spacing) * 3 + 1px)' : 'calc(100svh - var(--default-spacing) * 3 + 1px)'};
+    height: ${({ $isFirefox }) => $isFirefox ? 'calc(var(--vh) * 100 - var(--default-spacing) * 1 + 1px)' : 'calc(100svh - var(--default-spacing) * 3 + 1px)'};
   }
 `;
 
@@ -51,6 +49,9 @@ const Blurb = styled(m.div)`
   & > p {
     margin: 0;
   }
+  @media (max-width: 1024px) {
+    margin-top: var(--default-spacing);
+  }
 `;
 
 const ProfileSection = styled.div`
@@ -73,14 +74,18 @@ const Footer = styled(m.div)`
   bottom: var(--default-spacing);
   left: 0;
   right: 0;
-  margin-left: calc(var(--default-spacing) * -1);
   width: 100%;
+  margin-left: calc(var(--default-spacing) * -1);
   justify-content: flex-end;
   font-size: var(--body-text);
   font-family: var(--display-font);
   z-index: 1001;
   vertical-align: middle;
   align-items: center;
+  @media (max-width: 1024px) {
+    margin-left: 0;
+    justify-content: center;
+  }
 `;
 
 const CopyrightSymbol = styled.span`
@@ -109,12 +114,12 @@ const Cover = ({ $isMobile, $isFirefox, socialData }) => {
   };
 
   return (
-    <Container $isFirefox={$isFirefox}>
+    <Container $isFirefox={$isFirefox} id="contact">
       <InView>
         {({ inView, ref, entry }) => (
           <>
           <ProfileSection>
-              <ProfileImage $imageUrl='/avatar.png' $isMobile={$isMobile} />
+              <ProfileImage $imageUrl='/avatar.avif' $isMobile={$isMobile} />
               <Bio ref={ref} className={`${inView ? 'active' : ''}`}>                          
                 <Blurb
                   variants={fadeIn}

@@ -9,8 +9,9 @@ import ProjectBlurb from './ProjectBlurb';
 import Cover from '../../components/Home/Cover';
 import Figure from './Figure';
 import { m } from 'framer-motion';
-import TransitionMask from '../../components/Common/TransitionMask'; // Import TransitionMask
-import ScrollLine from './ScrollLine'; // Import ScrollLine component
+import TransitionMask from '../../components/Common/TransitionMask';
+import ScrollLine from './ScrollLine';
+import CustomLink from '../../components/Common/CustomLink';
 
 const Container = styled.div`
   position: relative;
@@ -34,10 +35,11 @@ const ProjectLanding = styled(m.div)`
   display: flex;
   flex-direction: column;
   width: auto;
-  height: 100vh;
+  height: calc(var(--vh) * 100);
   color: var(--black);
   position: relative;
   z-index: 8;
+  min-width: calc(100vw - 80px);
   @media (max-width: 1024px) {
     width: 100vw;
     height: calc(var(--vh, 1vh) * 100 - 80px);
@@ -46,10 +48,9 @@ const ProjectLanding = styled(m.div)`
 
 const ProjectLandingText = styled.div`
   position: absolute;
-  bottom: 7.5rem;
-  left: 7.5rem;
-  height: 25%;
-  width: calc(100% - var(--default-spacing) * 2);
+  bottom: calc(var(--default-spacing) * 2);
+  left: calc(var(--default-spacing) + 80px);
+  width: calc(100% - var(--default-spacing));
   display: block;
   @media (max-width: 1024px) {
     height: auto;
@@ -79,7 +80,7 @@ const ProjectTechnology = styled.div`
   align-items: center;
   line-height: 2;
   text-align: left;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   & svg {
     width: 40px;
     font-size: 2rem;
@@ -87,7 +88,6 @@ const ProjectTechnology = styled.div`
   }
   @media (max-width: 1024px) {
     width: 50%;
-    font-size: 1rem;
   }
 `;
 
@@ -102,25 +102,26 @@ const TextSection = styled.div`
 const Article = styled.div`
   padding-top: 7.5rem;
   padding-bottom: 7.5rem;
-  width: ${({ $columns }) => `calc(75vw * ${$columns})`};
-  max-width: ${({ $columns }) => `calc(1000px * ${$columns} +  var(--default-spacing) * 4 * ${$columns})`};
+  width: max-content;
   display: flex;
   flex-flow: column wrap;
-  height: calc(100vh - 15rem);
+  height: calc(var(--vh) * 100 - 15rem);
   align-items: center;
   z-index: 5;
+  margin-left: calc(var(--default-spacing) * -2);
   @media (max-width: 1024px) {
     width: 100%;
     max-width: 100%;
     flex-direction: column;
     flex-flow: column nowrap;
+    margin-left: 0;
     padding-top: var(--default-spacing);
     padding-bottom: 0;
-    height: auto;
+    height: max-content;
   }
 `;
 
-const Section = styled.div`
+const Section = styled(m.div)`
   margin-bottom: calc(var(--default-spacing) * 2);
   width: 75vw;
   max-width: 1000px;
@@ -155,7 +156,6 @@ const Headers = styled.div`
   margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {
     width: 100%;
-    font-size: 1.2rem;
     padding: 0;
   }
 `;
@@ -185,6 +185,84 @@ const TopicText = styled.div`
   }
 `;
 
+const ReturnLink = styled(CustomLink)`
+  z-index: 2;
+  text-decoration: none;
+  font-size: calc(var(--body-text) * 0.75);
+  font-family: var (--body-font);
+  letter-spacing: 1px;
+  color: var(--black);
+  transition: color 0.5s ease;
+  display: flex;
+  margin-bottom: var(--default-spacing);
+  &:hover {
+    color: var(--interact-hover-color);
+  }
+  & svg {
+    width: calc(var(--body-text) * 0.75);
+    margin-right: calc(var(--default-spacing) / 3);
+  }
+`;
+
+const Links = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: flex-end;
+  @media (max-width: 1024px) {
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const Action = styled.a`
+  z-index: 2;  
+  letter-spacing: 0.5px;
+  color: var(--offwhite);    
+  font-family: var(--body-font);
+  font-size: calc(var(--body-text));  
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: calc(100% - var(--default-spacing));
+  position: relative;  
+  margin-top: calc(var(--default-spacing));
+  margin-bottom: calc(var(--default-spacing));
+  display: flex;  
+  justify-content: center;
+  background: var(--black);
+  cursor: pointer;  
+  padding: 1rem;
+  transition: background 0.5s ease;
+  &:hover {
+    background: var(--interact-hover-color);
+  }
+  & svg {
+    width: calc(var(--body-text)); 
+    margin-right: 1rem;
+  }
+`;
+
+const SmallSection = styled.div`
+  display: flex;
+  height: calc(var(--vh) * 100);  
+  width: calc(75vw / 4);
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-left: calc(var(--default-spacing) * 2);
+  padding-right: calc(var(--default-spacing));
+  @media (max-width: 1024px) {
+    width: calc(100% - var(--default-spacing) * 2);
+    height: auto;
+    padding-left: var(--default-spacing);
+    padding-right: var(--default-spacing);
+    padding-bottom: calc(var(--default-spacing) * 2);
+  }
+`;
+
 const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
@@ -205,6 +283,14 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
     }),
   };
 
+  const sectionVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { delay: 0.5, duration: 1 },
+    },
+  };
+
   return (
     <Container>
       <Helmet>
@@ -216,7 +302,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
           <>
             <ProjectSplash
               $isMobile={$isMobile}
-              $imgUrl={`${import.meta.env.VITE_APP_UPLOAD_URL}${project.attributes.featured.data.attributes.url}`}
+              $img={project.attributes.featured}
             />
             <ProjectLandingText>
               <ProjectTitle titleText={project.attributes.title} />
@@ -228,7 +314,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
       </ProjectLanding>
       {project && project.attributes && (
         <Article $columns={project.attributes.columns}>
-          <Section>
+          <Section initial="hidden" whileInView="visible" variants={sectionVariants} viewport={{ once: true }}>
             <Headers className="topic-header">Built With</Headers>
             <BuiltWith>
               <StackComponents>
@@ -242,10 +328,16 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
           </Section>
           {project.attributes.article.map((topic, index) => {
             const isFigure = topic.__component === 'article.figure' || topic.__component === 'article.slides';
-            const first = index === 0 ? 'active' : '';
             if (isFigure && topic) {
               return (
-                <Section key={topic.id} className="figure">
+                <Section
+                  key={topic.id}
+                  className="figure"
+                  initial={"hidden"}
+                  whileInView="visible"
+                  variants={sectionVariants}
+                  viewport={{ once: true }}
+                >
                   <Figure
                     title={topic.title}
                     media={topic.__component === 'article.slides' ? topic.media.data : topic.figure.data}
@@ -257,8 +349,14 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
             }
 
             return (
-              <Section key={topic.id}>
-                <TextSection className={'dark ' + first}>
+              <Section
+                key={topic.id}
+                initial="hidden"
+                whileInView="visible"
+                variants={sectionVariants}
+                viewport={{ once: true }}
+              >
+                <TextSection>
                   <Headers className="topic-header">
                     {topic.header ? topic.header : ''}
                   </Headers>
@@ -279,7 +377,14 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
           })}
         </Article>
       )}
-      <Cover $srcproject={project} $isMobile={$isMobile} $isFirefox={$isFirefox} socialData={socialData} />
+      <SmallSection initial="hidden" whileInView="visible" variants={sectionVariants} viewport={{ once: true }}>
+        <Links>
+        {project && project.attributes.links?.map((action, index) => {
+          return <Action key={index} target='_blank' aria-label={action.name} href={action.url}>{Icons[action.icon]} {action.name}</Action>;
+        })}
+        </Links>
+      </SmallSection>
+      <Cover $isMobile={$isMobile} $isFirefox={$isFirefox} socialData={socialData} />
     </Container>
   );
 };

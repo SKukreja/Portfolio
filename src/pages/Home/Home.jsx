@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React from 'react'
 import Landing from '../../components/Home/Landing'
 import Splash from '../../components/Home/Splash'
 import FeaturedWorks from '../../components/Home/FeaturedWorks'

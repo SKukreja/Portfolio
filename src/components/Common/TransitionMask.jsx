@@ -25,7 +25,7 @@ const TransitionMask = () => {
       initial="hidden"
       animate={isTransitioning ? "visible" : "hidden"}
       variants={transitionVariants}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 1 }}
     />
   );
 };

@@ -1,7 +1,6 @@
-import React, { useRef } from 'react'
-import { cubicBezier,m, useScroll, useTransform } from 'framer-motion'
-import styled, { keyframes } from 'styled-components'
-import use from '../../hooks/use';
+import React from 'react'
+import { m } from 'framer-motion'
+import styled from 'styled-components'
 import { Icons } from '../Common/Icons';
 
 const Container = styled(m.div)`
@@ -9,7 +8,7 @@ const Container = styled(m.div)`
     display: flex;
     flex-direction: column;
     text-align: left;
-    z-index: 1001;
+    z-index: 1001;    
 `;
   
 const SocialLink = styled(m.a)`

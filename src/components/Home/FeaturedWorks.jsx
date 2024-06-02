@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { m, useAnimation } from 'framer-motion';
 import ProjectImage from './ProjectImage';
-import ProfileImage from './ProfileImage';
 import { InView, useInView } from 'react-intersection-observer';
-import use from '../../hooks/use';
 import { Icons } from '../Common/Icons';
 import AnimatedText from './AnimatedText';
 import CustomLink from '../Common/CustomLink';
-import FetchProjectData from './FetchProjectData';
 
 const Featured = styled(m.div)`
   height: calc(var(--vh, 1vh) * 100);
@@ -18,15 +15,15 @@ const Featured = styled(m.div)`
   position: relative;
   margin-left: 5vw;
   align-items: center;
-  width: 200vw;
-  max-width: 4000px;
+  width: max-content;  
   overflow: visible;
   @media (max-width: 1024px) {
     width: 100vw;
-    height: calc(var(--vh) * 300);
+    height: max-content;
     margin-top: calc(var(--default-spacing));
     justify-content: flex-start;
     margin-left: 0;
+    flex-direction: column;
   }
   @media (max-width: 768px) {
     margin-top: calc(var(--default-spacing) * 2);
@@ -85,6 +82,7 @@ const Projects = styled(m.div)`
   justify-content: space-between;
   @media (max-width: 1024px) {
     margin-top: 20vw;
+    margin-bottom: 20vw;
     flex-direction: column;
     justify-content: space-between;
   }
@@ -123,8 +121,8 @@ const Project = styled.div`
     margin-left: 5vw;
     margin-right: 5vw;
     flex-direction: column;
-    width: 25%;
-    max-width: 800px;
+    width: 800px;
+    max-width: 50vw;
     height: 100%;
     align-items: center;
     justify-content: flex-start;
@@ -194,10 +192,9 @@ const ProjectLink = styled(m(CustomLink))`
   display: flex;
   cursor: pointer;
   align-items: center;
+  transition: color 0.5s ease;
   &:hover {
     color: var(--interact-hover-color);
-    text-decoration: none;
-    transform: scale(1.03);
   }
 `;
 
@@ -208,6 +205,49 @@ const ProjectHeader = styled.div`
 
 const Spacer = styled.div`
   
+`;
+
+const SeeAll = styled(m(CustomLink))`
+  z-index: 2;
+  letter-spacing: 0.5px;
+  color: var(--black);    
+  font-family: var(--body-font);
+  font-size: calc(var(--body-text) * 2);  
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;  
+  margin-top: var(--default-spacing);
+  display: flex;
+  position: absolute;
+  right: 5vw;
+  bottom: 7.5rem;
+  cursor: pointer;
+  justify-content: flex-end;
+  text-align: right;
+  transition: color 0.5s ease, transform 0.3s linear;
+  transform-origin: center;
+  align-items: center;
+  &:hover {
+    color: var(--interact-hover-color);
+  }
+  & svg {
+    width: 3rem;
+    margin-right: 1rem;
+  }
+  @media (max-width: 1024px) {
+    position: relative;
+    margin-top: 0;
+    padding: var(--default-spacing) 0;
+    font-size: var(--body-text);
+    bottom: 0;
+    right: 0;
+    margin-right: var(--default-spacing);
+    width: auto;
+    & svg {
+      width: 1.5rem;
+      margin-right: 1rem;
+    }
+  }
 `;
 
 
@@ -273,7 +313,7 @@ const ProjectItem = ({ isMobile, project, number}) => {
       ) : (
         ''
       )}
-      <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 != 0} imageUrl={import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url} />  
+      <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 != 0} image={project.attributes.featured} />  
       {number % 2 != 0 ? (
         <>
           <ProjectInfo isInView={inView} className="even" number={number} project={project} />
@@ -287,6 +327,7 @@ const ProjectItem = ({ isMobile, project, number}) => {
 };
 
 const FeaturedWorks = ({ $isMobile, data }) => {
+  const controls = useAnimation();
   const [featuredProjects, setFeaturedProjects] = useState(null);
 
   const headerVariants = {
@@ -299,6 +340,24 @@ const FeaturedWorks = ({ $isMobile, data }) => {
       },
     }),
   };
+
+  const linkVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 1.5, delay: 2, ease: "easeInOut" } },
+  };
+
+  const [seeAllRef, isInView] = useInView({
+    threshold: 1,
+    triggerOnce: true
+  });
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start('visible');
+    } else {
+      controls.start('hidden');
+    }
+  }, [controls, isInView]);
 
   useEffect(() => {
     if (!data) return;
@@ -314,14 +373,21 @@ const FeaturedWorks = ({ $isMobile, data }) => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={headerVariants}
-          >Featured Work</Header>
+          >Featured Projects</Header>
 
           <Projects>
           {featuredProjects && featuredProjects.map((project, number) => (
             <ProjectItem key={project.id} $isMobile={$isMobile} project={project} number={number}  />
           ))}
 
-
+          <SeeAll ref={seeAllRef} initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={linkVariants} 
+            to={'/projects'}
+            aria-label={'See all projects'}
+            >
+              {Icons["Arrow Right"]} See all projects
+            </SeeAll>
           </Projects>
         </Featured>
       )}

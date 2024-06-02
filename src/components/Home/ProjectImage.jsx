@@ -44,6 +44,7 @@ const ImagePlane = styled(Plane)`
   position: absolute;
   top: 0;
   right: 0;
+  pointer-events: none;
   bottom: 0;
   left: 0;
 `;
@@ -250,7 +251,7 @@ const Noise = styled.img`
   object-fit: cover;
 `;
 
-function ProjectImage({ isMobile, number, imageUrl, even }) {
+function ProjectImage({ isMobile, number, image, even }) {
   const ref = useRef(null);
   const isVisible = useRef(false);
   const curtains = useCurtains((curtains) => {    
@@ -358,12 +359,12 @@ function ProjectImage({ isMobile, number, imageUrl, even }) {
             onAfterResize={onAfterResize}
             onReady={onPlaneReady}
           >
-            <Picture src={imageUrl} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
-            <Noise src={'/inknoise.png'} data-sampler="noiseTexture" alt="" />
+            <Picture src={import.meta.env.VITE_APP_UPLOAD_URL + image.data.attributes.url} alt={image.data.attributes.alternativeText} data-sampler="planeTexture" onLoad={() => setIsImageLoaded(true)} />
+            <Noise src={'/inknoise.avif'} aria-hidden="true" data-sampler="noiseTexture" alt="" />
           </ImagePlane>
         )}
         {!isImageLoaded && (
-          <Picture src={imageUrl} alt="" onLoad={() => setIsImageLoaded(true)} />
+          <Picture src={import.meta.env.VITE_APP_UPLOAD_URL + image.data.attributes.url} alt={image.data.attributes.alternativeText} aria-hidden="true" onLoad={() => setIsImageLoaded(true)} />
         )}
       </Container>
     </Scene>

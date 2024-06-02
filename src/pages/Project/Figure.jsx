@@ -34,7 +34,7 @@ const Headers = styled.div`
   font-weight: var(--header-weight);
   transition: opacity 0.5s ease;
   text-align: center;
-  margin-bottom: var(--default-spacing);
+  margin-bottom: calc(var(--default-spacing) * 1.5);
   @media (max-width: 1024px) {
     width: 100%;
     font-size: 1.2rem;
@@ -72,7 +72,7 @@ const FigureMedia = ({ item }) => {
       {type === "image" ? (
         <img src={src} alt="" />
       ) : (
-        <video ref={videoRef} autoPlay muted playsInline loop controls>
+        <video ref={videoRef} autoPlay muted playsInline loop style={{pointerEvents: 'none'}}>
           <source src={src} type="video/mp4" />
         </video>
       )}

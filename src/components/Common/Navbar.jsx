@@ -1,12 +1,12 @@
 import React, {useContext, useState, useRef, useEffect} from 'react'
 import styled, { keyframes, css } from 'styled-components';
 import { useLocation } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import use from '../../hooks/use';
 import { Icons } from './Icons';
 import { useLenis } from '@studio-freight/react-lenis';
 import { ModalContext } from './ModalContext.jsx';
 import CustomLink from './CustomLink';
+import ContactButton from './ContactButton';
 
 const slideInFromRight = keyframes`
   0% {
@@ -25,7 +25,7 @@ const Nav = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: calc(var(--vh) * 100);
   width: 80px;
   padding-top: calc(var(--default-spacing) * 0.5);
   padding-bottom: calc(var(--default-spacing) * 0.5);
@@ -114,6 +114,9 @@ const SocialLink = styled.a`
   margin-right: auto;
   color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'black' : 'black') : ($isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
+  & svg {
+    width: 1.5rem;
+  }
   &:hover {
     color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'white' : 'white') : 'var(--interact-hover-color)'};
   }
@@ -188,7 +191,7 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
   }
   &::after {
     content: "";
-    background: url("/paper.jpg");
+    background: url("/paper.avif");
     background-repeat: repeat;
     opacity: 0.4;
     width: 100%;
@@ -212,8 +215,27 @@ const OverlayLink = styled(CustomLink)`
   user-select: none;
   opacity: 0;
   &:hover {
-    color: #FF6281;
-    text-shadow: 0 0 2px #FF6281;
+    color: var(--interact-hover-color);
+  }
+  animation: ${({ $isVisible, index }) => 
+    $isVisible
+      ? css`${slideInFromRight} 0.4s ease-out ${(index + 1) * 0.05}s forwards`
+      : 'none'};
+`;
+
+const ContactLink = styled(ContactButton)`
+  color: var(--black);
+  text-decoration: none;
+  letter-spacing: 2px;
+  font-size: 2rem;
+  background: transparent;
+  text-shadow: 0 0 2px var(--black);
+  pointer-events: auto;
+  padding: 2rem;
+  user-select: none;
+  opacity: 0;
+  &:hover {
+    color: var(--interact-hover-color);
   }
   animation: ${({ $isVisible, index }) => 
     $isVisible
@@ -304,8 +326,8 @@ const usePath = () => {
   return path;
 };
 
-function Navbar({ socialData }) {
-  const { data, loading, error } = use('/navigation?populate=deep');
+function Navbar({ socialData, navigationData }) {
+  const [data, setData] = useState(null);
   const socials = socialData;
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
   const [isSolid, setIsSolid] = useState(false);
@@ -313,6 +335,11 @@ function Navbar({ socialData }) {
   const path = usePath(); 
   const isSolidRef = useRef(isSolid);
   const lenis = useLenis();
+
+  useEffect(() => {
+    if (!navigationData) return;
+    setData(navigationData);
+  }, [navigationData]);
 
   useEffect(() => {
       isSolidRef.current = isSolid;
@@ -356,8 +383,8 @@ function Navbar({ socialData }) {
     <>
       <Nav $isNavSolid={isSolid} $isMobile={isModalOpen}>
       <Left>
-        <LogoContainer to="/">
-          <Branding className="logo" src="/logo.svg" $isDark={isModalOpen} />
+        <LogoContainer to="/" aria-label="Home">
+          <Branding className="logo" src="/logo.svg" alt="Logo" $isDark={isModalOpen} />
         </LogoContainer>
       </Left>
       <Center>
@@ -366,6 +393,7 @@ function Navbar({ socialData }) {
           className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
           $isNavSolid={isSolid}
           $isMobile={isModalOpen}
+          aria-label="Menu"
         >
           <span></span>
           <span></span>
@@ -381,17 +409,30 @@ function Navbar({ socialData }) {
       <Noise />
       <BoxShadow />
         <OverlayMenu>
-          {data?.attributes.links.map((link, index) => (
-            <OverlayLink
-              key={link.id}
-              onClick={handleClick}
-              to={link.url}
-              $isVisible={isModalOpen}
-              index={index}
-            >
-              {link.text}
-            </OverlayLink>
-          ))}
+          {data?.attributes.links.map((link, index) => {
+            return link.text === 'Contact' ? (
+              <ContactLink
+                key={link.id}
+                to={link.url}
+                $isVisible={isModalOpen}
+                index={index}
+                aria-label={link.text}
+              >
+                {link.text}
+              </ContactLink>
+            ) : (
+              <OverlayLink
+                key={link.id}
+                onClick={handleClick}
+                to={link.url}
+                $isVisible={isModalOpen}
+                index={index}
+                aria-label={link.text}
+              >
+                {link.text}
+              </OverlayLink>
+            );
+          })}
         </OverlayMenu>
       </Overlay>
       </Nav>

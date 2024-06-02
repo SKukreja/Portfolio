@@ -6,9 +6,13 @@ const Scene = styled.div`
   position: relative;
   height: 350px;
   aspect-ratio: 3 / 4;
-  overflow: visible;
   @media (max-width: 1024px) {
-    height: 250px;
+    height: 350px;
+    margin-top: var(--default-spacing);
+  }
+  @media (max-width: 768px) {
+    height: 200px;
+    margin-top: 0;
   }
 `;
 
@@ -25,6 +29,7 @@ const ImagePlane = styled(Plane)`
   top: 0;
   right: 0;
   bottom: 0;
+  pointer-events: none;
   left: 0;
 `;
 
@@ -208,7 +213,6 @@ const Picture = styled.img`
   width: 100%;
   object-fit: cover;
   display: none;
-  filter: saturate(0.5) contrast(1.5) brightness(1.2);
 `;
 
 const Noise = styled.img`
@@ -315,12 +319,12 @@ function ProfileImage({ $imageUrl, $isMobile }) {
             onAfterResize={onAfterResize}
             onReady={onPlaneReady} 
           >
-            <Picture src={$imageUrl} data-sampler="planeTexture" alt="" onLoad={() => setIsImageLoaded(true)} />
-            <Noise src={'/profilenoise.png'} data-sampler="noiseTexture" alt="" />
+            <Picture src={$imageUrl} data-sampler="planeTexture" alt="A picture of Sumit Kukreja" onLoad={() => setIsImageLoaded(true)} />
+            <Noise src={'/profilenoise.avif'} aria-hidden="true" data-sampler="noiseTexture" alt="" />
           </ImagePlane>
         )}
         {!isImageLoaded && (
-          <Picture src={$imageUrl} alt="" onLoad={() => setIsImageLoaded(true)} />
+          <Picture src={$imageUrl} alt="" aria-hidden="true" onLoad={() => setIsImageLoaded(true)} />
         )}
       </Container>
     </Scene>

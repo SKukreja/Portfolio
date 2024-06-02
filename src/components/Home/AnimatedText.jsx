@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 
 const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => {
   const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true });
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(0);
 
   // Calculate delays only once to prevent recalculations on each render
   const animationDelays = useRef(text.split(' ').flatMap(
@@ -31,7 +31,16 @@ const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => 
     hover: ({ delay }) => ({
       opacity: 1,
       color: "var(--interact-hover-color)", 
-      scale: 1.1, 
+      scale: 1, 
+      transition: {        
+        duration: 0.5,
+        type: 'linear',        
+      },
+    }),
+    normal: ({ delay }) => ({
+      opacity: 1,
+      color: "var(--black)", 
+      scale: 1, 
       transition: {        
         duration: 0.5,
         type: 'linear',        
@@ -50,23 +59,24 @@ const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => 
   return (
     <div ref={ref} 
       onMouseEnter={() => {
-        if (isLink) setIsHovered(true)
+        if (isLink) setIsHovered(1)
       }}
       onMouseLeave={() => {
-        if (isLink) setIsHovered(false)
+        if (isLink) setIsHovered(2)
       }}
     >
       {words.map((word, wordIndex) => (
-        <span key={wordIndex} style={{ display: 'inline-block', marginRight: '0.25em' }}>
+        <span key={wordIndex} style={{ display: 'inline-block', marginRight: '0.25em' }} aria-label={text}>
           {word.map(({ char, delay }, index) => (
             <m.span
               key={index}
               variants={charVariants}
               initial="hidden"
-              animate={isHovered && isLink ? 'hover' : inView || startImmediately ? 'visible' : 'hidden'}
-              whileHover={isLink ? 'hover' : ''}
+              animate={isHovered == 1 && isLink ? 'hover' : isHovered == 2 && isLink ? 'normal' : inView || startImmediately ? 'visible' : 'hidden'}
+              whileHover={isLink ? 'hover' : 'normal'}
               custom={{ delay }}
               style={{ display: 'inline-block', whiteSpace: 'pre', willChange: 'color, transform, opacity' }}
+              aria-hidden="true"
             >
               {char}
             </m.span>
