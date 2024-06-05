@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
+import React, { createContext, useRef, useEffect, useState, Suspense, lazy, memo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { LazyMotion, AnimatePresence, MotionConfig, domAnimation } from 'framer-motion';
 import GlobalStyle from './globalStyles';
@@ -17,16 +17,18 @@ import WizardHandWoff2 from './assets/fonts/WizardHand.woff2';
 import LoadingScreen, { loadingVariants } from './components/Common/LoadingScreen';
 import { TransitionProvider } from './components/Common/TransitionContext';
 import TransitionMask from './components/Common/TransitionMask.jsx';
-import { set } from 'lodash';
 
 const Project = lazy(() => import('./pages/Project/Project'));
 
 const AppContainer = styled.div`
+  position: relative;
   & .curtains-canvas {
     position: fixed; 
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translate3d(0, 0, 0);
     z-index: 1;
     pointer-events: none;
   }
@@ -37,8 +39,8 @@ const Content = styled.div`
   background: var(--offwhite);
   position: relative;
   overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
   min-width: 100vw;
+  width: max-content;
   @media (max-width: 1024px) {
     flex-direction: column;
     width: 100vw;
@@ -58,6 +60,7 @@ const Noise = styled.div`
   opacity: 1;
   width: 100%;
   height: 100%;
+  -webkit-backface-visibility: visible;
   pointer-events: none;
   position: absolute;
   inset: 0;
@@ -70,7 +73,6 @@ const Noise = styled.div`
     pointer-events: none;
     opacity: 0.12;
     z-index: 5;
-    mix-blend-mode: color-burn;
     background: url('/paper.avif');
     @media (max-width: 1024px) {
       width: 100%;
@@ -90,7 +92,7 @@ const BoxShadow = styled.div`
   width: 100%;
   height: calc(var(--vh) * 100);
   inset: 0;
-  z-index: 10;
+  z-index: 2;
   pointer-events: none;
   mix-blend-mode: multiply;
   @media (max-width: 1024px) {
@@ -105,35 +107,42 @@ const BoxShadow = styled.div`
   }
 `;
 
-const LenisCurtainsSync = ({ $isMobile }) => {
-  const [curtainsRef, setCurtainsRef] = useState(null);
+const LenisCurtainsSync = memo(({ $isMobile }) => {
+  const latestCurtainsRef = useRef(null);
 
   useCurtains((curtains) => {
-    setCurtainsRef(curtains);
+    latestCurtainsRef.current = curtains;  // keep ref up-to-date
   });
 
-  useLenis(({ scroll }) => {
-    if (curtainsRef === null) return;
-    if ($isMobile) curtainsRef.updateScrollValues(0, scroll);
-    else curtainsRef.updateScrollValues(scroll, 0);
-  });
-};
+  useLenis(({ scroll }) => { 
+    if (!latestCurtainsRef.current) return;
 
-const ScrollToTop = (props) => {
+    const curtains = latestCurtainsRef.current;
+
+    if ($isMobile) {
+      curtains.updateScrollValues(0, scroll);
+    } else {
+      curtains.updateScrollValues(scroll, 0);
+    }
+  });
+
+  return null;
+});
+
+const ScrollToTop = memo((props) => {
   const location = useLocation();
   const lenis = useLenis();
   useEffect(() => {
     if (!location.hash) {
       lenis?.scrollTo(0, 0);
     }
-  }, [location]);
+  }, [location, lenis]);
 
   return <>{props.children}</>;
-};
+});
 
-const Layout = ({ $isMobile, $isFirefox, data, socialData, aboutData, navigationData }) => {
+const Layout = memo(({ $isMobile, $isFirefox, data, socialData, aboutData, navigationData }) => {
   const location = useLocation();
-
   const isWorkPage = location.pathname.includes('/projects');
 
   return (
@@ -147,8 +156,8 @@ const Layout = ({ $isMobile, $isFirefox, data, socialData, aboutData, navigation
         </Helmet>
         <Curtains
           className='curtains-canvas'
-          pixelRatio={Math.min(1.5, window.devicePixelRatio)}
-          antialias={true}
+          pixelRatio={Math.min(1, window.devicePixelRatio)}
+          antialias={false}
           watchScroll={false}
           premultipliedAlpha={true}
           production={true}
@@ -159,9 +168,9 @@ const Layout = ({ $isMobile, $isFirefox, data, socialData, aboutData, navigation
       </HelmetProvider>
     </AppContainer>
   );
-};
+});
 
-const Root = ({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }) => {
+const Root = memo(({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }) => {
   const location = useLocation();
   const container = useRef(null);
 
@@ -185,7 +194,6 @@ const Root = ({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }
     setVh();
     window.addEventListener('resize', setVh);
 
-    // Cleanup event listener on unmount
     return () => {
       window.removeEventListener('resize', setVh);
     };
@@ -207,18 +215,22 @@ const Root = ({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }
       </AnimatePresence>
     </Content>
   );
-};
+});
 
-export const CoverContext = React.createContext();
+const iOSContext = createContext();
 
 const preloadFonts = (fontUrls) => {
   const promises = fontUrls.map((url) => {
     const font = new FontFace('FontName', `url(${url})`);
     return font.load().then((loadedFont) => {
       document.fonts.add(loadedFont);
+    }).catch((error) => {
+      console.error("Error loading font:", error);
     });
   });
-  return Promise.all(promises);
+  return Promise.all(promises).catch((error) => {
+    console.error("Error in preloadFonts:", error);
+  });
 };
 
 const preloadImages = (imageUrls) => {
@@ -228,9 +240,13 @@ const preloadImages = (imageUrls) => {
       img.src = url;
       img.onload = resolve;
       img.onerror = reject;
+    }).catch((error) => {
+      console.error("Error loading image:", error);
     });
   });
-  return Promise.all(promises);
+  return Promise.all(promises).catch((error) => {
+    console.error("Error in preloadImages:", error);
+  });
 };
 
 const extractImageUrlsFromData = (data) => {
@@ -238,8 +254,8 @@ const extractImageUrlsFromData = (data) => {
     '/splash.avif',
     '/splashnoise.avif',
     '/profilenoise.avif',
-    '/avatar.avif',
-    '/bg.avif',
+    '/sumit.avif',
+    '/bg-min.avif',
     '/paper.avif',
   ];
   data.map(project => {
@@ -258,6 +274,7 @@ const App = () => {
   const [loadedSocialData, setLoadedSocialData] = useState(null);
   const [loadedAboutData, setLoadedAboutData] = useState(null);
   const [loadedNavigationData, setLoadedNavigationData] = useState(null);
+  const [isOldIOS, setIsOldIOS] = useState(false); // Add state for old iOS
   const lenisRef = useRef();
   const { data: apiData, loading: apiLoading, error } = use('/works?populate=deep&sort=year:desc');
   const { data: socialData, loading: socialApiLoading, sError } = use('/social?populate=deep');
@@ -268,29 +285,40 @@ const App = () => {
     lerp: 0.05,
     smoothWheel: true,
     syncTouch: true,
-    syncTouchLerp: 0.04,
-    touchInertiaMultiplier: 10,
-    smoothTouch: false, // smooth scroll for touch devices
     orientation: isMobile ? 'vertical' : 'horizontal',
-    gestureOrientation: 'both',
+    gestureOrientation: 'both',    
+  };
+
+  const setVh = useCallback(() => {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }, []);
+
+  const extractIOSVersion = (userAgent) => {
+    const match = userAgent.match(/iPhone OS (\d+)_/);
+    if (match && match[1]) {
+      const version = parseInt(match[1], 10);
+      return version < 16;
+    }
+    return false;
   };
 
   useEffect(() => {
-    let vh = window.innerHeight * 0.01;
-    // Set the --vh custom property
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-
-    window.addEventListener('resize', () => {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    });
-  }, []);
+    setVh();
+    window.addEventListener('resize', setVh);
+    return () => {
+      window.removeEventListener('resize', setVh);
+    };
+  }, [setVh]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)');
     const isFirefoxAndroid = navigator.userAgent.includes('Firefox');
+    const isOldIOS = extractIOSVersion(navigator.userAgent);
 
     setIsFirefox(isFirefoxAndroid);
+    setIsOldIOS(isOldIOS); // Set state for old iOS
+    console.log(isOldIOS)
 
     function handleResize(e) {
       setIsMobile(e.matches);
@@ -323,7 +351,6 @@ const App = () => {
     }
   }, [apiLoading, socialApiLoading, socialData, apiData, aboutApiLoading, aboutData, navigationData, navigationApiLoading]);
 
-  
   useEffect(() => {
     if (isLoading) return;
     const loadingScreen = document.getElementById('loading-screen');
@@ -333,26 +360,28 @@ const App = () => {
   }, [isLoading]);
 
   return (
-    <ReactLenis root ref={lenisRef} options={options}>
-      <LazyMotion features={domAnimation}>
-        <MotionConfig reducedMotion='user'>
-          <ModalProvider>
-            <TransitionProvider>
-            <Router>
-              {isLoading ? (
-                <LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' />
-              ) : (
-                <>
-                  <ScrollToTop />
-                  <Layout $isMobile={isMobile} $isFirefox={isFirefox} data={data} socialData={loadedSocialData} navigationData={loadedNavigationData} aboutData={loadedAboutData} />
-                </>
-              )}
-            </Router>
-            </TransitionProvider>
-          </ModalProvider>
-        </MotionConfig>
-      </LazyMotion>
-    </ReactLenis>
+    <iOSContext.Provider value={{ isOldIOS }}>
+      <ReactLenis root ref={lenisRef} options={options}>
+        <LazyMotion features={domAnimation}>
+          <MotionConfig reducedMotion='user'>
+            <ModalProvider>
+              <TransitionProvider>
+                <Router>
+                  {isLoading ? (
+                    <LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' />
+                  ) : (
+                    <>
+                      <ScrollToTop />
+                      <Layout $isMobile={isMobile} $isFirefox={isFirefox} data={data} socialData={loadedSocialData} navigationData={loadedNavigationData} aboutData={loadedAboutData} />
+                    </>
+                  )}
+                </Router>
+              </TransitionProvider>
+            </ModalProvider>
+          </MotionConfig>
+        </LazyMotion>
+      </ReactLenis>
+    </iOSContext.Provider>
   );
 };
 

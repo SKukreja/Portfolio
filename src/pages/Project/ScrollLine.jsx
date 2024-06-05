@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useLenis } from '@studio-freight/react-lenis';
 
 const ScrollLineStyled = styled.div`
-  height: 100px;
+  height: 60px;
   width: 1px;
   background: linear-gradient(45deg, rgba(0,0,0,0) 0%, var(--interact-hover-color) 50%, rgba(0,0,0,0) 100%);
   position: absolute;
@@ -15,7 +15,7 @@ const ScrollLineStyled = styled.div`
   opacity: ${({ $isInvisible }) => ($isInvisible ? 0 : 1)};
   transition: opacity 0.5s ease;
   @media (max-width: 1024px) {
-    display: flex;    
+    display: flex;
   }
 `;
 

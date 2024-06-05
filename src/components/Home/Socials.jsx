@@ -1,8 +1,9 @@
-import React from 'react'
-import { m } from 'framer-motion'
-import styled from 'styled-components'
+import React, { memo } from 'react';
+import { m } from 'framer-motion';
+import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 
+// Styled container for the social links
 const Container = styled(m.div)`
     margin-top: calc(var(--default-spacing) * 2);
     display: flex;
@@ -10,7 +11,8 @@ const Container = styled(m.div)`
     text-align: left;
     z-index: 1001;    
 `;
-  
+
+// Styled individual social link
 const SocialLink = styled(m.a)`
   font-family: var(--body-font);
   font-size: var(--body-text);
@@ -35,11 +37,13 @@ const SocialLink = styled(m.a)`
   }
 `;
 
-const Socials = ({inView, socialData}) => {
+// Component to display social links with animation
+const Socials = ({ inView, socialData }) => {
 
+    // Animation variants for social links
     const socialVariants = {
         hidden: { opacity: 0, x: -20 },
-        visible: ( {index} ) => ({      
+        visible: ({ index }) => ({      
           opacity: 1,
           x: 0,
           transition: {      
@@ -49,24 +53,25 @@ const Socials = ({inView, socialData}) => {
             stiffness: 40,
           },
         }),
-    }
+    };
 
     return (
         <Container as={m.div}>
         {socialData?.attributes.links.map((link, index) => (
-        <SocialLink 
-            key={link.id}
-            href={link.url} target="_blank"
-            variants={socialVariants}
-            initial={'hidden'}
-            animate={inView ? 'visible' : 'hidden'} 
-            custom={{ index }}          
-        >
-            {Icons["Arrow Right"]} {link.name}
-        </SocialLink>          
+          <SocialLink 
+              key={link.id}
+              href={link.url} 
+              target="_blank"
+              variants={socialVariants}
+              initial={'hidden'}
+              animate={inView ? 'visible' : 'hidden'} 
+              custom={{ index }}          
+          >
+              {Icons["Arrow Right"]} {link.name}
+          </SocialLink>          
         ))}
         </Container>
-    )
+    );
 }
 
-export default Socials
+export default memo(Socials);

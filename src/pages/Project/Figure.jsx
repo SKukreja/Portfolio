@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import styled from 'styled-components';
 import Slider from '../../components/Project/Slider';
 
+// Styled components
 const FigureContainer = styled.div`
   width: 100%;
   margin-left: auto;
@@ -55,7 +56,8 @@ const Caption = styled.span`
   padding-right: var(--default-spacing);
 `;
 
-const FigureMedia = ({ item }) => {
+// Memoize the media rendering component to avoid unnecessary re-renders
+const FigureMedia = memo(({ item }) => {
   const getMediaType = (mime) => {
     if (mime.startsWith("video")) {
       return "video";
@@ -78,31 +80,32 @@ const FigureMedia = ({ item }) => {
       )}
     </>
   );
-};
+});
 
 const Figure = ({ title, media, caption, isSlider }) => {
-    const [figureMedia, setFigureMedia] = useState(null);
-    const figureRef = useRef(null);
-    
-    useEffect(() => {
-      if (!media) return;
-      setFigureMedia(media);
-    }, [media]);
+  const [figureMedia, setFigureMedia] = useState(null);
+  const figureRef = useRef(null);
 
-    return (
-        <FigureContainer ref={figureRef} className='light'>
-            <Headers className='topic-header'>{title}</Headers>
+  // Use useEffect to set figureMedia only when media changes
+  useEffect(() => {
+    if (!media) return;
+    setFigureMedia(media);
+  }, [media]);
 
-            {media && isSlider && (
-              <Slider media={media} />
-            )}
+  return (
+    <FigureContainer ref={figureRef} className='light'>
+      <Headers className='topic-header'>{title}</Headers>
 
-            {media && !isSlider && (
-              <FigureMedia item={media} />
-            )}
-            <Caption>{caption}</Caption>
-        </FigureContainer>
-    );
+      {media && isSlider && (
+        <Slider media={media} />
+      )}
+
+      {media && !isSlider && (
+        <FigureMedia item={media} />
+      )}
+      <Caption>{caption}</Caption>
+    </FigureContainer>
+  );
 }
 
 export default Figure;

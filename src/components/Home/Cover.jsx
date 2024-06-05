@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { InView } from 'react-intersection-observer';
-import { m } from 'framer-motion'
+import { m } from 'framer-motion';
 import ProfileImage from './ProfileImage';
 import Socials from './Socials';
 
+// Styled components
 const Container = styled(m.div)`
   display: flex;
   flex-direction: column;
@@ -34,7 +35,10 @@ const Bio = styled.div`
   flex-direction: column;
   text-align: center;
   max-width: calc(100% - var(--default-spacing) * 2);
-  align-items: center;  
+  align-items: center;
+  @media (max-width: 1024px) {
+    margin-top: calc(var(--default-spacing) * -1);
+  }
 `;
 
 const Blurb = styled(m.div)`
@@ -98,25 +102,27 @@ const CopyrightSymbol = styled.span`
 const CopyrightText = styled.span`
 `;
 
-const Cover = ({ $isMobile, $isFirefox, socialData }) => {
+// Main component
+const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
   
-  const fadeIn = {
-    hidden: { opacity: 0, },
-    visible: ({delay}) => ({      
+  // Define animation variants
+  const fadeIn = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: ({ delay }) => ({      
       opacity: 1,
       transition: {      
         delay: 0.3 * delay,  
-        duration: 3,
+        duration: 1.5,
         type: 'spring',
         stiffness: 10,
       },
     }),
-  };
+  }), []);
 
   return (
     <Container $isFirefox={$isFirefox} id="contact">
       <InView>
-        {({ inView, ref, entry }) => (
+        {({ inView, ref }) => (
           <>
           <ProfileSection>
               <ProfileImage $imageUrl='/avatar.avif' $isMobile={$isMobile} />
@@ -145,7 +151,7 @@ const Cover = ({ $isMobile, $isFirefox, socialData }) => {
         )}
       </InView>
     </Container>
-  )
-}
+  );
+});
 
-export default Cover
+export default Cover;

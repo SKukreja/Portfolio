@@ -1,17 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useLenis } from '@studio-freight/react-lenis';
 
+// Styled components
 const Container = styled.div`
   display: flex;
   align-items: flex-start;
   width: calc(100vw - 80px);
+  max-width: calc(2560px + 20vw);
   height: calc(var(--vh) * 100);
   position: relative;
-  background: var(--offwhite);
   color: var(--black);
   @media (max-width: 1024px) {
     padding-left: var(--default-spacing);
@@ -33,7 +34,7 @@ const Bio = styled.div`
   transition: filter 2s ease-in-out;
   filter: grayscale(1);
   text-align: center;
-  padding-top: 8rem;
+  padding-top: 7.5vh;
   height: 100%;
   align-items: center;
   z-index: 3;
@@ -105,7 +106,7 @@ const Blurb = styled(m.div)`
   font-size: var(--body-text);  
   width: 100%;
   text-align: justify;
-  bottom: 7.5rem;
+  bottom: 7.5vh;
   z-index: 2;
   font-weight: var(--body-weight);
   & > p {
@@ -124,7 +125,7 @@ const Blurb = styled(m.div)`
     background: radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 70%),radial-gradient(var(--offwhite) 0%,transparent 60%), radial-gradient(var(--offwhite) 0%,transparent 50%), radial-gradient(var(--offwhite) 0%,transparent 40%);
     z-index: -1;
     @media (max-width: 1024px) {
-      top: 30%;
+      display: none;
     }
   }
 `;
@@ -149,33 +150,34 @@ const ProfileSection = styled.div`
 `;
 
 const Background = styled(m.div)`
--webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, transparent 100%);
-mask-image: linear-gradient(to right, transparent 0%, black 40%, transparent 100%);
-height: 100%;
-width: 100%;
-background: url('/bg.avif');
-background-size: cover;
-background-position: -35% center;
-position: absolute;
-inset: 0;
-filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
-will-change: opacity, filter, transform;
-opacity: 0.35;
-mix-blend-mode: darken;
-z-index: 2;
-pointer-events: none;
-@media (max-width: 1024px) {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
-  background-position: -96% 0%;
-  height: 70%;  
-}
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 40%, transparent 100%);
+  height: 100%;
+  width: 100%;
+  background: url('/bg.avif');
+  background-size: cover;
+  background-position: 15vw center;
+  position: absolute;
+  inset: 0;
+  filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
+  will-change: opacity, filter, transform;
+  opacity: 0.35;
+  mix-blend-mode: darken;
+  z-index: 2;
+  pointer-events: none;
+  @media (max-width: 1024px) {
+    display: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
+    background-position: -96% 0%;
+    height: 70%;  
+  }
 `;
 
 const TwoColumn = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 7.5rem;
+  margin-top: 7.5vh;
   width: 50%;
   padding-left: 5vw;
   padding-right: 5vw;
@@ -314,21 +316,22 @@ const Border = styled(m.span)`
 `;
 
 const BigBorder = styled(m.span)`
-content: '';
-position: absolute;
-bottom: 0;
-left: 0;
-opacity: 0.5;
-width: 100%;
-border: 1px solid;
-border-image-slice: 1;
-border-image-source: linear-gradient(to right, #793A2B, var(--offwhite));
-transform-origin: left;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  opacity: 0.5;
+  width: 100%;
+  border: 1px solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to right, #793A2B, var(--offwhite));
+  transform-origin: left;
 `;
 
-const About = ( {$isMobile, aboutData} ) => {
-  const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true});
-  const [aboutRef, aboutInView] = useInView({ threshold: 0.25, triggerOnce: true});
+// Main component
+const About = memo(({ $isMobile, aboutData }) => {
+  const [ref, inView] = useInView({ threshold: 0.25, triggerOnce: true });
+  const [aboutRef, aboutInView] = useInView({ threshold: 0.25, triggerOnce: true });
   const bgRef = useRef(null);
   const [blurbText, setBlurbText] = useState('');
   const [data, setData] = useState(null);
@@ -336,84 +339,88 @@ const About = ( {$isMobile, aboutData} ) => {
   useEffect(() => {
     if (!aboutData) return;
     setData(aboutData);
-  }, [data]);
+  }, [aboutData]);
 
   useLenis(({ scroll }) => {
+    if ($isMobile) return;
     if (bgRef.current) {
-      bgRef.current.style.transform = $isMobile ? `translateY(${scroll * 0.075 - 500}px)` : `translateX(${scroll * 0.075 - 800}px)`;
+      bgRef.current.style.transform = $isMobile ? `translateY(${scroll * 0.075 - 500}px)` : `translateX(${scroll * 0.055 - 800}px)`;
     }
   });
 
-  const blurbVariants = {
-    hidden: { opacity: 0, },
+  // Animation variants
+  const blurbVariants = useMemo(() => ({
+    hidden: { opacity: 0 },
     visible: () => ({      
       opacity: 1,
       transition: {    
         delay: 0.5,  
-        duration: 3,
+        duration: 1.5,
         type: 'linear',
       },
     }),
-  };
+  }), []);
 
-  const lineVariants = {
-    hidden: { scaleX: 0, },
+  const lineVariants = useMemo(() => ({
+    hidden: { scaleX: 0 },
     visible: () => ({      
       scaleX: 1,
       transition: {      
         delay: 0.5,  
-        duration: 3,
+        duration: 1.5,
       },
     }),
-  };
+  }), []);
 
-  const rowVariants = {
-    hidden: { opacity: 0, },
-    visible: ({delay}) => ({      
+  const rowVariants = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: ({ delay }) => ({      
       opacity: 1,
       transition: {      
         delay: 0.5 + delay,  
-        duration: 2,
+        duration: 1.5,
         type: 'spring',
         stiffness: 10,
       },
     }),
-  };
+  }), []);
 
-  useEffect(() => {
-    if(!data) return;
-    setBlurbText(data.attributes.blurb);    
-  }, [data]);
-
-  const headerVariants = {
+  const headerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: () => ({
       opacity: 1,
       transition: {
-        duration: 3,
+        duration: 1.5,
         type: 'linear',        
       },
     }),
-  };
-  
+  }), []);
+
+  useEffect(() => {
+    if (!data) return;
+    setBlurbText(data.attributes.blurb);
+  }, [data]);
+
   return (
     <Container ref={ref} as={m.div} id="about">
-      <Background ref={bgRef}
-
-      />
+      <Background ref={bgRef} />
       <ProfileSection ref={aboutRef}>
         <Bio className={`${inView ? 'active' : ''}`}>
           <Intro
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={headerVariants}
-          >About Me</Intro>
+          >
+            About Me
+          </Intro>
           <DiamondIcon
-          variants={blurbVariants}
-          initial="hidden"
-          animate={aboutInView ? 'visible' : 'hidden'}
-          custom={{ delay: 0.2 }}
-          >{Icons["Diamond"]}</DiamondIcon>
+            variants={blurbVariants}
+            initial="hidden"
+            animate={aboutInView ? 'visible' : 'hidden'}
+            custom={{ delay: 0.2 }}
+          >
+            {Icons["Diamond"]}
+          </DiamondIcon>
           <Blurb
             variants={blurbVariants}
             initial="hidden"
@@ -426,85 +433,42 @@ const About = ( {$isMobile, aboutData} ) => {
       </ProfileSection>
       <TwoColumn ref={ref}>
         <Column>
-          <ColumnHeader                
+          <ColumnHeader
             variants={rowVariants}
             initial="hidden"
             animate={inView ? 'visible' : 'hidden'}
-            custom={{delay: 0.2}}              
+            custom={{ delay: 0.2 }}
           >
             Work
-            <BigBorder                  
+            <BigBorder
               variants={lineVariants}
               initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}                                    
+              animate={inView ? 'visible' : 'hidden'}
             />
           </ColumnHeader>
           <Table>
-              <TableRow 
+            {[
+              { primary: "IT Engineer", secondary: "KPMB Architects", time: "2018 - 2024", delay: 0.3 },
+              { primary: "Programmer", secondary: "KUBRA", time: "2017 - 2018", delay: 0.5 },
+              { primary: "Jr. IT Technician", secondary: "KPMB Architects", time: "2016 - 2017", delay: 0.7 },
+              { primary: "Computer Technician", secondary: "Home Trust Company", time: "2014 - 2016", delay: 0.9 },
+              { primary: "Financial Model Analyst", secondary: "Royal Bank of Canada", time: "2014", delay: 1.1 }
+            ].map((job, index) => (
+              <TableRow
+                key={index}
                 variants={rowVariants}
                 initial="hidden"
                 animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 0.3}}
-              >                  
+                custom={{ delay: job.delay }}
+              >
                 <TableColumn>
-                  <Primary>IT Engineer</Primary>
-                  <Secondary>KPMB Architects</Secondary>                    
+                  <Primary>{job.primary}</Primary>
+                  <Secondary>{job.secondary}</Secondary>
                 </TableColumn>
-                <Time>2018 - 2024</Time>
+                <Time>{job.time}</Time>
                 <Border />
               </TableRow>
-              <TableRow
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 0.5}}
-              >                  
-                <TableColumn>
-                  <Primary>Programmer</Primary>
-                  <Secondary>KUBRA</Secondary>                    
-                </TableColumn>
-                <Time>2017 - 2018</Time>
-                <Border />
-              </TableRow>
-              <TableRow
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 0.7}}
-              >               
-                <TableColumn>
-                  <Primary>Jr. IT Technician</Primary>
-                  <Secondary>KPMB Architects</Secondary>                    
-                </TableColumn>
-                <Time>2016 - 2017</Time>
-                <Border />
-              </TableRow>
-              <TableRow
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 0.9}}
-              >               
-                <TableColumn>
-                  <Primary>Computer Technician</Primary>
-                  <Secondary>Home Trust Company</Secondary>                    
-                </TableColumn>
-                <Time>2014 - 2016</Time>
-                <Border />
-              </TableRow>
-              <TableRow
-                variants={rowVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                custom={{delay: 1.1}}
-              >               
-                <TableColumn>
-                  <Primary>Financial Model Analyst</Primary>
-                  <Secondary>Royal Bank of Canada</Secondary>                    
-                </TableColumn>
-                <Time>2014 - 2014</Time>
-                <Border />
-              </TableRow>            
+            ))}
           </Table>
         </Column>
         <Column>
@@ -512,45 +476,40 @@ const About = ( {$isMobile, aboutData} ) => {
             variants={rowVariants}
             initial="hidden"
             animate={inView ? 'visible' : 'hidden'}
-            custom={{delay: 1.3}}    
-          >Education
-          <BigBorder
-            variants={lineVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}   
-          /></ColumnHeader>
+            custom={{ delay: 1.3 }}
+          >
+            Education
+            <BigBorder
+              variants={lineVariants}
+              initial="hidden"
+              animate={inView ? 'visible' : 'hidden'}
+            />
+          </ColumnHeader>
           <Table>
-            <TableRow 
-              variants={rowVariants}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-              custom={{delay: 1.5}}
-            >      
-              <TableColumn>
-                <Primary>Software Engineering Technology</Primary>
-                <Secondary>McMaster University</Secondary>                    
-              </TableColumn>
-              <Time>2018 - 2023</Time>
-              <Border />
-            </TableRow>
-            <TableRow 
-              variants={rowVariants}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-              custom={{delay: 1.7}}
-            >      
-              <TableColumn>
-                <Primary>Software Development & Network Engineering</Primary>
-                <Secondary>Sheridan College</Secondary>                    
-              </TableColumn>
-              <Time>2012 - 2015</Time>
-              <Border />
-            </TableRow>
+            {[
+              { primary: "Software Engineering Technology", secondary: "McMaster University", time: "2018 - 2023", delay: 1.5 },
+              { primary: "Software Development & Network Engineering", secondary: "Sheridan College", time: "2012 - 2015", delay: 1.7 }
+            ].map((edu, index) => (
+              <TableRow
+                key={index}
+                variants={rowVariants}
+                initial="hidden"
+                animate={inView ? 'visible' : 'hidden'}
+                custom={{ delay: edu.delay }}
+              >
+                <TableColumn>
+                  <Primary>{edu.primary}</Primary>
+                  <Secondary>{edu.secondary}</Secondary>
+                </TableColumn>
+                <Time>{edu.time}</Time>
+                <Border />
+              </TableRow>
+            ))}
           </Table>
         </Column>
-      </TwoColumn>  
+      </TwoColumn>
     </Container>
-  )
-}
+  );
+});
 
-export default About
+export default About;

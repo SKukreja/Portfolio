@@ -1,14 +1,14 @@
-import { Github } from '@styled-icons/bootstrap/Github';
-import { LinkedinIn } from '@styled-icons/fa-brands/LinkedinIn';
-import { ArrowUpRight } from '@styled-icons/bootstrap/ArrowUpRight';
-import { ArrowLeft } from '@styled-icons/bootstrap/ArrowLeft';
+/* import { Github } from '@styled-icons/bootstrap/Github'; */
+/* import { LinkedinIn } from '@styled-icons/fa-brands/LinkedinIn'; */
+/* import { ArrowUpRight } from '@styled-icons/bootstrap/ArrowUpRight'; */
+/* import { ArrowLeft } from '@styled-icons/bootstrap/ArrowLeft';
 import { Link45deg } from '@styled-icons/bootstrap/Link45deg';
-import { Wordpress } from '@styled-icons/bootstrap/Wordpress';
-import { Square } from '@styled-icons/bootstrap/Square';
-import { Email } from '@styled-icons/material-sharp/Email';
-import { ArrowRight } from '@styled-icons/bootstrap/ArrowRight';
+import { Wordpress } from '@styled-icons/bootstrap/Wordpress'; */
+/* import { Square } from '@styled-icons/bootstrap/Square'; */
+/* import { Email } from '@styled-icons/material-sharp/Email'; */
+/* import { ArrowRight } from '@styled-icons/bootstrap/ArrowRight'; */
 import { Codesandbox } from '@styled-icons/simple-icons/Codesandbox';
-import { DiamondFill } from '@styled-icons/bootstrap/DiamondFill';
+/* import { DiamondFill } from '@styled-icons/bootstrap/DiamondFill'; */
 import { Php } from '@styled-icons/simple-icons/Php';
 import { Javascript } from '@styled-icons/simple-icons/Javascript';
 import { Mysql } from '@styled-icons/simple-icons/Mysql';
@@ -24,14 +24,14 @@ import { Csharp } from '@styled-icons/simple-icons/Csharp';
 import { Tailwindcss } from '@styled-icons/simple-icons/Tailwindcss';
 
 export const Icons = {    
-    "Github" : <Github />,
-    "Open in New" : <ArrowUpRight />,
+    "Github" : <Php />,
+    "Open in New" : <Php />,
     "Info" : <Php />,
-    "Codepen" : <Square />,
-    "LinkedIn" : <LinkedinIn />,
+    "Codepen" : <Php />,
+    "LinkedIn" : <Php />,
     "Code Sandbox" : <Codesandbox />,
-    "Up Right" : <ArrowUpRight />,
-    "WordPress" : <Wordpress />,
+    "Up Right" : <Php />,
+    "WordPress" : <Php />,
     "PHP" : <Php />,
     "Vanilla JS" : <Javascript />,
     "WebGL" : <Webgl />,
@@ -44,19 +44,13 @@ export const Icons = {
     "Work" : <Php />,
     "Personal" : <Php />,
     "Angular" : <Angular />,
-    "Square" : <Square />,
-    "Minimize" : <Square />,
-    "Close" : <Square />,
-    "Coffee" : <Php />,
-    "Heart" : <Php />,
-    "Plus" : <Php />,
-    "Envelope" : <Email />,
-    "Arrow Right" : <ArrowRight />,
-    "Arrow Up Right" : <ArrowUpRight />,
+    "Envelope" : <Php />,
+    "Arrow Right" : <Php />,
+    "Arrow Up Right" : <Php />,
     "Three.js" : <Threedotjs />,
     "Framer Motion" : <Framer />,
     "Strapi" : <Strapi />,
     "React" : <ReactLogo />,
-    "Diamond" : <DiamondFill />,
-    "Arrow Left" : <ArrowLeft />
+    "Diamond" : <Php />,
+    "Arrow Left" : <Php />
 } 

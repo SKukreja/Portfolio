@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Icons } from '../../components/Common/Icons';
@@ -19,6 +19,7 @@ const Container = styled.div`
   display: flex;
   padding-left: 80px;
   height: 100%;
+  width: max-content;
   min-width: 100vw;
   @media (max-width: 1024px) {
     padding-left: 0;
@@ -34,15 +35,17 @@ const Container = styled.div`
 const ProjectLanding = styled(m.div)`
   display: flex;
   flex-direction: column;
-  width: auto;
+  width: calc(20vw + var(--vh) * 130 * 4/3);
   height: calc(var(--vh) * 100);
   color: var(--black);
   position: relative;
   z-index: 8;
-  min-width: calc(100vw - 80px);
   @media (max-width: 1024px) {
     width: 100vw;
+  }
+  @media (max-width: 1024px) {
     height: calc(var(--vh, 1vh) * 100 - 80px);
+    margin-right: 0;
   }
 `;
 
@@ -50,13 +53,15 @@ const ProjectLandingText = styled.div`
   position: absolute;
   bottom: calc(var(--default-spacing) * 2);
   left: calc(var(--default-spacing) + 80px);
-  width: calc(100% - var(--default-spacing));
+  width: 20vw;
+  max-width: 1280px;
   display: block;
   @media (max-width: 1024px) {
     height: auto;
+    width: 100vw;
     left: var(--default-spacing);
     max-width: calc(100% - var(--default-spacing) * 2);
-    bottom: 120px;
+    bottom: calc(var(--default-spacing) * 3);
   }
 `;
 
@@ -100,8 +105,8 @@ const TextSection = styled.div`
 `;
 
 const Article = styled.div`
-  padding-top: 7.5rem;
-  padding-bottom: 7.5rem;
+  padding-top: 7.5vh;
+  padding-bottom: 7.5vh;
   width: max-content;
   display: flex;
   flex-flow: column wrap;
@@ -185,25 +190,6 @@ const TopicText = styled.div`
   }
 `;
 
-const ReturnLink = styled(CustomLink)`
-  z-index: 2;
-  text-decoration: none;
-  font-size: calc(var(--body-text) * 0.75);
-  font-family: var (--body-font);
-  letter-spacing: 1px;
-  color: var(--black);
-  transition: color 0.5s ease;
-  display: flex;
-  margin-bottom: var(--default-spacing);
-  &:hover {
-    color: var(--interact-hover-color);
-  }
-  & svg {
-    width: calc(var(--body-text) * 0.75);
-    margin-right: calc(var(--default-spacing) / 3);
-  }
-`;
-
 const Links = styled.div`
   display: flex;
   flex-direction: column;
@@ -279,7 +265,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
     hidden: { opacity: 0 },
     visible: () => ({
       opacity: 1,
-      transition: { delay: 0.5, duration: 3, type: 'linear' },
+      transition: { delay: 0.5, duration: 1.5, type: 'linear' },
     }),
   };
 
@@ -287,7 +273,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { delay: 0.5, duration: 1 },
+      transition: { delay: 0.1, duration: 1.5 },
     },
   };
 
@@ -314,7 +300,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
       </ProjectLanding>
       {project && project.attributes && (
         <Article $columns={project.attributes.columns}>
-          <Section initial="hidden" whileInView="visible" variants={sectionVariants} viewport={{ once: true }}>
+          <Section variants={sectionVariants} viewport={{ once: true }}>
             <Headers className="topic-header">Built With</Headers>
             <BuiltWith>
               <StackComponents>
@@ -333,8 +319,6 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
                 <Section
                   key={topic.id}
                   className="figure"
-                  initial={"hidden"}
-                  whileInView="visible"
                   variants={sectionVariants}
                   viewport={{ once: true }}
                 >
@@ -351,8 +335,6 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
             return (
               <Section
                 key={topic.id}
-                initial="hidden"
-                whileInView="visible"
                 variants={sectionVariants}
                 viewport={{ once: true }}
               >
@@ -377,7 +359,7 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
           })}
         </Article>
       )}
-      <SmallSection initial="hidden" whileInView="visible" variants={sectionVariants} viewport={{ once: true }}>
+      <SmallSection initial="hidden" variants={sectionVariants} viewport={{ once: true }}>
         <Links>
         {project && project.attributes.links?.map((action, index) => {
           return <Action key={index} target='_blank' aria-label={action.name} href={action.url}>{Icons[action.icon]} {action.name}</Action>;
@@ -389,4 +371,4 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
   );
 };
 
-export default Project;
+export default React.memo(Project);

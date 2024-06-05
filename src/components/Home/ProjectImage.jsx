@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo, memo } from 'react';
 import styled from 'styled-components';
-import { Plane, useCurtains } from "react-curtains";
+import { Plane } from "react-curtains";
 
 const Scene = styled.div`  
   position: absolute;
@@ -26,8 +26,8 @@ const Scene = styled.div`
     width: 100vw;
     height: 100vw;
     &.odd, &.even {
-      top: 0vh;
-      bottom: 0vh;
+      top: 0;
+      bottom: 0;
     }
   }
 `;
@@ -251,12 +251,10 @@ const Noise = styled.img`
   object-fit: cover;
 `;
 
-function ProjectImage({ isMobile, number, image, even }) {
+const ProjectImage = memo(({ isMobile, number, image, even }) => {
   const ref = useRef(null);
   const isVisible = useRef(false);
-  const curtains = useCurtains((curtains) => {    
-    curtains.resize();
-  });
+  const planeRef = useRef(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
@@ -286,21 +284,34 @@ function ProjectImage({ isMobile, number, image, even }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect()
-    plane.updatePosition()
     plane.uniforms.mobile.value = isMobile ? 1 : 0
-    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]    
-    curtains?.needRender();    
+    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]     
+    plane.updatePosition();
   }
 
   const onPlaneReady = (plane) => {
-    plane.updatePosition();
+    planeRef.current = plane;
+    setPlaneResolution(plane);
+    if (isImageLoaded) {
+      setTimeout(() => {
+        plane.updatePosition();
+      }, 100); // Slight delay to ensure rendering is complete
+    }
   };
 
   const onAfterResize = (plane) => {
     setPlaneResolution(plane)
   }
 
-  const uniforms = {
+  useEffect(() => {
+    if (isImageLoaded && planeRef.current) {
+      setTimeout(() => {
+        planeRef.current.updatePosition();
+      }, 100); // Slight delay to ensure rendering is complete
+    }
+  }, [isImageLoaded]);
+
+  const uniforms = useMemo(() => ({
     planeVisibility: {
       name: "uPlaneVisibility",
       type: "1f",
@@ -331,10 +342,9 @@ function ProjectImage({ isMobile, number, image, even }) {
       type: "1f",
       value: number
     }
-  };
+  }), [even, isMobile, number]);
 
   const onRender = (plane) => {
-    plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
@@ -369,6 +379,6 @@ function ProjectImage({ isMobile, number, image, even }) {
       </Container>
     </Scene>
   );
-}
+});
 
 export default ProjectImage;

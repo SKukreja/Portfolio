@@ -12,8 +12,8 @@ const GlobalStyle = createGlobalStyle`
     --accent-colour: #4F54D5;
     --secondary-colour: #9D282E;
     --black: #121518;
-    --body-text: clamp(1rem,0.9vw,1.4rem);
-    --title-text: clamp(6rem,5vw,10rem);
+    --body-text: 1.5vh;
+    --title-text: clamp(6rem,5vh,10rem);
     --article-spacing: 4rem;
     --desktop-container-width: 60vw;
     --interact-hover-color: #9D282E;
@@ -84,7 +84,7 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
   }
   
   .lenis.lenis-stopped {

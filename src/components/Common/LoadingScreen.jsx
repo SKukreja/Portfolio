@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import { m } from 'framer-motion';
 
+// Styled component for the loading screen container
 const StyledLoadingScreen = styled(m.div)`
   position: fixed;
   top: 0;
@@ -16,6 +17,7 @@ const StyledLoadingScreen = styled(m.div)`
   justify-content: center;  
 `;
 
+// Styled component for the container
 const Container = styled.div`
   position: relative;
   display: flex;
@@ -23,13 +25,14 @@ const Container = styled.div`
   width: 100%;
 `;
 
+// Styled component for the noise layer
 const NoiseLayer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("/Noise.png");
+  background: url("/Noise.avif");
   background-repeat: repeat;
   width: 100%;
   height: 100%;
@@ -54,43 +57,29 @@ const NoiseLayer = styled.div`
   }
 `;
 
-const PaperLayer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("/paper.avif");
-  background-repeat: repeat;
-  opacity: 0.4;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  mix-blend-mode: color-burn;
-  z-index: 104;
-`;
-
+// Styled component for the box shadow layer
 const BoxShadow = styled.div`
-    box-shadow: 
-        2px 3px 20px var(--black), 
-        inset 350px 0 350px -350px #8f5922,
-        inset -350px 0 350px -350px #8f5922
-    position: absolute;
-    width: 100%;
-    height: 200%;
-    inset: 0;  
-    z-index: 103;
-    pointer-events: none;
-    mix-blend-mode: multiply;  
-    @media (max-width: 1024px) {
-        height: 100%;
-        width: 100%;
-        box-shadow: 
-        inset 100px 0 100px -100px #8f5922,
-        inset -100px 0 100px -100px #8f5922;
-    }
+  box-shadow: 
+      2px 3px 20px var(--black), 
+      inset 350px 0 350px -350px #8f5922,
+      inset -350px 0 350px -350px #8f5922;
+  position: absolute;
+  width: 100%;
+  height: 200%;
+  inset: 0;  
+  z-index: 103;
+  pointer-events: none;
+  mix-blend-mode: multiply;  
+  @media (max-width: 1024px) {
+      height: 100%;
+      width: 100%;
+      box-shadow: 
+      inset 100px 0 100px -100px #8f5922,
+      inset -100px 0 100px -100px #8f5922;
+  }
 `;
 
+// Animation variants for loading screen
 const loadingVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
@@ -99,7 +88,8 @@ const loadingVariants = {
   transition: { duration: 2 }
 };
 
-const LoadingScreen = ( {$isFirefox} ) => {
+// Loading screen component
+const LoadingScreen = memo(({ $isFirefox }) => {
     return (
         <StyledLoadingScreen
         variants={loadingVariants}
@@ -113,7 +103,7 @@ const LoadingScreen = ( {$isFirefox} ) => {
             </Container>
         </StyledLoadingScreen>
     );
-};
+});
 
 export default LoadingScreen;
 export { loadingVariants };

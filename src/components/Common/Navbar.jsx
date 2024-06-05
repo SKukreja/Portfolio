@@ -1,13 +1,13 @@
-import React, {useContext, useState, useRef, useEffect} from 'react'
+import React, { useContext, useState, useRef, useEffect, memo, useMemo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useLocation } from 'react-router-dom';
-import use from '../../hooks/use';
 import { Icons } from './Icons';
 import { useLenis } from '@studio-freight/react-lenis';
 import { ModalContext } from './ModalContext.jsx';
 import CustomLink from './CustomLink';
 import ContactButton from './ContactButton';
 
+// Keyframes for slide-in animation
 const slideInFromRight = keyframes`
   0% {
     transform: translateX(-50px);
@@ -21,6 +21,7 @@ const slideInFromRight = keyframes`
   }
 `;
 
+// Styled components
 const Nav = styled.nav`
   position: fixed;
   top: 0;
@@ -31,12 +32,12 @@ const Nav = styled.nav`
   padding-bottom: calc(var(--default-spacing) * 0.5);
   box-sizing: border-box;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   transition: background 0.5s ease;
   background: var(--black);
-  z-index: 1002;    
+  z-index: 1002;
   &::after {
     content: "";
     background: url("/Noise.png");
@@ -44,39 +45,30 @@ const Nav = styled.nav`
     opacity: 1;
     width: 100%;
     height: 100%;
-    
     pointer-events: none;
     position: absolute;
     inset: 0;
   }
-  
   opacity: 1;
-
   & .logo {
-    filter:  ${({ $isNavSolid, $isMobile }) => $isNavSolid && !$isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
+    filter: ${({ $isNavSolid, $isMobile }) => $isNavSolid && !$isMobile ? 'brightness(0) invert(1)' : 'brightness(0) invert(0)'};
     transition: transform 0.5s ease, filter 0.5s ease;
   }
-
   & .logo:hover {
     transform: scale(1.1);
   }
-
   @media (max-width: 1024px) {
     top: 0;
-    left: 0;     
-    height: var(--default-spacing); 
-    width: 100vw; 
+    left: 0;
+    height: var(--default-spacing);
+    width: 100vw;
     flex-direction: row;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
-    padding-top: calc(var(--default-spacing)/2);
-    padding-bottom: calc(var(--default-spacing)/2);
-    padding-left: var(--default-spacing);
-    padding-right: var(--default-spacing);
+    padding: calc(var(--default-spacing) / 2) var(--default-spacing);
   }
   @media (max-width: 768px) {
-    padding-top: calc(var(--default-spacing));
-    padding-bottom: calc(var(--default-spacing));
+    padding: var(--default-spacing);
   }
 `;
 
@@ -95,7 +87,7 @@ const Center = styled.div`
 `;
 
 const Noise = styled.div`
-  background: url("Noise.png");
+  background: url("/Noise.png");
   background-repeat: repeat;
   opacity: 1;
   width: 100%;
@@ -124,13 +116,13 @@ const SocialLink = styled.a`
 
 const Branding = styled.img`
   width: 50px;
-  pointer-events: auto;  
+  pointer-events: auto;
   cursor: pointer;
   user-select: none;
   transition: opacity 0.5s ease;
   opacity: 1;
-  z-index: 50;  
-  position: absolute; 
+  z-index: 50;
+  position: absolute;
   @media (max-width: 1024px) {
     width: 40px;
   }
@@ -140,7 +132,7 @@ const Right = styled.div`
   text-align: center;
   display: flex;
   flex-direction: column;
-  width: 100%;  
+  width: 100%;
   @media (max-width: 1024px) {
     display: none;
   }
@@ -174,7 +166,6 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
   flex-direction: column;
   background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
   z-index: 10;
-
   &::before {
     content: "";
     position: absolute;
@@ -243,8 +234,6 @@ const ContactLink = styled(ContactButton)`
       : 'none'};
 `;
 
-
-
 const OverlayMenu = styled.nav`
   display: none;
   flex-direction: column;
@@ -253,8 +242,6 @@ const OverlayMenu = styled.nav`
   height: 100%;
   font-family: var(--body-font);
   font-weight: 500;
-
-
   @media (max-width: 1024px) {
     display: flex;
   }
@@ -270,29 +257,24 @@ const HamburgerButton = styled.button`
   padding: 0;
   user-select: none;
   outline: none;
-
   & span {
     display: block;
     width: 22px;
-    height: 2px;    
-    background: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'var(--black)' : 'var(--black)') :  ($isMobile ? 'var(--black)' : 'var(--offwhite)')};  
+    height: 2px;
+    background: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'var(--black)' : 'var(--black)') : ($isMobile ? 'var(--black)' : 'var(--offwhite)')};  
     margin: 5px 0;
     transition: transform 0.3s ease, background 0.5s ease;
   }
-
   @media (max-width: 1024px) {
     display: block;
   }
-
   &.buttonActive {
     span:nth-child(1) {
       transform: rotate(45deg) translate(5px, 5px);
     }
-
     span:nth-child(2) {
       opacity: 0;
     }
-
     span:nth-child(3) {
       transform: rotate(-45deg) translate(5px, -5px);
     }
@@ -315,6 +297,7 @@ const BoxShadow = styled.div`
   }
 `;
 
+// Custom hook to get the current path
 const usePath = () => {
   const location = useLocation();
   const [path, setPath] = useState(location.pathname);
@@ -326,13 +309,14 @@ const usePath = () => {
   return path;
 };
 
-function Navbar({ socialData, navigationData }) {
+// Navbar component
+const Navbar = memo(({ socialData, navigationData }) => {
   const [data, setData] = useState(null);
   const socials = socialData;
   const { isModalOpen, setIsModalOpen } = useContext(ModalContext);
   const [isSolid, setIsSolid] = useState(false);
   const [onHomePage, setOnHomePage] = useState(false);
-  const path = usePath(); 
+  const path = usePath();
   const isSolidRef = useRef(isSolid);
   const lenis = useLenis();
 
@@ -342,7 +326,7 @@ function Navbar({ socialData, navigationData }) {
   }, [navigationData]);
 
   useEffect(() => {
-      isSolidRef.current = isSolid;
+    isSolidRef.current = isSolid;
   }, [isSolid]);
 
   const toggleOverlay = () => {
@@ -354,7 +338,7 @@ function Navbar({ socialData, navigationData }) {
   };
 
   useEffect(() => {
-    if(path === '/') {
+    if (path === '/') {
       setOnHomePage(true);
       setIsSolid(true);
     } else {
@@ -363,16 +347,13 @@ function Navbar({ socialData, navigationData }) {
     }
   }, [onHomePage, path]);
 
-
-  
-  useEffect(() => {    
+  useEffect(() => {
     if (isModalOpen) {
-      lenis?.stop()
-  
+      lenis?.stop();
       return () => {
-        lenis?.start()
+        lenis?.start();
       };
-    } 
+    }
   }, [isModalOpen]);
 
   if (!data) {
@@ -382,62 +363,62 @@ function Navbar({ socialData, navigationData }) {
   return (
     <>
       <Nav $isNavSolid={isSolid} $isMobile={isModalOpen}>
-      <Left>
-        <LogoContainer to="/" aria-label="Home">
-          <Branding className="logo" src="/logo.svg" alt="Logo" $isDark={isModalOpen} />
-        </LogoContainer>
-      </Left>
-      <Center>
-        <HamburgerButton
-          onClick={toggleOverlay}
-          className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
-          $isNavSolid={isSolid}
-          $isMobile={isModalOpen}
-          aria-label="Menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </HamburgerButton>
-      </Center>
-      <Right>
-        {socials?.attributes.links.map((link, index) => (
-          <SocialLink key={link.id} href={link.url} $isNavSolid={isSolid} target="_blank">{Icons[link.icon]}</SocialLink>          
-        ))}
-      </Right>
-      <Overlay $isVisible={isModalOpen}>
-      <Noise />
-      <BoxShadow />
-        <OverlayMenu>
-          {data?.attributes.links.map((link, index) => {
-            return link.text === 'Contact' ? (
-              <ContactLink
-                key={link.id}
-                to={link.url}
-                $isVisible={isModalOpen}
-                index={index}
-                aria-label={link.text}
-              >
-                {link.text}
-              </ContactLink>
-            ) : (
-              <OverlayLink
-                key={link.id}
-                onClick={handleClick}
-                to={link.url}
-                $isVisible={isModalOpen}
-                index={index}
-                aria-label={link.text}
-              >
-                {link.text}
-              </OverlayLink>
-            );
-          })}
-        </OverlayMenu>
-      </Overlay>
+        <Left>
+          <LogoContainer to="/" aria-label="Home">
+            <Branding className="logo" src="/logo.svg" alt="Logo" $isDark={isModalOpen} />
+          </LogoContainer>
+        </Left>
+        <Center>
+          <HamburgerButton
+            onClick={toggleOverlay}
+            className={isModalOpen ? 'hamburger buttonActive' : 'hamburger'}
+            $isNavSolid={isSolid}
+            $isMobile={isModalOpen}
+            aria-label="Menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </HamburgerButton>
+        </Center>
+        <Right>
+          {socials?.attributes.links.map((link) => (
+            <SocialLink key={link.id} href={link.url} $isNavSolid={isSolid} target="_blank">{Icons[link.icon]}</SocialLink>
+          ))}
+        </Right>
+        <Overlay $isVisible={isModalOpen}>
+          <Noise />
+          <BoxShadow />
+          <OverlayMenu>
+            {data?.attributes.links.map((link, index) => (
+              link.text === 'Contact' ? (
+                <ContactLink
+                  key={link.id}
+                  to={link.url}
+                  $isVisible={isModalOpen}
+                  index={index}
+                  aria-label={link.text}
+                >
+                  {link.text}
+                </ContactLink>
+              ) : (
+                <OverlayLink
+                  key={link.id}
+                  onClick={handleClick}
+                  to={link.url}
+                  $isVisible={isModalOpen}
+                  index={index}
+                  aria-label={link.text}
+                >
+                  {link.text}
+                </OverlayLink>
+              )
+            ))}
+          </OverlayMenu>
+        </Overlay>
       </Nav>
     </>
   );
-};
+});
 
 export default Navbar;

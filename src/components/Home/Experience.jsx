@@ -71,7 +71,7 @@ const Blurb = styled.div`
   font-size: var(--body-text);
   width: 100%;
   text-align: left;
-  bottom: 7.5rem;
+  bottom: 7.5vh;
   z-index: 2;
   overflow: visible;
   font-weight: var(--body-weight);    
@@ -143,7 +143,7 @@ z-index: 1;
 const TwoColumn = styled.div`
   display: flex;
   gap: 6rem;
-  margin-top: 5vh;
+  margin-top: 7.5vh;
   width: 100%;
   z-index: 3;
 `;

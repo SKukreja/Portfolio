@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { memo, useRef, useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
-import { Plane, useCurtains } from "react-curtains";
+import { Plane } from "react-curtains";
 
-const Scene = styled.div`  
+const Scene = styled.div`
   position: relative;
   height: 350px;
   aspect-ratio: 3 / 4;
@@ -222,12 +222,11 @@ const Noise = styled.img`
   object-fit: cover;
 `;
 
-function ProfileImage({ $imageUrl, $isMobile }) {
+const ProfileImage = memo(({ $imageUrl, $isMobile }) => {
   const ref = useRef(null);
   const isVisible = useRef(true);
-  const curtains = useCurtains((curtains) => {    
-    curtains.resize(); 
-  });
+  const planeRef = useRef(null);
+
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
@@ -257,20 +256,26 @@ function ProfileImage({ $imageUrl, $isMobile }) {
 
   const setPlaneResolution = (plane) => {
     const planeBox = plane.getBoundingRect();
-    plane.updatePosition();    
     plane.uniforms.mobile.value = $isMobile ? 1 : 0;
     plane.uniforms.resolution.value = [planeBox.width, planeBox.height];
+    plane.updatePosition();
   };
 
   const onPlaneReady = (plane) => {
-    plane.updatePosition();
+    planeRef.current = plane;
+    setPlaneResolution(plane);
+    if (isImageLoaded) {
+      setTimeout(() => {
+        plane.updatePosition();
+      }, 100); // Slight delay to ensure rendering is complete
+    }
   };
 
   const onAfterResize = (plane) => {
     setPlaneResolution(plane);
   };
 
-  const uniforms = {
+  const uniforms = useMemo(() => ({
     planeVisibility: {
       name: "uPlaneVisibility",
       type: "1f",
@@ -291,17 +296,23 @@ function ProfileImage({ $imageUrl, $isMobile }) {
       type: "1f",
       value: 0
     },
-  };
+  }), []);
 
   const onRender = (plane) => {
-    plane.updatePosition();
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
-    }
-    else if (isVisible.current && plane.uniforms.time.value < 300) {
+    } else if (isVisible.current && plane.uniforms.time.value < 300) {
       plane.uniforms.time.value += 1;
     }
   };
+
+  useEffect(() => {
+    if (isImageLoaded && planeRef.current) {
+      setTimeout(() => {
+        planeRef.current.updatePosition();
+      }, 100); // Slight delay to ensure rendering is complete
+    }
+  }, [isImageLoaded]);
 
   return (
     <Scene ref={ref}>
@@ -317,7 +328,7 @@ function ProfileImage({ $imageUrl, $isMobile }) {
             // plane events
             onRender={onRender}
             onAfterResize={onAfterResize}
-            onReady={onPlaneReady} 
+            onReady={onPlaneReady}
           >
             <Picture src={$imageUrl} data-sampler="planeTexture" alt="A picture of Sumit Kukreja" onLoad={() => setIsImageLoaded(true)} />
             <Noise src={'/profilenoise.avif'} aria-hidden="true" data-sampler="noiseTexture" alt="" />
@@ -329,5 +340,6 @@ function ProfileImage({ $imageUrl, $isMobile }) {
       </Container>
     </Scene>
   );
-}
+});
+
 export default ProfileImage;
