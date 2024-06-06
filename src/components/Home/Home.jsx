@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import Landing from '../../components/Home/Landing';
-import Splash from '../../components/Home/Splash';
-import FeaturedWorks from '../../components/Home/FeaturedWorks';
-import About from '../../components/Home/About';
-import Cover from '../../components/Home/Cover';
+import Landing from './Landing';
+import Splash from './Splash';
+import FeaturedWorks from './FeaturedWorks';
+import About from './About';
+import Cover from '../Footer/Cover';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 

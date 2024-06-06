@@ -5,7 +5,7 @@ import { m, useAnimation } from 'framer-motion';
 import ProjectImage from './ProjectImage';
 import { InView, useInView } from 'react-intersection-observer';
 import { Icons } from '../Common/Icons';
-import AnimatedText from './AnimatedText';
+import AnimatedText from '../Common/AnimatedText';
 import CustomLink from '../Common/CustomLink';
 
 // Styled components
@@ -38,7 +38,7 @@ const Header = styled(m.h1)`
   display: flex;
   align-items: center;
   white-space: nowrap;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   position: absolute;  
   z-index: 4;
   height: auto;
@@ -373,7 +373,7 @@ const FeaturedWorks = memo(({ $isMobile, data }) => {
             animate={inView ? "visible" : "hidden"}
             variants={headerVariants}
           >
-            Featured Projects
+            Featured &nbsp;Projects
           </Header>
 
           <Projects>

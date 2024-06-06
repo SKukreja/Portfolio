@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import styled from 'styled-components';
-import Slider from '../../components/Project/Slider';
+import Slider from './Slider';
 
 // Styled components
 const FigureContainer = styled.div`

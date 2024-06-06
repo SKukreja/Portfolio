@@ -1,17 +1,17 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Icons } from '../../components/Common/Icons';
+import { Icons } from '../Common/Icons';
 import { Helmet } from 'react-helmet-async';
 import ProjectTitle from './ProjectTitle';
 import ProjectSplash from './ProjectSplash';
 import ProjectBlurb from './ProjectBlurb';
-import Cover from '../../components/Home/Cover';
+import Cover from '../Footer/Cover';
 import Figure from './Figure';
 import { m } from 'framer-motion';
-import TransitionMask from '../../components/Common/TransitionMask';
+import TransitionMask from '../Common/TransitionMask';
 import ScrollLine from './ScrollLine';
-import CustomLink from '../../components/Common/CustomLink';
+import CustomLink from '../Common/CustomLink';
 
 const Container = styled.div`
   position: relative;
@@ -98,7 +98,7 @@ const ProjectTechnology = styled.div`
 
 const TextSection = styled.div`
   text-align: justify;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   &.intro {
     width: 100%;
   }
@@ -157,7 +157,7 @@ const Headers = styled.div`
   font-weight: var(--header-weight);
   transition: opacity 0.5s ease;
   text-align: center;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {
     width: 100%;

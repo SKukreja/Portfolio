@@ -267,7 +267,7 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0.1
+        threshold: 0
       }
     );
 

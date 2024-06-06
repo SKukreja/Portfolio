@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { m } from 'framer-motion';
 import styled from 'styled-components';
-import AnimatedText from './AnimatedText';
+import AnimatedText from '../Common/AnimatedText';
 import { Icons } from '../Common/Icons';
 import ScrollButton from '../Common/ScrollButton';
 
@@ -90,10 +90,9 @@ const ActionButtons = styled(m.div)`
   width: 100%;
   justify-content: flex-start;
   @media (max-width: 1024px) {
-    margin-top: 25vh;
-    margin-top: 25svh;
     flex-direction: column;
-    margin-top: var(--default-spacing);
+    margin-top: calc(var(--default-spacing) / 2);
+    margin-bottom: 0;
   }  
 `;
 
@@ -121,7 +120,8 @@ const Button = styled(ScrollButton)`
     align-items: center;  
   }
   @media (max-width: 1024px) {
-    margin: 0;
+    margin-bottom: 0;
+    margin-left: 0;
     margin-right: var(--default-spacing);
   }
 `;
@@ -162,8 +162,8 @@ const Landing = memo(({ $isMobile }) => {
         </NameContainer>
         <Intro aria-label="Introduction"><AnimatedText text="I'm a full-stack developer with a passion for creating unique digital experiences." /></Intro>
         <ActionButtons initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 2 }}>
-          <Button $isMobile={$isMobile} to={"#featured-works"} aria-label="View my work"><p>{Icons["Arrow Right"]} View my work</p></Button>
-          <Button $isMobile={$isMobile} to={"#about"} aria-label="More about me"><p>{Icons["Arrow Right"]} More about me</p></Button>
+          <Button $isMobile={$isMobile} to={"#featured-works"} aria-label="View my work">{Icons["Arrow Right"]} View my work</Button>
+          <Button $isMobile={$isMobile} to={"#about"} aria-label="More about me">{Icons["Arrow Right"]} More about me</Button>
         </ActionButtons>      
       </SceneText>
     </Scene>

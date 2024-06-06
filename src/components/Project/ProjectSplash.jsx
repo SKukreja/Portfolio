@@ -19,10 +19,10 @@ const Scene = styled.div`
     margin-left: calc(var(--vh, 1vh) * -20);
   }
   @media (max-width: 768px) {
-    width: calc(var(--vh) * 80);
-    height: calc(var(--vh) * 80);
-    margin-top: -50vw;
-    margin-left: -40vw;
+    width: calc(var(--vh) * 90);
+    height: calc(var(--vh) * 90);
+    margin-top: -55vw;
+    margin-left: -30vw;
   }
 `;
 

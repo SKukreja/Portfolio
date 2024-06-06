@@ -27,6 +27,7 @@ const Header = styled(m.h1)`
   color: var(--black);  
   width: 50%;
   text-align: center;
+  letter-spacing: 2px;
   height: calc(var(--vh) * 20);
   margin-bottom: var(--default-spacing);
   @media (max-width: 1024px) {

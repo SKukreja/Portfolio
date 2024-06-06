@@ -13,16 +13,16 @@ const Scene = styled.div`
   margin-left: -10vw;  
   pointer-events: none;
   @media (max-width: 1024px) {
-    width: 130vw;
-    height: 130vw;
-    margin-top: -85vw;
-    margin-left: -20vw;    
+    width: 150vw;
+    height: 150vw;
+    margin-top: -95vw;
+    margin-left: -25vw;    
   }
   @media (max-width: 768px) {
-    width: 130vw;
-    height: 130vw;
-    margin-top: -110vw;
-    margin-left: -15vw;
+    width: 80vh;
+    height: 80vh;
+    margin-top: -60vh;
+    margin-left: -30vw;
   }
 `;
 
@@ -200,7 +200,7 @@ const fragmentShader = `
     noiseVal /= maxValue;
 
     vec2 center = vec2(0.47, 0.355);
-    float currentRadius = 0.23 * time;
+    float currentRadius = 0.20 * time;
     float expansion = sqrLen(fragPos - center);
     expansion = 1.0 - expansion;
     expansion += currentRadius;

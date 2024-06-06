@@ -1,11 +1,11 @@
 import React, { useContext, useState, useRef, useEffect, memo, useMemo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useLocation } from 'react-router-dom';
-import { Icons } from './Icons';
+import { Icons } from '../Common/Icons.jsx';
 import { useLenis } from '@studio-freight/react-lenis';
 import { ModalContext } from './ModalContext.jsx';
-import CustomLink from './CustomLink';
-import ContactButton from './ContactButton';
+import CustomLink from '../Common/CustomLink.jsx';
+import ContactButton from './ContactButton.jsx';
 
 // Keyframes for slide-in animation
 const slideInFromRight = keyframes`

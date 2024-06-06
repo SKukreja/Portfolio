@@ -45,7 +45,7 @@ const GlobalStyle = createGlobalStyle`
     }    
     @media (max-width: 767px) {
       --title-text: 12vw;
-      --body-text: 4vw;
+      --body-text: 3.5vw;
       --default-spacing: 1.5rem;
       --desktop-container-width: 95vw;
     }

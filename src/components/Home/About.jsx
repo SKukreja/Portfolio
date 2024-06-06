@@ -54,7 +54,7 @@ const Intro = styled(m.h1)`
   font-size: var(--title-text);
   color: var(--black);
   white-space: nowrap;
-  letter-spacing: 4px;  
+  letter-spacing: 2px; 
   z-index: 4;
   margin-top: 0;
   height: auto;  

@@ -8,7 +8,7 @@ const Header = styled(m.h1)`
   color: var(--black);
   display: flex;  
   white-space: nowrap;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   position: relative;  
   z-index:2;
   height: auto;
