@@ -21,6 +21,7 @@ const Scene = styled(m.div)`
   z-index: 2;
   @media (max-width: 1024px) {
     width: 100%;    
+    height: 50vh;
     align-items: flex-start;
     margin-top: 0;
   }

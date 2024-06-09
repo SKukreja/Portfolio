@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, memo, useCallback } from 'react';
+import React, { useRef, useEffect, useState, memo, useCallback, useMemo } from 'react';
 import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import { LazyMotion, MotionConfig, domAnimation } from 'framer-motion';
 import { ModalProvider } from './components/Navbar/ModalContext.jsx';
@@ -9,7 +9,7 @@ import ParchmentItalicWoff2 from './assets/fonts/ParchmentPrintItalic.woff2';
 import WizardHandWoff2 from './assets/fonts/WizardHand.woff2';
 import LoadingScreen, { loadingVariants } from './components/Common/LoadingScreen.jsx';
 import { TransitionProvider } from './components/Common/TransitionContext.jsx';
-import { VideoProvider } from './components/Common/VideoContext.jsx';
+import { VideoProvider, usePerformance } from './components/Common/VideoContext.jsx';
 import Layout from './Layout.jsx';
 
 const ScrollToTop = memo((props) => {
@@ -71,7 +71,7 @@ const extractImageUrlsFromData = (data) => {
   return imageUrls;
 };
 
-const App = () => {
+const AppContent = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -79,25 +79,32 @@ const App = () => {
   const [loadedAboutData, setLoadedAboutData] = useState(null);
   const [loadedNavigationData, setLoadedNavigationData] = useState(null);
   const lenisRef = useRef();
+  const { isVideoCapable } = usePerformance();
   const { data: apiData, loading: apiLoading, error } = use('/works?populate=deep&sort=year:desc');
   const { data: socialData, loading: socialApiLoading, sError } = use('/social?populate=deep');
   const { data: aboutData, loading: aboutApiLoading, aError } = use('/about?populate=deep');
   const { data: navigationData, loading: navigationApiLoading, nError } = use('/navigation?populate=deep');
 
-  const options = {
-    lerp: 0.05,
-    smoothWheel: true,
-    syncTouch: true,
-    orientation: isMobile ? 'vertical' : 'horizontal',
-    gestureOrientation: 'both',    
-  };
+  useEffect(() => {
+    console.log('isVideoCapable:', isVideoCapable); // Add logging
+  }, [isVideoCapable]);
+
+  const options = useMemo(() => {
+    const opts = {
+      lerp: 0.05,
+      smoothWheel: true,
+      syncTouch: isVideoCapable ? true : false,
+      orientation: isMobile ? 'vertical' : 'horizontal',
+      gestureOrientation: 'both',
+    };
+    console.log('Lenis options:', opts); // Add logging
+    return opts;
+  }, [isVideoCapable, isMobile]);
 
   const setVh = useCallback(() => {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
   }, []);
-
-
 
   useEffect(() => {
     setVh();
@@ -121,9 +128,7 @@ const App = () => {
     return () => {
       mediaQuery.removeEventListener('change', handleResize);
     };
-  }, [isMobile]);
-
-
+  }, []);
 
   useEffect(() => {
     if (!apiLoading && !socialApiLoading && !aboutApiLoading && apiData && socialData && aboutData && navigationData && !navigationApiLoading) {
@@ -152,29 +157,33 @@ const App = () => {
   }, [isLoading]);
 
   return (
-    <VideoProvider>
-      <ReactLenis root ref={lenisRef} options={options}>
-        <LazyMotion features={domAnimation}>
-          <MotionConfig reducedMotion='user'>
-            <ModalProvider>
-              <TransitionProvider>
-                <Router>
-                  {isLoading ? (
-                    <LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' />
-                  ) : (
-                    <>
-                      <ScrollToTop />
-                      <Layout $isMobile={isMobile} data={data} socialData={loadedSocialData} navigationData={loadedNavigationData} aboutData={loadedAboutData} />
-                    </>
-                  )}
-                </Router>
-              </TransitionProvider>
-            </ModalProvider>
-          </MotionConfig>
-        </LazyMotion>
-      </ReactLenis>
-    </VideoProvider>
+    <ReactLenis key={`${isVideoCapable}-${isMobile}`} root ref={lenisRef} options={options}>
+      <LazyMotion features={domAnimation}>
+        <MotionConfig reducedMotion='user'>
+          <ModalProvider>
+            <TransitionProvider>
+              <Router>
+                {isLoading ? (
+                  <LoadingScreen variants={loadingVariants} initial='hidden' animate='visible' exit='exit' />
+                ) : (
+                  <>
+                    <ScrollToTop />
+                    <Layout $isMobile={isMobile} data={data} socialData={loadedSocialData} navigationData={loadedNavigationData} aboutData={loadedAboutData} />
+                  </>
+                )}
+              </Router>
+            </TransitionProvider>
+          </ModalProvider>
+        </MotionConfig>
+      </LazyMotion>
+    </ReactLenis>
   );
 };
+
+const App = () => (
+  <VideoProvider>
+    <AppContent />
+  </VideoProvider>
+);
 
 export default App;

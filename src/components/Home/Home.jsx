@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Landing from './Landing';
-import Splash from './Splash';
 import FeaturedWorks from './FeaturedWorks';
 import About from './About';
 import Cover from '../Footer/Cover';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
+import { usePerformance } from '../Common/VideoContext'; // Ensure this import
 
 const Container = styled.div`
   position: relative;
@@ -22,12 +22,36 @@ const Container = styled.div`
 `;
 
 const MemoizedLanding = React.memo(Landing);
-const MemoizedSplash = React.memo(Splash);
 const MemoizedFeaturedWorks = React.memo(FeaturedWorks);
 const MemoizedAbout = React.memo(About);
 const MemoizedCover = React.memo(Cover);
 
+// Placeholder component
+const PlaceholderComponent = styled.div`
+  width: 100%;
+  height: 300px; // Adjust as needed
+  background: url('/placeholder-image.png'); // Replace with your placeholder image path
+  background-size: cover;
+  background-position: center;
+`;
+
 const Home = ({ $isMobile, $isFirefox, data, socialData, aboutData }) => {
+  const { isVideoCapable } = usePerformance();
+  const [Splash, setSplash] = useState(null);
+
+  useEffect(() => {
+    if (isVideoCapable) {
+      import('./Splash').then((module) => {
+        setSplash(() => module.default);
+      });
+    }
+    else {
+      import('./Simplified/Splash').then((module) => {
+        setSplash(() => module.default);
+      });
+    }
+  }, [isVideoCapable]);
+
   const memoizedFeaturedWorks = useMemo(() => (
     <MemoizedFeaturedWorks $isMobile={$isMobile} $isFirefox={$isFirefox} data={data} />
   ), [$isMobile, $isFirefox, data]);
@@ -46,7 +70,9 @@ const Home = ({ $isMobile, $isFirefox, data, socialData, aboutData }) => {
         <title>Sumit Kukreja</title>
       </Helmet>        
       <MemoizedLanding $isMobile={$isMobile} />
-      <MemoizedSplash $isMobile={$isMobile} />
+      {Splash ? (
+        <Splash $isMobile={$isMobile} />
+      ) : null}
       {memoizedFeaturedWorks}
       {memoizedAbout}
       {memoizedCover}

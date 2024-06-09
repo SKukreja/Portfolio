@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { m, useAnimation } from 'framer-motion';
-import ProjectImage from './ProjectImage';
 import { InView, useInView } from 'react-intersection-observer';
 import { Icons } from '../Common/Icons';
 import AnimatedText from '../Common/AnimatedText';
 import CustomLink from '../Common/CustomLink';
+import { usePerformance } from '../Common/VideoContext';
 
 // Styled components
 const Featured = styled(m.div)`
@@ -301,6 +301,22 @@ const ProjectItem = memo(({ isMobile, project, number }) => {
     triggerOnce: true
   });
 
+  const { isVideoCapable } = usePerformance();
+  const [ProjectImage, setProjectImage] = useState(null);
+
+  useEffect(() => {
+    if (isVideoCapable) {
+      import('./ProjectImage').then((module) => {
+        setProjectImage(() => module.default);
+      });
+    }
+    else {
+      import('./Simplified/ProjectImage').then((module) => {
+        setProjectImage(() => module.default);
+      });
+    }
+  }, [isVideoCapable]);
+
   return (
     <Project ref={viewRef} className={`${inView ? 'active' : ''} ${number % 2 === 0 ? 'odd' : 'even'}`}>
       {number % 2 === 0 ? (
@@ -308,18 +324,19 @@ const ProjectItem = memo(({ isMobile, project, number }) => {
           <Spacer />
           <ProjectInfo isInView={inView} className="odd" number={number} project={project} />
         </>
-      ) : (
-        null
-      )}
-      <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 !== 0} image={project.attributes.featured} />  
+      ) : null}
+      {isVideoCapable && ProjectImage ? (
+        <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 !== 0} image={project.attributes.featured} />
+      ) : ProjectImage ? (
+        <ProjectImage isInView={inView} isMobile={isMobile} number={number} even={number % 2 !== 0} image={project.attributes.featured} />
+      ) : null
+      }
       {number % 2 !== 0 ? (
         <>
           <ProjectInfo isInView={inView} className="even" number={number} project={project} />
           <Spacer />
         </>
-      ) : (
-        null
-      )}
+      ) : null}
     </Project>
   );
 });
@@ -335,7 +352,7 @@ const FeaturedWorks = memo(({ $isMobile, data }) => {
       opacity: 1,
       transition: {
         duration: 1.5,
-        type: 'linear',        
+        type: 'linear',
       },
     }),
   }), []);

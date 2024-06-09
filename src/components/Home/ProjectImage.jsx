@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo, memo } from 'react';
 import styled from 'styled-components';
 import { Plane } from "react-curtains";
+import { usePerformance } from '../Common/VideoContext.jsx'; 
 
 const Scene = styled.div`  
   position: absolute;
@@ -72,7 +73,6 @@ const vertexShader = `
 
     // cool effect on scroll
 
-
     gl_Position = uPMatrix * uMVMatrix * vec4(vertexPosition, 1.0);
     
     // varyings
@@ -101,6 +101,7 @@ const fragmentShader = `
   uniform float uEven;
   uniform float uMobile;
   uniform float uNumber;
+  uniform float uMaxTime;
 
   float sqrLen(vec2 vec)
   {
@@ -192,11 +193,11 @@ const fragmentShader = `
   }
 
   float easeOutCubic(float t) {
-    return 1.0 - pow(1.0 - t, 3.0);
+    return 1.0 - pow(1.0 - t, 4.0);
   }
   
   void main() {
-    float time = uTime/400.;
+    float time = uTime / uMaxTime;
     time = easeOutCubic(time);
 
     vec2 fragPos = vNoiseCoord;
@@ -252,10 +253,16 @@ const Noise = styled.img`
 `;
 
 const ProjectImage = memo(({ isMobile, number, image, even }) => {
+  const { isVideoCapable } = usePerformance();
   const ref = useRef(null);
   const isVisible = useRef(false);
   const planeRef = useRef(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const lastRenderTime = useRef(0);
+    // Determine frame rate and time based on performance
+    const frameRate = isVideoCapable ? 60 : 30;
+    const maxTime = isVideoCapable ? 240 : 120;
+    const frameInterval = 1000 / frameRate;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -267,7 +274,7 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0
+        threshold: 0.1
       }
     );
 
@@ -283,11 +290,11 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
   }, [ref]);
 
   const setPlaneResolution = (plane) => {
-    const planeBox = plane.getBoundingRect()
-    plane.uniforms.mobile.value = isMobile ? 1 : 0
-    plane.uniforms.resolution.value = [planeBox.width, planeBox.height]     
+    const planeBox = plane.getBoundingRect();
+    plane.uniforms.mobile.value = isMobile ? 1 : 0;
+    plane.uniforms.resolution.value = [planeBox.width, planeBox.height];
     plane.updatePosition();
-  }
+  };
 
   const onPlaneReady = (plane) => {
     planeRef.current = plane;
@@ -300,8 +307,8 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
   };
 
   const onAfterResize = (plane) => {
-    setPlaneResolution(plane)
-  }
+    setPlaneResolution(plane);
+  };
 
   useEffect(() => {
     if (isImageLoaded && planeRef.current) {
@@ -341,14 +348,25 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
       name: "uNumber",
       type: "1f",
       value: number
+    },
+    maxTime: {
+      name: "uMaxTime",
+      type: "1f",
+      value: maxTime
     }
-  }), [even, isMobile, number]);
+  }), [even, isMobile, number, maxTime]);
 
   const onRender = (plane) => {
+    const now = performance.now();
+    if (now - lastRenderTime.current < frameInterval) {
+      return;
+    }
+    lastRenderTime.current = now;
+
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
     }
-    else if (isVisible.current && plane.uniforms.time.value < 400) {
+    else if (isVisible.current && plane.uniforms.time.value < maxTime) { // Adjusted time range
       plane.uniforms.time.value += 1;
     }
   };

@@ -124,59 +124,57 @@ const LenisCurtainsSync = memo(({ $isMobile }) => {
     return null;
   });
 
-const Layout = memo(({ $isMobile, $isFirefox, data, socialData, aboutData, navigationData }) => {
-  const { isVideoCapable } = usePerformance();
-  const location = useLocation();
-  const isWorkPage = location.pathname.includes('/projects');
+  const Layout = memo(({ $isMobile, $isFirefox, data, socialData, aboutData, navigationData }) => {
+    const location = useLocation();
+    const isWorkPage = location.pathname.includes('/projects');
+    const { isVideoCapable } = usePerformance();
 
-  console.log(isVideoCapable)
-  // If the device is not video capable, render an empty component
-/*   if (!isVideoCapable) {
     return (
-        <>
-        </>
-    )
-  }
- */
-  return (
-    <AppContainer className='app'>
-      <HelmetProvider>
-        <GlobalStyle />
-        <Navbar navigationData={navigationData} socialData={socialData} />
-        <Helmet>
-          <title>Sumit Kukreja</title>
-          <link rel='icon' type='image/png' href='/favicon.ico' />
-        </Helmet>
-        <Curtains
-          className='curtains-canvas'
-          pixelRatio={Math.min(1, window.devicePixelRatio)}
-          antialias={false}
-          watchScroll={false}
-          premultipliedAlpha={true}
-          production={true}
-        >
-          <LenisCurtainsSync $isMobile={$isMobile} />
-          <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />
-        </Curtains>
-      </HelmetProvider>
-    </AppContainer>
-  );
-});
-
-const Root = memo(({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData }) => {
-  const location = useLocation();
-  const container = useRef(null);
-
-  const curtains = useCurtains((curtains) => {
-    curtains.resize();
-    curtains.updateScrollValues(0, 0);
+      <AppContainer className='app'>
+        <HelmetProvider>
+          <GlobalStyle />
+          <Navbar navigationData={navigationData} socialData={socialData} />
+          <Helmet>
+            <title>Sumit Kukreja</title>
+            <link rel='icon' type='image/png' href='/favicon.ico' />
+          </Helmet>
+          {isVideoCapable ? (
+            <Curtains
+              className='curtains-canvas'
+              pixelRatio={Math.min(1, window.devicePixelRatio)}
+              antialias={false}
+              watchScroll={false}
+              premultipliedAlpha={true}
+              production={true}
+            >
+              <LenisCurtainsSync $isMobile={$isMobile} />
+              <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />
+            </Curtains>
+          ) : (
+            <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isVideoCapable={isVideoCapable} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />            
+          )}
+        </HelmetProvider>
+      </AppContainer>
+    );
   });
+  
 
-  useEffect(() => {
-    if (curtains) {
+const Root = memo(({ $isMobile, $isFirefox, isWorkPage, data, socialData, aboutData, isVideoCapable }) => {
+  const container = useRef(null);
+  const location = useLocation();
+
+  if (isVideoCapable) {
+    const curtains = useCurtains((curtains) => {
+      curtains.resize();
       curtains.updateScrollValues(0, 0);
-    }
-  }, [location, curtains]);
+    });
+  
+    useEffect(() => {
+      if (curtains) {
+        curtains.updateScrollValues(0, 0);
+      }
+    }, [location, curtains]);
+  }
 
   useEffect(() => {
     function setVh() {

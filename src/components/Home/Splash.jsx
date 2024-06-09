@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo, memo } from 'react';
 import styled from 'styled-components';
 import { Plane } from "react-curtains";
+import { usePerformance } from '../Common/VideoContext.jsx'; // Import the usePerformance hook
 
 // Styled components
 const Scene = styled.div`
@@ -9,20 +10,20 @@ const Scene = styled.div`
   height: calc(var(--vh, 1vh) * 150);
   z-index: 1;
   overflow: visible;
-  margin-top: calc(var(--vh, 1vh) * -37.5);
-  margin-left: -10vw;  
+  margin-top: calc(var(--vh, 1vh) * -35.5);
+  margin-left: calc(var(--vh, 1vh) * -20);
+  margin-right: calc(var(--vh, 1vh) * -10);
   pointer-events: none;
   @media (max-width: 1024px) {
+    margin-top: calc(var(--vh, 1vh) * -20.5);
     width: 150vw;
     height: 150vw;
-    margin-top: -95vw;
     margin-left: -25vw;    
   }
   @media (max-width: 768px) {
     width: 80vh;
     height: 80vh;
-    margin-top: -60vh;
-    margin-left: -30vw;
+    margin-left: -35vw;
   }
 `;
 
@@ -101,6 +102,7 @@ const fragmentShader = `
   uniform vec2 uResolution;
   uniform float uTime;  
   uniform float uMobile;
+  uniform float uMaxTime;
 
   float sqrLen(vec2 vec) {
     return vec.x * vec.x + vec.y * vec.y;  
@@ -180,7 +182,7 @@ const fragmentShader = `
   }
   
   void main() {
-    float time = uTime / 300.;
+    float time = uTime / uMaxTime; // Use the uniform here
     time = easeOutCubic(time);
 
     vec2 fragPos = vNoiseCoord;
@@ -214,10 +216,17 @@ const fragmentShader = `
 
 // Main component
 const Splash = memo(({ isMobile }) => {
+  const { isVideoCapable } = usePerformance(); // Use the performance context
   const ref = useRef(null);
   const isVisible = useRef(false);
   const planeRef = useRef(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const lastRenderTime = useRef(0);
+
+  // Determine frame rate and time based on performance
+  const frameRate = isVideoCapable ? 60 : 30;
+  const maxTime = isVideoCapable ? 240 : 120;
+  const frameInterval = 1000 / frameRate;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -270,9 +279,15 @@ const Splash = memo(({ isMobile }) => {
 
   // Render loop
   const onRender = (plane) => {
+    const now = performance.now();
+    if (now - lastRenderTime.current < frameInterval) {
+      return;
+    }
+    lastRenderTime.current = now;
+
     if (!isVisible.current && plane.uniforms.time.value > 0) {
       plane.uniforms.time.value -= 1;
-    } else if (isVisible.current && plane.uniforms.time.value < 300) {
+    } else if (isVisible.current && plane.uniforms.time.value < maxTime) {
       plane.uniforms.time.value += 1;
     }
   };
@@ -308,7 +323,12 @@ const Splash = memo(({ isMobile }) => {
       type: "1f",
       value: 0
     },
-  }), [isMobile]);
+    maxTime: {
+      name: "uMaxTime",
+      type: "1f",
+      value: maxTime
+    }
+  }), [isMobile, maxTime]);
 
   return (
     <Scene ref={ref}>

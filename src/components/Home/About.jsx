@@ -300,7 +300,7 @@ const DiamondIcon = styled(m.div)`
   margin-right: auto;
   z-index: 5;
   & svg {
-    width: 1.5rem;
+    width: 1.3rem;
   }
 `;
 

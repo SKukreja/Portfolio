@@ -1,9 +1,9 @@
-import React, { memo, useMemo } from 'react';
+import React, { useState, useEffect, memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { InView } from 'react-intersection-observer';
 import { m } from 'framer-motion';
-import ProfileImage from './ProfileImage';
 import Socials from './Socials';
+import { usePerformance } from '../Common/VideoContext'; // Ensure this import
 
 // Styled components
 const Container = styled(m.div)`
@@ -99,12 +99,36 @@ const CopyrightSymbol = styled.span`
   margin-right: 0.5rem;
 `;
 
-const CopyrightText = styled.span`
+const CopyrightText = styled.span``;
+
+// Placeholder component
+const PlaceholderProfileImage = styled.div`
+  width: 150px; // Adjust as needed
+  height: 150px; // Adjust as needed
+  background: url('/placeholder-image.png'); // Replace with your placeholder image path
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%; // To keep it circular
 `;
 
 // Main component
 const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
-  
+  const { isVideoCapable } = usePerformance();
+  const [ProfileImage, setProfileImage] = useState(null);
+
+  useEffect(() => {
+    if (isVideoCapable) {
+      import('./ProfileImage').then((module) => {
+        setProfileImage(() => module.default);
+      });
+    }
+    else {
+      import('./Simplified/ProfileImage').then((module) => {
+        setProfileImage(() => module.default);
+      });
+    }
+  }, [isVideoCapable]);
+
   // Define animation variants
   const fadeIn = useMemo(() => ({
     hidden: { opacity: 0 },
@@ -124,8 +148,12 @@ const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
       <InView>
         {({ inView, ref }) => (
           <>
-          <ProfileSection>
-              <ProfileImage $imageUrl='/avatar.avif' $isMobile={$isMobile} />
+            <ProfileSection>
+              {ProfileImage ? (
+                <ProfileImage $imageUrl='/avatar.avif' $isMobile={$isMobile} />
+              ) : (
+                null
+              )}
               <Bio ref={ref} className={`${inView ? 'active' : ''}`}>                          
                 <Blurb
                   variants={fadeIn}
@@ -137,16 +165,16 @@ const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
                 </Blurb>
                 <Socials inView={inView} socialData={socialData} />
               </Bio>
-          </ProfileSection>
-          <Footer
-            variants={fadeIn}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            custom={{ delay: 1.5 }}
-          >
-            <CopyrightSymbol>©</CopyrightSymbol>        
-            <CopyrightText>S.Kukreja {new Date().getFullYear()}</CopyrightText>
-          </Footer>
+            </ProfileSection>
+            <Footer
+              variants={fadeIn}
+              initial="hidden"
+              animate={inView ? 'visible' : 'hidden'}
+              custom={{ delay: 1.5 }}
+            >
+              <CopyrightSymbol>©</CopyrightSymbol>        
+              <CopyrightText>S.Kukreja {new Date().getFullYear()}</CopyrightText>
+            </Footer>
           </>
         )}
       </InView>

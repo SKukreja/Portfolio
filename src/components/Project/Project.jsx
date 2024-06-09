@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Icons } from '../Common/Icons';
 import { Helmet } from 'react-helmet-async';
 import ProjectTitle from './ProjectTitle';
-import ProjectSplash from './ProjectSplash';
 import ProjectBlurb from './ProjectBlurb';
 import Cover from '../Footer/Cover';
 import Figure from './Figure';
@@ -12,6 +11,7 @@ import { m } from 'framer-motion';
 import TransitionMask from '../Common/TransitionMask';
 import ScrollLine from './ScrollLine';
 import CustomLink from '../Common/CustomLink';
+import { usePerformance } from '../Common/VideoContext'; // Ensure this import
 
 const Container = styled.div`
   position: relative;
@@ -249,9 +249,27 @@ const SmallSection = styled.div`
   }
 `;
 
+const PlaceholderProjectSplash = styled.div`
+  width: 100%;
+  height: 300px; // Adjust as needed
+  background: url('/placeholder-image.png'); // Replace with your placeholder image path
+  background-size: cover;
+  background-position: center;
+`;
+
 const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
+  const { isVideoCapable } = usePerformance();
+  const [ProjectSplash, setProjectSplash] = useState(null);
+
+  useEffect(() => {
+    if (isVideoCapable) {
+      import('./ProjectSplash').then((module) => {
+        setProjectSplash(() => module.default);
+      });
+    }
+  }, [isVideoCapable]);
 
   useEffect(() => {
     if (!data || !id) return;
@@ -286,10 +304,11 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
       <ProjectLanding variants={landingVariants} initial="hidden" animate="visible" exit="exit">
         {project && project.attributes && project.attributes.featured && (
           <>
-            <ProjectSplash
-              $isMobile={$isMobile}
-              $img={project.attributes.featured}
-            />
+            {isVideoCapable && ProjectSplash ? (
+              <ProjectSplash $isMobile={$isMobile} $img={project.attributes.featured} />
+            ) : (
+              <PlaceholderProjectSplash />
+            )}
             <ProjectLandingText>
               <ProjectTitle titleText={project.attributes.title} />
               <ProjectBlurb blurbText={project.attributes.summary} />
