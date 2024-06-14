@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { m, useAnimation } from 'framer-motion';
 import CustomLink from '../../components/Common/CustomLink';
+import ReactGA from 'react-ga4';
 
 const Featured = styled(m.div)`
   position: relative;
@@ -69,6 +70,22 @@ const Project = styled(m.div)`
   position: relative;
   padding: 0 var(--default-spacing);
   transition: height 0.5s ease;
+  &::before {
+    background-image: ${({ backgroundImage }) => backgroundImage};
+    background-size: 80% auto;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    width: 100%;
+    height: 100%;
+    opacity: ${({ isCurrent }) => (isCurrent ? 0.5 : 0)};
+    -webkit-mask-image: radial-gradient(black 0%, transparent 60%);
+    mask-image: radial-gradient(black 0%, transparent 60%);
+    transition: opacity 3s ease;
+  }
   @media (max-width: 1024px) {
     height: calc(var(--vh) * 10);
   }
@@ -128,6 +145,10 @@ const Work = ({ projectData }) => {
   const [currentProject, setCurrentProject] = useState(0);
   const controls = useAnimation();
   let scrollTimeout = useRef(null);
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/projects", title: "All Projects" });
+  }, []);
 
   useEffect(() => {
     if (!projectData) return;    
@@ -195,7 +216,7 @@ const Work = ({ projectData }) => {
         </Header>
         <Projects as={m.div} variants={containerVariants} initial="hidden" animate="visible">
           {data && data.map((project, index) => (
-            <Project key={project.id} isCurrent={index === currentProject} variants={projectVariants} custom={{ delay: index }}>
+            <Project key={project.id} backgroundImage={`url(${import.meta.env.VITE_APP_UPLOAD_URL + project.attributes.featured.data.attributes.url})`} isCurrent={index === currentProject} variants={projectVariants} custom={{ delay: index }}>
               <Year>{project.attributes.year}</Year>
               <ProjectName to={"/project/" + project.attributes.slug}>
                 {project.attributes.title}

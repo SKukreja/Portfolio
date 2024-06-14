@@ -10,7 +10,7 @@ import Figure from './Figure';
 import { m } from 'framer-motion';
 import TransitionMask from '../Common/TransitionMask';
 import ScrollLine from './ScrollLine';
-import CustomLink from '../Common/CustomLink';
+import ReactGA from 'react-ga4';
 import { usePerformance } from '../Common/VideoContext'; // Ensure this import
 
 const Container = styled.div`
@@ -264,8 +264,18 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
   const [ProjectSplash, setProjectSplash] = useState(null);
 
   useEffect(() => {
+    if (!project) return;
+    ReactGA.send({ hitType: "pageview", page: "/project/" + id, title: project?.attributes.title });
+  }, [project]);
+
+  useEffect(() => {
     if (isVideoCapable) {
       import('./ProjectSplash').then((module) => {
+        setProjectSplash(() => module.default);
+      });
+    }
+    else {
+      import('./Simplified/ProjectSplash').then((module) => {
         setProjectSplash(() => module.default);
       });
     }
@@ -304,10 +314,10 @@ const Project = ({ $isMobile, $isFirefox, data, socialData }) => {
       <ProjectLanding variants={landingVariants} initial="hidden" animate="visible" exit="exit">
         {project && project.attributes && project.attributes.featured && (
           <>
-            {isVideoCapable && ProjectSplash ? (
+            {ProjectSplash ? (
               <ProjectSplash $isMobile={$isMobile} $img={project.attributes.featured} />
             ) : (
-              <PlaceholderProjectSplash />
+              null
             )}
             <ProjectLandingText>
               <ProjectTitle titleText={project.attributes.title} />

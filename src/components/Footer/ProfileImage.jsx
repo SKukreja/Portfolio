@@ -11,7 +11,7 @@ const Scene = styled.div`
     margin-top: var(--default-spacing);
   }
   @media (max-width: 768px) {
-    height: 200px;
+    height: 175px;
     margin-top: 0;
   }
 `;

@@ -5,6 +5,7 @@ const VideoContext = createContext();
 
 export const VideoProvider = ({ children }) => {
   const [isVideoCapable, setIsVideoCapable] = useState(false);
+  const [isFirefoxAndroid, setIsFirefoxAndroid] = useState(false);
 
   const extractIOSVersion = (userAgent) => {
     const match = userAgent.match(/iPhone OS (\d+)_/);
@@ -20,6 +21,7 @@ export const VideoProvider = ({ children }) => {
       const isFirefoxAndroid = navigator.userAgent.includes('Firefox') && navigator.userAgent.includes('Android');
       const isOldIOS = extractIOSVersion(navigator.userAgent);
       const gpuTier = await getGPUTier();
+      setIsFirefoxAndroid(isFirefoxAndroid);
       setIsVideoCapable(!(gpuTier.tier < 1 || isFirefoxAndroid || isOldIOS));
       console.log("GPU Tier: " + gpuTier.tier + "\nisFirefoxAndroid: " + isFirefoxAndroid + "\nisOldIOS: " + isOldIOS)
     };
@@ -27,7 +29,7 @@ export const VideoProvider = ({ children }) => {
   }, []);
 
   return (
-    <VideoContext.Provider value={{ isVideoCapable }}>
+    <VideoContext.Provider value={{ isVideoCapable, isFirefoxAndroid }}>
       {children}
     </VideoContext.Provider>
   );

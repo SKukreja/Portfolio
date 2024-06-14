@@ -29,8 +29,8 @@ const SocialLink = styled(m.a)`
   }
   & svg {
     margin-right: 1rem;
-    margin-bottom: 0.1rem;
-    width: 1.5rem;
+    margin-top: 0.1rem;
+    width: 1.2rem;
   }
   @media (max-width: 1024px) {
     margin-bottom: var(--default-spacing);

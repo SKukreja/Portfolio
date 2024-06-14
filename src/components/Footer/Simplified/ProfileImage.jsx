@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 
 const Scene = styled(m.div)`  
-  width: 50%;
+  width: 40%;
   height: 26vh;
   position: relative;
   inset: 0;

@@ -11,7 +11,7 @@ const Scene = styled(m.div)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-bottom: calc(var(--default-spacing) * -1);
+  margin-top: calc(var(--default-spacing) * -8);
   align-items: center;
   z-index: 1;
   overflow: visible;
@@ -33,7 +33,7 @@ const Image = styled(m.div)`
 `;
 
 
-const Splash = memo(({ isMobile }) => {
+const ProjectSplash = memo(({ isMobile, $img }) => {
   const controls = useAnimation();
 
   const [ref, inView, entry] = useInView({
@@ -51,7 +51,7 @@ const Splash = memo(({ isMobile }) => {
 
   return (
     <Scene ref={ref} initial="hidden" animate={controls} variants={imgVariants} isInView={inView}>
-        <Image style={{backgroundImage: 'url(/splash.avif)'}} />
+        <Image style={{backgroundImage: 'url(' + import.meta.env.VITE_APP_UPLOAD_URL + $img.data.attributes.url + ')'}} />
     </Scene>
   );
 });

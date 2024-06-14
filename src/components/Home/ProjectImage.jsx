@@ -193,7 +193,7 @@ const fragmentShader = `
   }
 
   float easeOutCubic(float t) {
-    return 1.0 - pow(1.0 - t, 4.0);
+    return 1.0 - pow(1.0 - t, 6.0);
   }
   
   void main() {
@@ -204,9 +204,9 @@ const fragmentShader = `
 	  vec3 pos = vec3(fragPos, time * 0.0001);
     
     //noise sampling
-    vec3 scaledPos 	= 4.0 * pos;
+    vec3 scaledPos 	= (3.5 + (0.3 * uNumber)) * pos;
     float noiseVal 	= 0.0;
-    float ampl 		= 2.0;
+    float ampl 		= 1.5 + 0.5 * uNumber;
     float maxValue 	= 0.0;
     
     for(float i = 0.0; i < 8.0; ++i)
@@ -261,7 +261,7 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
   const lastRenderTime = useRef(0);
     // Determine frame rate and time based on performance
     const frameRate = isVideoCapable ? 60 : 30;
-    const maxTime = isVideoCapable ? 240 : 120;
+    const maxTime = isVideoCapable ? 360 : 180;
     const frameInterval = 1000 / frameRate;
 
   useEffect(() => {

@@ -162,7 +162,6 @@ const Background = styled(m.div)`
   filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
   will-change: opacity, filter, transform;
   opacity: 0.35;
-  mix-blend-mode: darken;
   z-index: 2;
   pointer-events: none;
   @media (max-width: 1024px) {
@@ -300,7 +299,7 @@ const DiamondIcon = styled(m.div)`
   margin-right: auto;
   z-index: 5;
   & svg {
-    width: 1.3rem;
+    width: 1.1rem;
   }
 `;
 
@@ -334,12 +333,6 @@ const About = memo(({ $isMobile, aboutData }) => {
   const [aboutRef, aboutInView] = useInView({ threshold: 0.25, triggerOnce: true });
   const bgRef = useRef(null);
   const [blurbText, setBlurbText] = useState('');
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    if (!aboutData) return;
-    setData(aboutData);
-  }, [aboutData]);
 
   useLenis(({ scroll }) => {
     if ($isMobile) return;
@@ -397,9 +390,9 @@ const About = memo(({ $isMobile, aboutData }) => {
   }), []);
 
   useEffect(() => {
-    if (!data) return;
-    setBlurbText(data.attributes.blurb);
-  }, [data]);
+    if (!aboutData) return;
+    setBlurbText(aboutData.attributes.blurb);    
+  }, [aboutData]);
 
   return (
     <Container ref={ref} as={m.div} id="about">

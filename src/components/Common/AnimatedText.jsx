@@ -9,7 +9,7 @@ const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => 
   // Calculate delays only once to prevent recalculations on each render
   const animationDelays = useRef(text.split(' ').flatMap(
     (word, wordIndex) => [...word].map((_, charIndex) => ({
-      delay: Math.random(), // Adjust this calculation as needed
+      delay: Math.random() + (1 * startImmediately), // Adjust this calculation as needed
       wordIndex,
       charIndex,
     }))
@@ -23,7 +23,7 @@ const AnimatedText = React.memo(({ text, startImmediately, isLink = false }) => 
       opacity: 1,
       transition: {
         delay,
-        duration: 1.5,
+        duration: 2,
         type: 'spring',
         stiffness: 120,
       },

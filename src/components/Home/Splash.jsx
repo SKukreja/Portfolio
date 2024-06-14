@@ -15,15 +15,19 @@ const Scene = styled.div`
   margin-right: calc(var(--vh, 1vh) * -10);
   pointer-events: none;
   @media (max-width: 1024px) {
-    margin-top: calc(var(--vh, 1vh) * -20.5);
+    margin-top: calc(var(--vh) * -20.5);
     width: 150vw;
     height: 150vw;
-    margin-left: -25vw;    
+    left: -25%;
+    margin-left: auto;
+    margin-right: auto;
   }
   @media (max-width: 768px) {
-    width: 80vh;
-    height: 80vh;
-    margin-left: -35vw;
+    width: 150vw;
+    height: 150vw;
+    left: -25%;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 

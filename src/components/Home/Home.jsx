@@ -6,6 +6,7 @@ import Cover from '../Footer/Cover';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 import { usePerformance } from '../Common/VideoContext'; // Ensure this import
+import ReactGA from 'react-ga4';
 
 const Container = styled.div`
   position: relative;
@@ -38,6 +39,10 @@ const PlaceholderComponent = styled.div`
 const Home = ({ $isMobile, $isFirefox, data, socialData, aboutData }) => {
   const { isVideoCapable } = usePerformance();
   const [Splash, setSplash] = useState(null);
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: "/", title: "Home Page" });
+  }, []);
 
   useEffect(() => {
     if (isVideoCapable) {

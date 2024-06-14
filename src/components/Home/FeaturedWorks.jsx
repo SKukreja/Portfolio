@@ -229,8 +229,9 @@ const SeeAll = styled(m(CustomLink))`
     color: var(--interact-hover-color);
   }
   & svg {
-    width: 3rem;
+    width: 2.1rem;
     margin-right: 1rem;
+    margin-top: 0.3rem;
   }
   @media (max-width: 1024px) {
     position: relative;

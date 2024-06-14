@@ -6,6 +6,7 @@ import use from './components/Common/use.js';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import ParchmentWoff2 from './assets/fonts/ParchmentPrint.woff2';
 import ParchmentItalicWoff2 from './assets/fonts/ParchmentPrintItalic.woff2';
+import ReactGA from 'react-ga4';
 import WizardHandWoff2 from './assets/fonts/WizardHand.woff2';
 import LoadingScreen, { loadingVariants } from './components/Common/LoadingScreen.jsx';
 import { TransitionProvider } from './components/Common/TransitionContext.jsx';
@@ -91,7 +92,7 @@ const AppContent = () => {
 
   const options = useMemo(() => {
     const opts = {
-      lerp: 0.05,
+      lerp: 0.04,
       smoothWheel: true,
       syncTouch: isVideoCapable ? true : false,
       orientation: isMobile ? 'vertical' : 'horizontal',
@@ -104,6 +105,7 @@ const AppContent = () => {
   const setVh = useCallback(() => {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
+    ReactGA.initialize(import.meta.env.VITE_GTAG_ID);    
   }, []);
 
   useEffect(() => {

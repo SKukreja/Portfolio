@@ -112,11 +112,12 @@ const PlaceholderProfileImage = styled.div`
 `;
 
 // Main component
-const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
-  const { isVideoCapable } = usePerformance();
+const Cover = memo(({ $isMobile, socialData }) => {
+  const { isVideoCapable, isFirefoxAndroid } = usePerformance();
   const [ProfileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
+    if (ProfileImage) return;
     if (isVideoCapable) {
       import('./ProfileImage').then((module) => {
         setProfileImage(() => module.default);
@@ -144,7 +145,7 @@ const Cover = memo(({ $isMobile, $isFirefox, socialData }) => {
   }), []);
 
   return (
-    <Container $isFirefox={$isFirefox} id="contact">
+    <Container $isFirefox={isFirefoxAndroid} id="contact">
       <InView>
         {({ inView, ref }) => (
           <>

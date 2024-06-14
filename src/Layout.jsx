@@ -124,10 +124,10 @@ const LenisCurtainsSync = memo(({ $isMobile }) => {
     return null;
   });
 
-  const Layout = memo(({ $isMobile, $isFirefox, data, socialData, aboutData, navigationData }) => {
+  const Layout = memo(({ $isMobile, data, socialData, aboutData, navigationData }) => {
     const location = useLocation();
     const isWorkPage = location.pathname.includes('/projects');
-    const { isVideoCapable } = usePerformance();
+    const { isVideoCapable, isFirefoxAndroid } = usePerformance();
 
     return (
       <AppContainer className='app'>
@@ -148,10 +148,10 @@ const LenisCurtainsSync = memo(({ $isMobile }) => {
               production={true}
             >
               <LenisCurtainsSync $isMobile={$isMobile} />
-              <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />
+              <Root $isMobile={$isMobile} $isFirefox={isFirefoxAndroid} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />
             </Curtains>
           ) : (
-            <Root $isMobile={$isMobile} $isFirefox={$isFirefox} isVideoCapable={isVideoCapable} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />            
+            <Root $isMobile={$isMobile} $isFirefox={isFirefoxAndroid} isVideoCapable={isVideoCapable} isWorkPage={isWorkPage} data={data} socialData={socialData} aboutData={aboutData} />            
           )}
         </HelmetProvider>
       </AppContainer>

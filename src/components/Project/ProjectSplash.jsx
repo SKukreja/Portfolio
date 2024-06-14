@@ -13,16 +13,18 @@ const Scene = styled.div`
   margin-top: calc(var(--vh, 1vh) * -5);
   margin-left: 15vw;  
   @media (max-width: 1024px) {
-    width: calc(var(--vh) * 110);
-    height: calc(var(--vh) * 110);
+    width: 150vw;
+    height: 150vw;
+    left: -25%;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: calc(var(--vh, 1vh) * -35);
-    margin-left: calc(var(--vh, 1vh) * -20);
   }
   @media (max-width: 768px) {
-    width: calc(var(--vh) * 90);
-    height: calc(var(--vh) * 90);
-    margin-top: -55vw;
-    margin-left: -30vw;
+    margin-top: -30vh;
+    width: 175vw;
+    height: 175vw;
+    left: -37.5%;
   }
 `;
 

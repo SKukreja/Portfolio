@@ -107,7 +107,11 @@ const SocialLink = styled.a`
   color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'black' : 'black') : ($isMobile ? 'var(--black)' : 'var(--offwhite)')};
   transition: color 0.5s ease;
   & svg {
-    width: 1.5rem;
+    width: 1.3rem;
+  }
+  & .envelope {
+    width: 1.4rem;
+    margin-left: -0.05rem;
   }
   &:hover {
     color: ${({ $isNavSolid, $isMobile }) => !$isNavSolid ? ($isMobile ? 'white' : 'white') : 'var(--interact-hover-color)'};

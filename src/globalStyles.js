@@ -39,7 +39,7 @@ const GlobalStyle = createGlobalStyle`
       --default-spacing: 1rem;
     }
     @media (max-width: 1024px) {
-      --default-spacing: 4rem;
+      --default-spacing: 3rem;
       --body-text: 2.5vw;
       --title-text: 15vw;   
     }    
