@@ -53,7 +53,7 @@ const Header = styled(m.h1)`
   }
 `;
 
-const ProjectName = styled(Link)`
+const ProjectName = styled(CustomLink)`
   font-family: var(--body-font);  
   font-size: calc(var(--body-text));
   color: var(--black);  
