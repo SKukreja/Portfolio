@@ -37,7 +37,7 @@ const ProjectSplash = memo(({ isMobile, $img }) => {
   const controls = useAnimation();
 
   const [ref, inView, entry] = useInView({
-    threshold: 0.5,
+    threshold: 0.5
   });
 
   const imgVariants = {

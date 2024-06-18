@@ -4,11 +4,10 @@ import { Plane } from "react-curtains";
 import { usePerformance } from '../Common/VideoContext.jsx'; 
 
 const Scene = styled.div`  
-  position: absolute;
-  height: 0;
-  width: 150%;
-  height: calc(var(--vh, 1vh) * 50);
+  position: relative;
+  width: 150%;  
   display: flex;
+  aspect-ratio: 1.89/1;
   pointer-events: none;
   flex-direction: column;
   justify-content: center;
@@ -16,19 +15,12 @@ const Scene = styled.div`
   z-index: 1;
   backface-visibility: hidden;
   overflow: visible;
-  &.even {
-    top: -10vh;
-  }
-  &.odd {
-    bottom: -10vh;
-  }
+
   @media (max-width: 1024px) {
+    width: 200%;
     position: relative;
-    width: 100vw;
-    height: 100vw;
-    &.odd, &.even {
-      top: 0;
-      bottom: 0;
+    &.odd, &.even {      
+      margin-bottom: calc(var(--default-spacing) * -2);
     }
   }
 `;
@@ -261,7 +253,7 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
   const lastRenderTime = useRef(0);
     // Determine frame rate and time based on performance
     const frameRate = isVideoCapable ? 60 : 30;
-    const maxTime = isVideoCapable ? 360 : 180;
+    const maxTime = isVideoCapable ? 300 : 150;
     const frameInterval = 1000 / frameRate;
 
   useEffect(() => {
@@ -274,7 +266,7 @@ const ProjectImage = memo(({ isMobile, number, image, even }) => {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0.1
+        threshold: 0,
       }
     );
 

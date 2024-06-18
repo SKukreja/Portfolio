@@ -37,6 +37,7 @@ const GlobalStyle = createGlobalStyle`
       --article-spacing: 4rem;
       --desktop-container-width: 90vw;
       --default-spacing: 1rem;
+      --title-text: 6vw;
     }
     @media (max-width: 1024px) {
       --default-spacing: 3rem;

@@ -85,6 +85,9 @@ const Project = styled(m.div)`
     -webkit-mask-image: radial-gradient(black 0%, transparent 60%);
     mask-image: radial-gradient(black 0%, transparent 60%);
     transition: opacity 3s ease;
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
   @media (max-width: 1024px) {
     height: calc(var(--vh) * 10);

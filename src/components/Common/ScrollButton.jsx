@@ -7,7 +7,7 @@ const ScrollButton = ({ to, children, ...props }) => {
   const handleClick = (e) => {
     e.preventDefault();
     const target = document.querySelector(to);
-    console.log(target)
+    //console.log(target)
     if (target) {
         const vwOffset = $isMobile ? window.innerHeight * 0.1 : window.innerWidth * 0.05; // 5vw offset        
         let targetPosition;

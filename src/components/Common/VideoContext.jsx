@@ -23,7 +23,7 @@ export const VideoProvider = ({ children }) => {
       const gpuTier = await getGPUTier();
       setIsFirefoxAndroid(isFirefoxAndroid);
       setIsVideoCapable(!(gpuTier.tier < 1 || isFirefoxAndroid || isOldIOS));
-      console.log("GPU Tier: " + gpuTier.tier + "\nisFirefoxAndroid: " + isFirefoxAndroid + "\nisOldIOS: " + isOldIOS)
+      //console.log("GPU Tier: " + gpuTier.tier + "\nisFirefoxAndroid: " + isFirefoxAndroid + "\nisOldIOS: " + isOldIOS)
     };
     checkGpuPerformance();
   }, []);

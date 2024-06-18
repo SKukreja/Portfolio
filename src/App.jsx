@@ -86,9 +86,11 @@ const AppContent = () => {
   const { data: aboutData, loading: aboutApiLoading, aError } = use('/about?populate=deep');
   const { data: navigationData, loading: navigationApiLoading, nError } = use('/navigation?populate=deep');
 
+  /*
   useEffect(() => {
-    console.log('isVideoCapable:', isVideoCapable); // Add logging
+    console.log('isVideoCapable:', isVideoCapable); 
   }, [isVideoCapable]);
+  */
 
   const options = useMemo(() => {
     const opts = {
@@ -98,7 +100,7 @@ const AppContent = () => {
       orientation: isMobile ? 'vertical' : 'horizontal',
       gestureOrientation: 'both',
     };
-    console.log('Lenis options:', opts); // Add logging
+    //console.log('Lenis options:', opts);
     return opts;
   }, [isVideoCapable, isMobile]);
 

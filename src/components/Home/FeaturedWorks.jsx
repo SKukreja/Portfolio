@@ -44,7 +44,7 @@ const Header = styled(m.h1)`
   height: auto;
   top: 7.5vh;
   margin: 0;
-  left: 5rem;  
+  left: calc(5vw - 1rem);  
   text-align: center;
   @media (max-width: 1024px) {    
     top: 0;
@@ -77,13 +77,14 @@ const ProjectName = styled(Link)`
 
 const Projects = styled(m.div)`
   display: flex;
-  height: 100%;
+  height: calc(var(--vh) * 100);
   width: 100%;
   overflow: visible;
   justify-content: space-between;
   @media (max-width: 1024px) {
     margin-top: 20vw;
     margin-bottom: 20vw;
+    height: max-content;
     flex-direction: column;
     justify-content: space-between;
   }
@@ -94,14 +95,13 @@ const ProjectContent = styled.div`
   width: 100%;
   height: fit-content;
   flex-direction: column;
-  z-index: 2;
-  position: absolute;
-  
+  z-index: 2;  
+  position: relative;
   &.odd {
-    bottom: 33%;    
+    margin-top: calc(var(--default-spacing) * 2);
   }
   &.even {
-    top: 33%;    
+    margin-top: calc(var(--default-spacing) * -2);
   }
   @media (max-width: 1024px) {
     width: calc(100% - 2 * var(--default-spacing));
@@ -110,7 +110,8 @@ const ProjectContent = styled.div`
     margin-top: -15vw;    
     padding: var(--default-spacing);
     &.even, &.odd {
-      top: 0;    
+      top: 0;
+      margin-top: 0;
     }
   }
 `;
@@ -125,22 +126,30 @@ const Project = styled.div`
   max-width: 50vw;
   height: 100%;
   align-items: center;
-  justify-content: flex-start;
+  &.odd {
+    justify-content: flex-end;
+    margin-top: calc(var(--default-spacing) * 4);
+  }
+  &.even {
+    justify-content: flex-start;
+    margin-top: calc(var(--default-spacing) * -4);
+  }
   @media (max-width: 1024px) {
     width: 100vw;
     max-width: 100vw;
-    height: 25%;
     margin-left: 0;
     flex-direction: column;
     &.odd, &.odd .project-image {
       margin-top: calc(var(--default-spacing));        
       margin-bottom: calc(var(--default-spacing)); 
       flex-direction: column-reverse;
+      justify-content: flex-start;
     }
     &.even, &.even .project-image {
       margin-top: calc(var(--default-spacing));        
       margin-bottom: calc(var(--default-spacing));
       flex-direction: column;
+      justify-content: flex-start;
     }
   }
 `;
@@ -203,7 +212,14 @@ const ProjectHeader = styled.div`
   align-items: center;
 `;
 
-const Spacer = styled.div``;
+const Spacer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 33%;
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
 
 const SeeAll = styled(m(CustomLink))`
   z-index: 2;

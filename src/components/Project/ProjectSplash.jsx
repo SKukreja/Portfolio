@@ -231,7 +231,8 @@ const ProjectSplash = memo(({ $img, $isMobile }) => {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0.1
+        threshold: 0,
+        triggerOnce: true
       }
     );
 

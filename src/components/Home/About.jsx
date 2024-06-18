@@ -442,7 +442,7 @@ const About = memo(({ $isMobile, aboutData }) => {
           <Table>
             {[
               { primary: "IT Engineer", secondary: "KPMB Architects", time: "2018 - 2024", delay: 0.3 },
-              { primary: "Programmer", secondary: "KUBRA", time: "2017 - 2018", delay: 0.5 },
+              { primary: "Programmer / Analyst", secondary: "KUBRA", time: "2017 - 2018", delay: 0.5 },
               { primary: "Jr. IT Technician", secondary: "KPMB Architects", time: "2016 - 2017", delay: 0.7 },
               { primary: "Computer Technician", secondary: "Home Trust Company", time: "2014 - 2016", delay: 0.9 },
               { primary: "Financial Model Analyst", secondary: "Royal Bank of Canada", time: "2014", delay: 1.1 }
