@@ -10,13 +10,11 @@ import ContactButton from './ContactButton.jsx';
 // Keyframes for slide-in animation
 const slideInFromRight = keyframes`
   0% {
-    transform: translateX(-50px);
-    filter: blur(5px);
+    transform: translateX(-25px);
     opacity: 0;
   }
   100% {
     transform: translateX(0);
-    filter: blur(0);
     opacity: 1;
   }
 `;
@@ -35,8 +33,7 @@ const Nav = styled.nav`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.5s ease;
-  background: var(--black);
+  background: ${({ $isNavSolid, $isMobile }) => $isNavSolid && $isMobile ? 'var(--offwhite)' : 'var(--black)'};
   z-index: 1002;
   &::after {
     content: "";
@@ -168,7 +165,7 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
   height: calc(var(--vh) * 100);
   width: 100%;
   flex-direction: column;
-  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5));
   z-index: 10;
   &::before {
     content: "";
@@ -181,20 +178,19 @@ const Overlay = styled.div.attrs(({ $isVisible }) => ({
     left: 0;
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(20px) saturate(180%) contrast(1.2);
     z-index: -1;
   }
   &::after {
     content: "";
-    background: url("/paper.avif");
+    background: var(--offwhite);
     background-repeat: repeat;
-    opacity: 0.4;
+    opacity: 0.75;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    mix-blend-mode: color-burn;
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
 `;
 
@@ -208,6 +204,7 @@ const OverlayLink = styled(CustomLink)`
   pointer-events: auto;
   padding: 2rem;
   user-select: none;
+  z-index: 2;
   opacity: 0;
   &:hover {
     color: var(--interact-hover-color);
@@ -227,6 +224,7 @@ const ContactLink = styled(ContactButton)`
   text-shadow: 0 0 2px var(--black);
   pointer-events: auto;
   padding: 2rem;
+  z-index: 2;
   user-select: none;
   opacity: 0;
   &:hover {

@@ -30,17 +30,12 @@ const Container = styled.div`
 
 const Bio = styled.div`
   display: flex;
-  flex-direction: column;
-  transition: filter 2s ease-in-out;
-  filter: grayscale(1);
+  flex-direction: column;  
   text-align: center;
   padding-top: 7.5vh;
   height: 100%;
   align-items: center;
-  z-index: 3;
-  &.active {
-    filter: grayscale(0);
-  }
+  z-index: 3;  
   @media (max-width: 1024px) {
     padding-top: 0;
     margin-top: var(--default-spacing);
@@ -155,21 +150,16 @@ const Background = styled(m.div)`
   height: 100%;
   width: 100%;
   background: url('/bg.avif');
-  background-size: cover;
-  background-position: 15vw center;
+  background-size: contain; 
+  background-position: center center;
+  background-repeat: no-repeat;
   position: absolute;
   inset: 0;
-  filter: saturate(0.5) brightness(0.8) contrast(1.2) grayscale(0.5);
-  will-change: opacity, filter, transform;
   opacity: 0.35;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
   @media (max-width: 1024px) {
     display: none;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
-    background-position: -96% 0%;
-    height: 70%;  
   }
 `;
 
@@ -337,7 +327,7 @@ const About = memo(({ $isMobile, aboutData }) => {
   useLenis(({ scroll }) => {
     if ($isMobile) return;
     if (bgRef.current) {
-      bgRef.current.style.transform = $isMobile ? `translateY(${scroll * 0.075 - 500}px)` : `translateX(${scroll * 0.055 - 800}px)`;
+      bgRef.current.style.transform = $isMobile ? `translateY(0)` : `translateX(calc(${scroll * 0.055}px - 25vw))`;
     }
   });
 
